@@ -17,6 +17,15 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'api'], function()
 {
+    /*
+     *
+     */
     Route::post('Authenticate', 'AuthenticateController@authenticate');
     Route::post('Register', 'AuthenticateController@register');
+    /*Persona*/
+    Route::get('Persona','PersonaController@show');
+    Route::post('Persona','PersonaController@store');
+    Route::delete('Persona','PersonaController@destroy');
+    Route::put('Persona','PersonaController@update');
+
 });
