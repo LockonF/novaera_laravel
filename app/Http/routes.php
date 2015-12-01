@@ -27,5 +27,11 @@ Route::group(['prefix' => 'api'], function()
     Route::post('Persona','PersonaController@store');
     Route::delete('Persona','PersonaController@destroy');
     Route::put('Persona','PersonaController@update');
+    /*Proyecto*/
+    Route::get('Proyecto/Persona','ProyectoController@showProjects');
+    Route::put('Proyecto/Persona/{id}','ProyectoController@editProject');
+    Route::post('Proyecto/Persona','ProyectoController@storeByPerson');
+    Route::delete('Proyecto/Persona/{id}','ProyectoController@removeProject');
+
 
 });

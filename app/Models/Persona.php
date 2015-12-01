@@ -15,4 +15,7 @@ class Persona extends Model
         return $this->belongsTo('App\User','idUser');
     }
 
+    public function Proyecto(){
+        return $this->belongsToMany('App\Models\Proyecto', 'Persona_Proyecto', 'idPersona', 'idProyecto')->withPivot('Owner');
+    }
 }

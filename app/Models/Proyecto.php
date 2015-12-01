@@ -11,4 +11,9 @@ class Proyecto extends Model
         'Titulo','Descripcion', 'Antecedentes',
         'Justificacion','Objetivos', 'Alcances',
         'idEjecucion','idImpacto','idModeloNegocio'];
+
+    public function Persona(){
+        return $this->belongsToMany('App\Models\Persona', 'Persona_Proyecto', 'idProyecto', 'idPersona')->withPivot('Owner');
+    }
+
 }
