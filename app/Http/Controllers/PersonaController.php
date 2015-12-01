@@ -30,17 +30,11 @@ class PersonaController extends Controller
         {
             return response()->json(['message'=>'server_error'],500);
         }catch (Exceptions\TokenExpiredException $e) {
-
             return response()->json(['token_expired'], $e->getStatusCode());
-
         } catch (Exceptions\TokenInvalidException $e) {
-
             return response()->json(['token_invalid'], $e->getStatusCode());
-
         } catch (Exceptions\JWTException $e) {
-
             return response()->json(['token_absent'], $e->getStatusCode());
-
         }
 
 

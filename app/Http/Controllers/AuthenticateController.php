@@ -10,20 +10,46 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use Mockery\CountValidator\Exception;
+use Tymon\JWTAuth\Exceptions;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticateController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return null
+     * @throws Exceptions\JWTException
+     * @throws Exceptions\TokenExpiredException
+     * @throws Exceptions\TokenInvalidException
+     * @throws \Exception
      */
-    public function index()
+
+    public static function checkUser()
     {
-        //
+
+        try {
+
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                return null;
+            }
+
+        } catch (Exceptions\TokenExpiredException $e) {
+
+            throw $e;
+
+        } catch (Exceptions\TokenInvalidException $e) {
+
+            throw $e;
+
+        } catch (Exceptions\JWTException $e) {
+            throw $e;
+        }
+        return $user;
     }
+
+
 
     public function authenticate(Request $request)
     {

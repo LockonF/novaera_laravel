@@ -45,4 +45,5 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->hasOne('App\Models\Persona','idUser');
     }
+
 }
