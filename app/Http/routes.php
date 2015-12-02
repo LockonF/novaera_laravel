@@ -30,8 +30,20 @@ Route::group(['prefix' => 'api'], function()
     /*Proyecto*/
     Route::get('Proyecto/Persona','ProyectoController@showProjects');
     Route::put('Proyecto/Persona/{id}','ProyectoController@editProject');
+    Route::post('Proyecto/Persona/Inscribir','ProyectoController@addCollaborator');
+    Route::post('Proyecto/Persona/Eliminar','ProyectoController@removeCollaborator');
+
+
     Route::post('Proyecto/Persona','ProyectoController@storeByPerson');
     Route::delete('Proyecto/Persona/{id}','ProyectoController@removeProject');
+
+    /*Programa de Fondeo*/
+    Route::get('ProgramaFondeo','ProgramaFondeoController@showAll');
+    Route::get('ProgramaFondeo/{id}','ProgramaFondeoController@show');
+    Route::post('ProgramaFondeo','ProgramaFondeoController@store');
+    Route::put('ProgramaFondeo/{id}','ProgramaFondeoController@update');
+    Route::delete('ProgramaFondeo/{id}','ProgramaFondeoController@destroy');
+
 
 
 });
