@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Illuminate\Auth\Access\UnauthorizedException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
@@ -26,27 +26,47 @@ class AuthenticateController extends Controller
      * @throws \Exception
      */
 
-    public static function checkUser()
+    public static function checkUser($permissions)
     {
+
+        $admin = ['Admin'];
+        $supervisor = ['Admin','Supervisor'];
+        $userPermissions = ['Admin','Supervisor','User'];
 
         try {
 
             if (! $user = JWTAuth::parseToken()->authenticate()) {
-                return null;
+                throw new Exceptions\JWTException;
             }
+            if($permissions!=null)
+            {
+                switch($permissions)
+                {
+                    case 'User':
+                        $validatePermissions= $userPermissions;
+                        break;
+                    case 'Supervisor':
+                        $validatePermissions= $supervisor;
+                        break;
+                    case 'Admin':
+                        $validatePermissions = $admin;
+                        break;
+                    default :
+                        $validatePermissions = $userPermissions;
+                        break;
 
+                }
+                if(!in_array($user->type,$validatePermissions))
+                    throw new \App\Exceptions\UnauthorizedException;
+            }
+            return $user;
         } catch (Exceptions\TokenExpiredException $e) {
-
             throw $e;
-
         } catch (Exceptions\TokenInvalidException $e) {
-
             throw $e;
-
         } catch (Exceptions\JWTException $e) {
             throw $e;
         }
-        return $user;
     }
 
 
