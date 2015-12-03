@@ -14,6 +14,11 @@ use Tymon\JWTAuth\Exceptions;
 class ProgramaFondeoController extends Controller
 {
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
     public function show($id)
     {
         try{
@@ -46,6 +51,37 @@ class ProgramaFondeoController extends Controller
         try{
             $programaFondeo = ProgramaFondeo::get();
             return response()->json($programaFondeo);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showConvocatorias($id)
+    {
+        try{
+            $programaFondeo = ProgramaFondeo::with('Convocatoria')->find($id);
+            if($programaFondeo!=null)
+            {
+                return response()->json($programaFondeo->Convocatoria);
+            }
+            return response()->json(['message'=>'programa_fondeo_not_found'],404);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

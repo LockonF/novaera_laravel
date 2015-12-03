@@ -43,7 +43,12 @@ Route::group(['prefix' => 'api'], function()
     Route::post('ProgramaFondeo','ProgramaFondeoController@store');
     Route::put('ProgramaFondeo/{id}','ProgramaFondeoController@update');
     Route::delete('ProgramaFondeo/{id}','ProgramaFondeoController@destroy');
+        /*Convocatorias del Programa de Fondeo */
+        Route::get('ProgramaFondeo/Convocatoria/{id}','ProgramaFondeoController@showConvocatorias');
 
-
+    /*Convocatorias*/
+    Route::post('Convocatoria','ConvocatoriaController@store');
+    Route::put('Convocatoria/{id}','ConvocatoriaController@update');
+    Route::delete('Convocatoria/{id}','ConvocatoriaController@destroy');
 
 });
