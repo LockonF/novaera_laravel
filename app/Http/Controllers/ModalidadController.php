@@ -2,61 +2,29 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Exceptions\UnauthorizedException;
-use App\Models\Convocatoria;
+use App\Models\Modalidad;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class ConvocatoriaController extends Controller
+class ModalidadController extends Controller
 {
-
-    /**
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-
-    public function showModalidades($id)
-    {
-        try{
-            $convocatoria = Convocatoria::with('Modalidad')->find($id);
-            if($convocatoria!=null)
-            {
-                return response()->json($convocatoria->Modalidad);
-            }
-            return response()->json(['message'=>'convocatoria_not_found'],404);
-
-        }catch (QueryException $e)
-        {
-            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
-        }catch (Exceptions\TokenExpiredException $e) {
-            return response()->json(['token_expired'], $e->getStatusCode());
-        } catch (Exceptions\TokenInvalidException $e) {
-            return response()->json(['token_invalid'], $e->getStatusCode());
-        }catch(UnauthorizedException $e)
-        {
-            return response()->json(['unauthorized'], $e->getStatusCode());
-        }
-        catch (Exceptions\JWTException $e) {
-            return response()->json(['token_absent'], $e->getStatusCode());
-        }
-
-    }
 
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function store(Request $request)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
-            $convocatoria = new Convocatoria($request->all());
-            $convocatoria->save();
-            return response()->json($convocatoria);
+            AuthenticateController::checkUser('Supervisor');
+            $modalidad = new Modalidad($request->all());
+            $modalidad->save();
+            return response()->json($modalidad);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -71,7 +39,6 @@ class ConvocatoriaController extends Controller
         catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
-
     }
 
     /**
@@ -83,14 +50,13 @@ class ConvocatoriaController extends Controller
     {
         try{
             AuthenticateController::checkUser('Supervisor');
-            $convocatoria = Convocatoria::find($id);
-            if($convocatoria!=null)
+            $modalidad = Modalidad::find($id);
+            if($modalidad!=null)
             {
-                $convocatoria->delete();
-                return response()->json('success',200);
+                $modalidad->delete();
+                return response()->json(['message'=>'success']);
             }
-            return response()->json(['message'=>'convocatoria_not_found'],404);
-
+            return response()->json(['message'=>'modalidad_not_found'],404);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -105,22 +71,26 @@ class ConvocatoriaController extends Controller
         catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
-
     }
 
-    public function update(Request $request, $id)
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function update(Request $request,$id)
     {
         try{
             AuthenticateController::checkUser('Supervisor');
-            $convocatoria = Convocatoria::find($id);
-            if($convocatoria!=null)
+            $modalidad = Modalidad::find($id);
+            if($modalidad!=null)
             {
-                $convocatoria->fill($request->all());
-                $convocatoria->save();
-                return response()->json($convocatoria,200);
+                $modalidad->fill($request->all());
+                $modalidad->save();
+                return response()->json($modalidad);
             }
-            return response()->json(['message'=>'convocatoria_not_found'],404);
-
+            return response()->json(['message'=>'modalidad_not_found'],404);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -135,7 +105,6 @@ class ConvocatoriaController extends Controller
         catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
-
     }
 
 

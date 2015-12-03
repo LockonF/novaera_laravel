@@ -50,5 +50,12 @@ Route::group(['prefix' => 'api'], function()
     Route::post('Convocatoria','ConvocatoriaController@store');
     Route::put('Convocatoria/{id}','ConvocatoriaController@update');
     Route::delete('Convocatoria/{id}','ConvocatoriaController@destroy');
+        /*Modalidades Asociadas a la Convocatoria*/
+        Route::get('Convocatoria/Modalidad/{id}','ConvocatoriaController@showModalidades');
+    /*Modalidades*/
+    Route::post('Modalidad','ModalidadController@store');
+    Route::delete('Modalidad/{id}','ModalidadController@destroy');
+    Route::put('Modalidad/{id}','ModalidadController@update');
+
 
 });
