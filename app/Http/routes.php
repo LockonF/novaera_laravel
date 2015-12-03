@@ -28,14 +28,20 @@ Route::group(['prefix' => 'api'], function()
     Route::delete('Persona','PersonaController@destroy');
     Route::put('Persona','PersonaController@update');
     /*Proyecto*/
-    Route::get('Proyecto/Persona','ProyectoController@showProjects');
-    Route::put('Proyecto/Persona/{id}','ProyectoController@editProject');
-    Route::post('Proyecto/Persona/Inscribir','ProyectoController@addCollaborator');
-    Route::post('Proyecto/Persona/Eliminar','ProyectoController@removeCollaborator');
 
+        /*Metodos para cuando personas inscriben un proyecto */
+        Route::get('Proyecto/Persona','ProyectoController@showProjects');
+        Route::post('Proyecto/Persona','ProyectoController@storeByPerson');
+        Route::put('Proyecto/Persona/{id}','ProyectoController@editProject');
+        Route::delete('Proyecto/Persona/{id}','ProyectoController@removeProject');
+        /*Metodos para personas colaboradoras del proyecto*/
+        Route::post('Proyecto/Persona/Inscribir','ProyectoController@addCollaborator');
+        Route::post('Proyecto/Persona/Eliminar','ProyectoController@removeCollaborator');
 
-    Route::post('Proyecto/Persona','ProyectoController@storeByPerson');
-    Route::delete('Proyecto/Persona/{id}','ProyectoController@removeProject');
+        /*Metodos para inscribir proyecto a modalidad*/
+        Route::post('Proyecto/Modalidad','ProyectoController@addToModalidad');
+        Route::post('Proyecto/Modalidad/Delete','ProyectoController@removeFromModalidad');
+        Route::get('Proyecto/Modalidad/{id}','ProyectoController@showModalidades');
 
     /*Programa de Fondeo*/
     Route::get('ProgramaFondeo','ProgramaFondeoController@showAll');
