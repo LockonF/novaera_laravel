@@ -27,6 +27,14 @@ Route::group(['prefix' => 'api'], function()
     Route::post('Persona','PersonaController@store');
     Route::delete('Persona','PersonaController@destroy');
     Route::put('Persona','PersonaController@update');
+
+    /*Contacto*/
+    Route::post('Contacto','ContactoController@store');
+    Route::get('Contacto','ContactoController@show');
+    Route::put('Contacto','ContactoController@update');
+    Route::delete('Contacto','ContactoController@destroy');
+
+
     /*Proyecto*/
 
         /*Metodos para cuando personas inscriben un proyecto */

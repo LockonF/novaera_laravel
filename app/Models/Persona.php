@@ -10,6 +10,8 @@ class Persona extends Model
     public $fillable = ['Nombre','ApellidoP','ApellidoM','Notas','Description','idUser','idContacto'];
     public $hidden = ['idUser','idContacto'];
 
+    /*Relationships*/
+
     public function User()
     {
         return $this->belongsTo('App\User','idUser');
@@ -18,4 +20,10 @@ class Persona extends Model
     public function Proyecto(){
         return $this->belongsToMany('App\Models\Proyecto', 'Persona_Proyecto', 'idPersona', 'idProyecto')->withPivot('Owner');
     }
+
+    public function Contacto()
+    {
+        return $this->hasOne('App\Models\Contacto','idPersona');
+    }
+
 }
