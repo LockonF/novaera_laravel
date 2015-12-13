@@ -28,6 +28,13 @@ Route::group(['prefix' => 'api'], function()
     Route::delete('Persona','PersonaController@destroy');
     Route::put('Persona','PersonaController@update');
 
+    /*Organizacion*/
+    Route::get('Organizacion','OrganizacionController@showAll');
+    Route::post('Organizacion','OrganizacionController@store');
+    Route::get('Organizacion/{id}','OrganizacionController@show');
+    Route::put('Organizacion/{id}','OrganizacionController@update');
+    Route::delete('Organizacion/{id}','OrganizacionController@destroy');
+
     /*Contacto*/
     Route::post('Contacto','ContactoController@store');
     Route::get('Contacto','ContactoController@show');
