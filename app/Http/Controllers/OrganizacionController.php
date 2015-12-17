@@ -180,6 +180,17 @@ class OrganizacionController extends Controller
         catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
+    }
+
+
+
+    public function upload(Request $request)
+    {
+
+
+        $request->file('file')->move('files');
+
+        return response()->json();
 
     }
 

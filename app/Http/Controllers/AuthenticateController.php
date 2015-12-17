@@ -76,12 +76,12 @@ class AuthenticateController extends Controller
         $credentials = $request->only('username','password');
         if($credentials['username'] =='' or $credentials['password']=='')
         {
-            return response()->json(['error' => 'invalid_credentials'], 401);
+            return response()->json(['error' => 'Usuario o Contraseña Incorrectas'], 401);
         }
         try {
             // verify the credentials and create a token for the user
             if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'invalid_credentials'], 401);
+                return response()->json(['error' => 'Usuario o Contraseña Incorrectas'], 500);
             }
         } catch (JWTException $e) {
             // something went wrong

@@ -13,4 +13,9 @@ class Contacto extends Model
     {
         return $this->belongsTo('App\Models\Persona','idPersona');
     }
+
+    public function Direccion()
+    {
+        return $this->belongsTo('App\Models\Direccion','idContacto');
+    }
 }

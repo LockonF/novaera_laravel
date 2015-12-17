@@ -33,7 +33,7 @@ class ContactoController extends Controller
             $new_contacto = new Contacto($request->all());
             $user->Persona->Contacto()->save($new_contacto);
 
-            return response()->json(['message'=>'success'],200);
+            return response()->json($new_contacto,200);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['prefix' => 'api'], function()
+Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 {
     /*
      *
@@ -31,6 +31,7 @@ Route::group(['prefix' => 'api'], function()
     /*Organizacion*/
     Route::get('Organizacion','OrganizacionController@showAll');
     Route::post('Organizacion','OrganizacionController@store');
+    Route::post('Organizacion/Upload','OrganizacionController@upload');
     Route::get('Organizacion/{id}','OrganizacionController@show');
     Route::put('Organizacion/{id}','OrganizacionController@update');
     Route::delete('Organizacion/{id}','OrganizacionController@destroy');
@@ -40,6 +41,16 @@ Route::group(['prefix' => 'api'], function()
     Route::get('Contacto','ContactoController@show');
     Route::put('Contacto','ContactoController@update');
     Route::delete('Contacto','ContactoController@destroy');
+
+
+    /*Pais*/
+    Route::get('Pais','PaisController@showAll');
+    Route::get('Pais/EntidadFederativa/{id}','PaisController@showEntidades');
+
+    /*EntidadFederativa*/
+    Route::get('EntidadFederativa/Municipio/{id}','EntidadFederativaController@showMunicipios');
+
+
 
 
     /*Proyecto*/
@@ -77,6 +88,8 @@ Route::group(['prefix' => 'api'], function()
     Route::post('Modalidad','ModalidadController@store');
     Route::delete('Modalidad/{id}','ModalidadController@destroy');
     Route::put('Modalidad/{id}','ModalidadController@update');
+
+
 
 
 });

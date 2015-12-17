@@ -25,7 +25,7 @@ class PersonaController extends Controller
             $user = AuthenticateController::checkUser(null);
             $persona = new Persona($request->all());
             $user->Persona()->save($persona);
-            return response()->json(['message'=>'success'],200);
+            return response()->json($persona,200);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
