@@ -16,6 +16,6 @@ class Contacto extends Model
 
     public function Direccion()
     {
-        return $this->belongsTo('App\Models\Direccion','idContacto');
+        return $this->hasOne('App\Models\Direccion','idContacto');
     }
 }

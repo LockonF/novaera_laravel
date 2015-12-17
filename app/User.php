@@ -46,4 +46,10 @@ class User extends Model implements AuthenticatableContract,
         return $this->hasOne('App\Models\Persona','idUser');
     }
 
+    public function Contacto()
+    {
+        return $this->hasManyThrough('App\Models\Contacto','App\Models\Persona','idUser','idPersona');
+    }
+
+
 }

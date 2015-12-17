@@ -42,6 +42,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::put('Contacto','ContactoController@update');
     Route::delete('Contacto','ContactoController@destroy');
 
+    /*Direccion*/
+    Route::post('Direccion','DireccionController@store');
+    Route::get('Direccion','DireccionController@show');
+    Route::put('Direccion','DireccionController@update');
+
 
     /*Pais*/
     Route::get('Pais','PaisController@showAll');
@@ -50,6 +55,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     /*EntidadFederativa*/
     Route::get('EntidadFederativa/Municipio/{id}','EntidadFederativaController@showMunicipios');
 
+    /*Municipio*/
+    Route::get('Municipio/Selected/{id}','MunicipioController@getSelectedInfo');
 
 
 
