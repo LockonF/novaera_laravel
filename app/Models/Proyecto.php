@@ -12,6 +12,8 @@ class Proyecto extends Model
         'Justificacion','Objetivos', 'Alcances',
         'idEjecucion','idImpacto','idModeloNegocio'];
 
+    //Relationships
+
     public function Persona(){
         return $this->belongsToMany('App\Models\Persona', 'Persona_Proyecto', 'idProyecto', 'idPersona')->withPivot('Owner');
     }
@@ -24,6 +26,12 @@ class Proyecto extends Model
     public function Impacto()
     {
         return $this->hasOne('App\Models\Impacto','idProyecto');
+    }
+
+    public function TRL()
+    {
+        return $this->belongsToMany('App\Models\TRL','ProyectoTRL','idProyecto','idTRL')->
+        withPivot('id','Descripcion','Fecha','created_at','updated_at');
     }
 
 }

@@ -7,6 +7,7 @@ use App\Models\Persona;
 use App\Models\ProgramaFondeo;
 use App\Models\Proyecto;
 use App\Models\ProyectoModalidad;
+use App\Models\TRL;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -53,7 +54,7 @@ class ProyectoController extends Controller
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
             $user->Persona->load('Proyecto');
-            return response()->json($user->Persona->Proyecto,200);
+            return response()->json(['Proyectos'=>$user->Persona->Proyecto],200);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -457,5 +458,102 @@ class ProyectoController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function addTRL(Request $request)
+    {
+
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
+            if($proyecto == null)
+            {
+                return response()->json(['message'=>'server_error'],500);
+            }
+            if($proyecto->pivot->Owner!=1)
+            {
+                return response()->json(['message'=>'owner_not_matching'],500);
+            }
+            else
+            {
+                $proyecto->load('TRL');
+                $trl = TRL::where('id',$request->idTRL)->first();
+                if($trl == null)
+                {
+                    return response()->json(['message'=>'trl_not_found'],404);
+                }
+                $proyecto->TRL()->save($trl,$request->Info);
+
+                $proyecto = Proyecto::find($proyecto->id);
+                $proyecto->load('TRL');
+
+                foreach($proyecto->TRL as $trl)
+                {
+                    $data[]= $trl->pivot;
+                }
+
+                return response()->json(['TRL'=>$data]);
+
+            }
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function viewTRL($id)
+    {
+
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$id)->first();
+            if($proyecto == null)
+            {
+                return response()->json(['message'=>'server_error'],500);
+            }
+            if($proyecto->pivot->Owner!=1)
+            {
+                return response()->json(['message'=>'owner_not_matching'],500);
+            }
+            else
+            {
+                $proyecto->load('TRL');
+                foreach($proyecto->TRL as $trl)
+                {
+                    $data[]= $trl->pivot;
+                }
+
+                return response()->json(['TRL'=>$data]);
+
+            }
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
 
 }

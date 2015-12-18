@@ -186,12 +186,22 @@ class OrganizacionController extends Controller
 
     public function upload(Request $request)
     {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $request->file('file')->move('files',$request->type."_".$request->name);
+            return response()->json();
 
-
-        $request->file('file')->move('files');
-
-        return response()->json();
-
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
     }
 
 

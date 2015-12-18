@@ -81,6 +81,10 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::get('Proyecto/Impacto/{id}','ProyectoController@showImpacto');
         Route::put('Proyecto/Impacto','ProyectoController@updateImpacto');
 
+        /*Metodos para registrar el TRL de un proyecto */
+        Route::post('Proyecto/TRL','ProyectoController@addTRL');
+        Route::get('Proyecto/TRL/{id}','ProyectoController@viewTRL');
+
 
     /*Programa de Fondeo*/
     Route::get('ProgramaFondeo','ProgramaFondeoController@showAll');
