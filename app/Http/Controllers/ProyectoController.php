@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Impacto;
 use App\Models\Persona;
 use App\Models\ProgramaFondeo;
 use App\Models\Proyecto;
@@ -335,5 +336,126 @@ class ProyectoController extends Controller
     }
 
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function addImpacto(Request $request)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
+            if($proyecto == null)
+            {
+                return response()->json(['message'=>'server_error'],500);
+            }
+            if($proyecto->pivot->Owner!=1)
+            {
+                return response()->json(['message'=>'owner_not_matching'],500);
+            }
+            else
+            {
+                $proyecto->load('Impacto');
+                $impacto = new Impacto($request->all());
+                $proyecto->Impacto()->save($impacto);
+                $proyecto = Proyecto::with('Impacto')->find($request->idProyecto);
+                return response()->json($proyecto->Impacto);
+            }
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+
+    }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function updateImpacto(Request $request)
+    {
+
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
+            if($proyecto == null)
+            {
+                return response()->json(['message'=>'server_error'],500);
+            }
+            if($proyecto->pivot->Owner!=1)
+            {
+                return response()->json(['message'=>'owner_not_matching'],500);
+            }
+            else
+            {
+                $proyecto->load('Impacto');
+                $proyecto->Impacto->fill($request->all());
+                $proyecto->Impacto->save();
+                return response()->json($proyecto->Impacto);
+            }
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showImpacto($id)
+    {
+
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$id)->first();
+            if($proyecto == null)
+            {
+                return response()->json(['message'=>'server_error'],500);
+            }
+            if($proyecto->pivot->Owner!=1)
+            {
+                return response()->json(['message'=>'owner_not_matching'],500);
+            }
+            else
+            {
+                $proyecto->load('Impacto');
+                if($proyecto->Impacto == null)
+                {
+                    return response()->json(['message'=>'impacto_not_found'],404);
+                }
+                return response()->json($proyecto->Impacto);
+            }
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
 
 }

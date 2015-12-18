@@ -76,6 +76,12 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::post('Proyecto/Modalidad/Delete','ProyectoController@removeFromModalidad');
         Route::get('Proyecto/Modalidad/{id}','ProyectoController@showModalidades');
 
+        /*Metodos para registrar el impacto de un proyecto*/
+        Route::post('Proyecto/Impacto','ProyectoController@addImpacto');
+        Route::get('Proyecto/Impacto/{id}','ProyectoController@showImpacto');
+        Route::put('Proyecto/Impacto','ProyectoController@updateImpacto');
+
+
     /*Programa de Fondeo*/
     Route::get('ProgramaFondeo','ProgramaFondeoController@showAll');
     Route::get('ProgramaFondeo/{id}','ProgramaFondeoController@show');

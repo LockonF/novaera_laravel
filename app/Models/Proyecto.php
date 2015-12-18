@@ -21,4 +21,9 @@ class Proyecto extends Model
         withPivot('id','Solicitud','MontoSolicitado','MontoApoyado','TRLInicial','TRLFinal','FechaRegistro','FechaCierre','Resultado');
     }
 
+    public function Impacto()
+    {
+        return $this->hasOne('App\Models\Impacto','idProyecto');
+    }
+
 }
