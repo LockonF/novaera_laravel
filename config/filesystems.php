@@ -45,7 +45,13 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root'   => storage_path('app'),
+            'root'  => base_path().'/public/files',
+            //'root'   => storage_path('app'),
+        ],
+
+        'public'=>[
+            'diver' => 'local',
+            'root'  => base_path().'/public/files'
         ],
 
         'ftp' => [
