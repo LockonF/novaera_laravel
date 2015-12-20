@@ -9,7 +9,7 @@ class Ejecucion extends Model
     protected $table = 'Ejecucion';
     protected $fillable = ['Requisitos','AnalisisEntornoP','FactibilidadTecnicaP','FactibilidadEconomicaP',
     'FactibilidadComercialP','BenchmarkComercialP','BenchmarkTecnologicoP','RecursosHumanosP','RecursosFinancierosP',
-    'RecursosMaterialesP','idProyecto'];
+    'RecursosTecnologicosP','RecursosMaterialesP','idProyecto'];
 
     public function Proyecto()
     {
