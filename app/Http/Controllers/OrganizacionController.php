@@ -189,7 +189,7 @@ class OrganizacionController extends Controller
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $request->file('file')->move('files',$request->type."_".$request->name);
+            $request->file('file')->move('files/'.$user->username,$request->type."_".$request->name);
             return response()->json();
 
         }catch (QueryException $e)

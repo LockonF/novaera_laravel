@@ -85,6 +85,12 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::post('Proyecto/TRL','ProyectoController@addTRL');
         Route::get('Proyecto/TRL/{id}','ProyectoController@viewTRL');
 
+        /*Métodos para registrar la ejecución de un proyecto*/
+        Route::post('Ejecucion','EjecucionController@store');
+        Route::post('Ejecucion/Update','EjecucionController@update');
+        Route::get('Ejecucion/{idProyecto}','EjecucionController@show');
+        Route::get('Ejecucion/Archivos/{idProyecto}','EjecucionController@showFileRoutes');
+
 
     /*Programa de Fondeo*/
     Route::get('ProgramaFondeo','ProgramaFondeoController@showAll');

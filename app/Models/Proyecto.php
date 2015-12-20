@@ -28,6 +28,11 @@ class Proyecto extends Model
         return $this->hasOne('App\Models\Impacto','idProyecto');
     }
 
+    public function Ejecucion()
+    {
+        return $this->hasOne('App\Models\Ejecucion','idProyecto');
+    }
+
     public function TRL()
     {
         return $this->belongsToMany('App\Models\TRL','ProyectoTRL','idProyecto','idTRL')->
