@@ -112,6 +112,9 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::delete('Modalidad/{id}','ModalidadController@destroy');
     Route::put('Modalidad/{id}','ModalidadController@update');
 
+    /*TRL*/
+    Route::get('TRL','TRLController@show');
+
 
 
 
