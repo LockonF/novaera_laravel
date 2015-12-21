@@ -83,6 +83,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
         /*Metodos para registrar el TRL de un proyecto */
         Route::post('Proyecto/TRL','ProyectoController@addTRL');
+        Route::post('Proyecto/TRL/Delete','ProyectoController@deleteTRLs');
         Route::get('Proyecto/TRL/{id}','ProyectoController@viewTRL');
 
         /*Métodos para registrar la ejecución de un proyecto*/

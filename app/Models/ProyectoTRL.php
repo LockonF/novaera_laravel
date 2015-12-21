@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProyectoTRL extends Model
 {
     protected $table = 'ProyectoTRL';
-    protected $fillable = ['idProyecto','idTRL','Descripcion','Fecha'];
+    protected $fillable = ['id','idProyecto','idTRL','Descripcion','Fecha'];
 
     public function Proyecto()
     {
