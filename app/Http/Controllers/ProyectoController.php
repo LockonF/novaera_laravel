@@ -31,7 +31,7 @@ class ProyectoController extends Controller
             $new_proyecto = new Proyecto($request->all());
             $user->load('Persona');
             $user->Persona->Proyecto()->save($new_proyecto,['Owner'=>1]);
-            return response()->json(['message'=>'success'],200);
+            return response()->json($new_proyecto,200);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -66,6 +66,45 @@ class ProyectoController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
+
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showOneProject($id)
+    {
+
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$id)->first();
+            if($proyecto == null)
+            {
+                return response()->json(['message'=>'server_error'],500);
+            }
+            if($proyecto->pivot->Owner!=1)
+            {
+                return response()->json(['message'=>'owner_not_matching'],500);
+            }
+            else
+            {
+                return response()->json($proyecto);
+            }
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+
+    }
+
 
     /**
      * @param Request $request
