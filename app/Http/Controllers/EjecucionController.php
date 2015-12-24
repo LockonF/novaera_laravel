@@ -42,28 +42,35 @@ class EjecucionController extends Controller
                 $proyecto->load('Ejecucion');
                 if($proyecto->Ejecucion==null)
                 {
-                    $data['user']=$user;
-                    $data['proyecto']=$proyecto;
-                    $data['request']=$request;
-                    $ruta = $user->username."/".$request->type."_".$request->name;
-                    $tipo = TipoArchivo::where('Titulo',$request->type)->first();
                     $ejecucion = new Ejecucion($request->Ejecucion);
-                    $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
-                    $data['ejecucion']=$ejecucion;
-                    $data['archivo']=$archivo;
+                    if($request->type!=null)
+                    {
+                        $data['user']=$user;
+                        $data['proyecto']=$proyecto;
+                        $data['request']=$request;
+                        $ruta = $user->username."/".$request->type."_".$request->name;
+                        $tipo = TipoArchivo::where('Titulo',$request->type)->first();
+                        $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
+                        $data['ejecucion']=$ejecucion;
+                        $data['archivo']=$archivo;
 
-                    return DB::transaction(function () use($data) {
-                        $proyecto = $data['proyecto'];
-                        $proyecto->Ejecucion()->save($data['ejecucion']);
+                        return DB::transaction(function () use($data) {
+                            $proyecto = $data['proyecto'];
+                            $proyecto->Ejecucion()->save($data['ejecucion']);
+                            $proyecto = Proyecto::find($proyecto->id);
+                            $proyecto->load('Ejecucion');
+                            $proyecto->Ejecucion->load('Archivos');
+                            $proyecto->Ejecucion->Archivos()->save($data['archivo']);
+                            $data['request']->file('file')->move('files/'.$data['user']->username,$data['request']->type."_".$data['request']->name);
+                            return response()->json(['Ejecucion'=>$proyecto->Ejecucion,'Archivo'=>$data['archivo']]);
+                        });
+                    }
+                    else
+                    {
+                        $proyecto->Ejecucion()->save($ejecucion);
+                        return response()->json(['Ejecucion'=>$ejecucion]);
+                    }
 
-                        $proyecto = Proyecto::find($proyecto->id);
-                        $proyecto->load('Ejecucion');
-                        $proyecto->Ejecucion->load('Archivos');
-                        $proyecto->Ejecucion->Archivos()->save($data['archivo']);
-                        $data['request']->file('file')->move('files/'.$data['user']->username,$data['request']->type."_".$data['request']->name);
-
-                        return response()->json(['Ejecucion'=>$proyecto->Ejecucion,'Archivo'=>$data['archivo']]);
-                    });
                 }
                 return response()->json(['message'=>'ejecucion_already_exists'],500);
             }
@@ -108,54 +115,64 @@ class EjecucionController extends Controller
                 $proyecto->load('Ejecucion');
                 if($proyecto->Ejecucion!=null)
                 {
-                    $data['user']=$user;
-                    $data['proyecto']=$proyecto;
-                    $data['request']=$request;
+                    if($request->type!=null)
+                    {
+                        $data['user']=$user;
+                        $data['proyecto']=$proyecto;
+                        $data['request']=$request;
 
-                    DB::transaction(function () use($data) {
-                        $user= $data['user'];
-                        $proyecto=$data['proyecto'];
-                        $request=$data['request'];
+                        DB::transaction(function () use($data) {
+                            $user= $data['user'];
+                            $proyecto=$data['proyecto'];
+                            $request=$data['request'];
 
 
-                        //Guardamos la ejecución
+                            //Guardamos la ejecución
+                            $proyecto->Ejecucion->fill($request->Ejecucion);
+                            $proyecto->Ejecucion->save();
+                            $proyecto->Ejecucion->load('Archivos');
+
+                            //Ponemos el tipo de archivo junto con su ruta
+                            $tipo = TipoArchivo::where('Titulo',$request->type)->first();
+                            $ruta = $user->username."/".$request->type."_".$request->name;
+
+                            //Obtenemos el archivo viejo
+                            $storedFile = Archivos::where('idEjecucion',$proyecto->Ejecucion->id)->where('idTipoArchivo',$tipo->id)->first();
+
+                            if($storedFile!=null)
+                            {
+                                //Borramos el archivo viejo
+                                try{
+                                    Storage::delete($storedFile->Ruta);
+                                }catch(FileNotFoundException $e){}
+
+                                //Actualizamos la información
+                                $storedFile->Ruta = $ruta;
+                                $storedFile->save();
+                            }
+                            else
+                            {
+                                $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
+                                $proyecto->Ejecucion->Archivos()->save($archivo);
+                            }
+
+                            //Movemos el archivo
+                            $request->file('file')->move('files/'.$user->username,$request->type."_".$request->name);
+
+                        });
+                        $proyecto->load('Ejecucion');
+                        $tipo = TipoArchivo::where('Titulo',$request->type)->first();
+                        $storedFile = Archivos::where('idEjecucion',$proyecto->Ejecucion->id)->where('idTipoArchivo',$tipo->id)->first();
+                        return response()->json(
+                            ['Ejecucion'=>$proyecto->Ejecucion,'Archivo'=>$storedFile]);
+                    }
+                    else
+                    {
                         $proyecto->Ejecucion->fill($request->Ejecucion);
                         $proyecto->Ejecucion->save();
-                        $proyecto->Ejecucion->load('Archivos');
+                        return response()->json(['Ejecucion'=>$proyecto->Ejecucion]);
+                    }
 
-                        //Ponemos el tipo de archivo junto con su ruta
-                        $tipo = TipoArchivo::where('Titulo',$request->type)->first();
-                        $ruta = $user->username."/".$request->type."_".$request->name;
-
-                        //Obtenemos el archivo viejo
-                        $storedFile = Archivos::where('idEjecucion',$proyecto->Ejecucion->id)->where('idTipoArchivo',$tipo->id)->first();
-
-                        if($storedFile!=null)
-                        {
-                            //Borramos el archivo viejo
-                            try{
-                                Storage::delete($storedFile->Ruta);
-                            }catch(FileNotFoundException $e){}
-
-                            //Actualizamos la información
-                            $storedFile->Ruta = $ruta;
-                            $storedFile->save();
-                        }
-                        else
-                        {
-                            $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
-                            $proyecto->Ejecucion->Archivos()->save($archivo);
-                        }
-
-                        //Movemos el archivo
-                        $request->file('file')->move('files/'.$user->username,$request->type."_".$request->name);
-
-                    });
-                    $proyecto->load('Ejecucion');
-                    $tipo = TipoArchivo::where('Titulo',$request->type)->first();
-                    $storedFile = Archivos::where('idEjecucion',$proyecto->Ejecucion->id)->where('idTipoArchivo',$tipo->id)->first();
-                    return response()->json(
-                        ['Ejecucion'=>$proyecto->Ejecucion,'Archivo'=>$storedFile]);
 
                 }
                 return response()->json(['message'=>'ejecucion_not_found'],404);
