@@ -28,6 +28,7 @@ class EjecucionController extends Controller
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
+
             $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
             if($proyecto == null)
             {
@@ -42,6 +43,7 @@ class EjecucionController extends Controller
                 $proyecto->load('Ejecucion');
                 if($proyecto->Ejecucion==null)
                 {
+                    $request->Ejecucion = $this->processValue($request->Ejecucion);
                     $ejecucion = new Ejecucion($request->Ejecucion);
                     if($request->type!=null)
                     {
@@ -115,6 +117,7 @@ class EjecucionController extends Controller
                 $proyecto->load('Ejecucion');
                 if($proyecto->Ejecucion!=null)
                 {
+                    $request->Ejecucion = $this->processValue($request->Ejecucion);
                     if($request->type!=null)
                     {
                         $data['user']=$user;
@@ -290,6 +293,22 @@ class EjecucionController extends Controller
         }
 
     }
+
+    private function processValue($array)
+    {
+
+        foreach($array as $key=>$item)
+        {
+            if($item=="null") {
+                $newArr[$key] = null;
+            }
+            else{
+                $newArr[$key] = $item;
+            }
+        }
+        return $newArr;
+    }
+
 
 
 }
