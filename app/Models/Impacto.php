@@ -15,4 +15,9 @@ class Impacto extends Model
     {
         return $this->belongsTo('App\Models\Proyecto','idProyecto');
     }
+
+    public function Archivos()
+    {
+        return $this->hasMany('App\Models\Archivos','idImpacto');
+    }
 }

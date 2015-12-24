@@ -13,6 +13,12 @@ class Archivos extends Model
     {
         return $this->belongsTo('App\Models\Ejecucion','idEjecucion');
     }
+
+    public function Impacto()
+    {
+        return $this->belongsTo('App\Models\Ejecucion','idImpacto');
+    }
+
     public function TipoArchivo()
     {
         return $this->belongsTo('App\Models\TipoArchivo','idTipoArchivo');

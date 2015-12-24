@@ -78,9 +78,10 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::get('Proyecto/Modalidad/{id}','ProyectoController@showModalidades');
 
         /*Metodos para registrar el impacto de un proyecto*/
-        Route::post('Proyecto/Impacto','ProyectoController@addImpacto');
-        Route::get('Proyecto/Impacto/{id}','ProyectoController@showImpacto');
-        Route::put('Proyecto/Impacto','ProyectoController@updateImpacto');
+        Route::post('Impacto','ImpactoController@store');
+        Route::post('Impacto/Update','ImpactoController@update');
+        Route::get('Impacto/{idProyecto}','ImpactoController@show');
+        Route::get('Impacto/Archivos/{idProyecto}','ImpactoController@showFileRoutes');
 
         /*Metodos para registrar el TRL de un proyecto */
         Route::post('Proyecto/TRL','ProyectoController@addTRL');
