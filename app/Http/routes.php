@@ -17,11 +17,10 @@ Route::get('/', function () {
 
 Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 {
-    /*
-     *
-     */
+    /*Usuario*/
     Route::post('Authenticate', 'AuthenticateController@authenticate');
     Route::post('Register', 'AuthenticateController@register');
+    Route::get('User', 'AuthenticateController@getUser');
     /*Persona*/
     Route::get('Persona','PersonaController@show');
     Route::post('Persona','PersonaController@store');

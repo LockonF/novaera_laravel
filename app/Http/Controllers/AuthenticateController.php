@@ -69,7 +69,10 @@ class AuthenticateController extends Controller
         }
     }
 
-
+    /**
+     * @param Request $request
+     * @return mixed
+     */
 
     public function authenticate(Request $request)
     {
@@ -91,7 +94,6 @@ class AuthenticateController extends Controller
         // if no errors are encountered we can return a JWT
         return response()->json(compact('token'));
     }
-
 
     /*
      * Función para crear usuarios
@@ -115,6 +117,28 @@ class AuthenticateController extends Controller
         }
         else
             return response()->json(['message'=>'user_already_exists'],500);
+
+    }
+
+
+
+
+    public function getUser()
+    {
+        try
+        {
+            return response()->json(self::checkUser(null));
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
 
     }
 
