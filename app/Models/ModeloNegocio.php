@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ModeloNegocio extends Model
 {
-    public $table = 'ModeloNegocio';
-    public $fillable = ['idProyecto','Canales','VentajaCompetitiva',
+    protected $table = 'ModeloNegocio';
+    protected $fillable = ['idProyecto','Canales','VentajaCompetitiva',
     'Problematica','Costos','Ingresos','ActividadesClave','RelacionesCliente',
     'RecursosClave','AliadosClave'];
 
