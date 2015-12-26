@@ -127,7 +127,9 @@ class AuthenticateController extends Controller
     {
         try
         {
-            return response()->json(self::checkUser(null));
+            $user =  self::checkUser(null);
+            $user->load('Persona');
+            return response()->json($user);
         }catch (Exceptions\TokenExpiredException $e) {
             return response()->json(['token_expired'], $e->getStatusCode());
         } catch (Exceptions\TokenInvalidException $e) {

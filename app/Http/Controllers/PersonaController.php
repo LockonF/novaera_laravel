@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UnauthorizedException;
 use App\Models\Persona;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\AuthenticateController;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Exceptions;
 
 class PersonaController extends Controller
@@ -124,4 +126,74 @@ class PersonaController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+
+    public function validatePerson(Request $request)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            return DB::transaction(function() use ($request)
+            {
+               foreach($request->all() as $persona)
+               {
+                   $storedPersona = Persona::find($persona['id']);
+                   $storedPersona->isValidated = 1;
+                   $storedPersona->save();
+               }
+
+                $personas = Persona::where('isValidated',0)->get();
+                return response()->json(['Persona'=>$personas]);
+            });
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showNotValidated()
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $personas = Persona::where('isValidated',0)->get();
+            return response()->json(['Persona'=>$personas]);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+
 }

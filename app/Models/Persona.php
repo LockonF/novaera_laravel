@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Persona extends Model
 {
     public $table = 'Persona';
-    public $fillable = ['Nombre','ApellidoP','ApellidoM','Notas','Description','idUser','idContacto'];
+    public $fillable = ['Nombre','ApellidoP','ApellidoM','Notas','Description','idUser','idContacto','isValidated'];
     public $hidden = ['idUser','idContacto'];
 
     /*Relationships*/
