@@ -37,6 +37,11 @@ class Proyecto extends Model
         return $this->hasOne('App\Models\ModeloNegocio','idProyecto');
     }
 
+    public function TransferenciaTecnologica()
+    {
+        return $this->hasMany('App\Models\TransferenciaTecnologica','idProyecto');
+    }
+
     public function TRL()
     {
         return $this->belongsToMany('App\Models\TRL','ProyectoTRL','idProyecto','idTRL')->
