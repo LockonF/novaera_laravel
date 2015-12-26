@@ -93,6 +93,12 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::get('Ejecucion/{idProyecto}','EjecucionController@show');
         Route::get('Ejecucion/Archivos/{idProyecto}','EjecucionController@showFileRoutes');
 
+        /*Métodos para registrar el Modelo de Negocio de un proyecto*/
+        Route::post('ModeloNegocio','ModeloNegocioController@store');
+        Route::post('ModeloNegocio/Update','ModeloNegocioController@update');
+        Route::get('ModeloNegocio/{idProyecto}','ModeloNegocioController@show');
+        Route::get('ModeloNegocio/Archivos/{idProyecto}','ModeloNegocioController@showFileRoutes');
+
 
     /*Programa de Fondeo*/
     Route::get('ProgramaFondeo','ProgramaFondeoController@showAll');

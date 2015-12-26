@@ -14,6 +14,11 @@ class Archivos extends Model
         return $this->belongsTo('App\Models\Ejecucion','idEjecucion');
     }
 
+    public function ModeloNegocio()
+    {
+        return $this->belongsTo('App\Models\ModeloNegocio','idModeloNegocio');
+    }
+
     public function Impacto()
     {
         return $this->belongsTo('App\Models\Ejecucion','idImpacto');
@@ -23,5 +28,8 @@ class Archivos extends Model
     {
         return $this->belongsTo('App\Models\TipoArchivo','idTipoArchivo');
     }
+
+
+
 
 }

@@ -32,6 +32,10 @@ class Proyecto extends Model
     {
         return $this->hasOne('App\Models\Ejecucion','idProyecto');
     }
+    public function ModeloNegocio()
+    {
+        return $this->hasOne('App\Models\ModeloNegocio','idProyecto');
+    }
 
     public function TRL()
     {
