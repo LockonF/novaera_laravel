@@ -210,8 +210,13 @@ class PersonaController extends Controller
             }
             $descriptor = Descriptor::find($request->idDescriptor);
             $persona->Descriptor()->save($descriptor,$request->all());
-            $persona->load('Descriptor');
-            return response()->json($persona);
+
+            $descriptores = [];
+            foreach($persona->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
@@ -239,11 +244,53 @@ class PersonaController extends Controller
             {
                 return response()->json(['message'=>'persona_not_found'],404);
             }
+            $descriptores = [];
             foreach($persona->Descriptor as $descriptor)
             {
                 $descriptores[] = $descriptor;
             }
             return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function detachDescriptor($id)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $persona = $user->Persona;
+            if($persona==null)
+            {
+                return response()->json(['message'=>'persona_not_found'],404);
+            }
+            $descriptor = Descriptor::find($id);
+            if($descriptor!=null)
+            {
+                $persona->Descriptor()->detach($descriptor);
+                $persona->load('Descriptor');
+                $descriptores = [];
+                foreach($persona->Descriptor as $descriptor)
+                {
+                    $descriptores[] = $descriptor;
+                }
+                return response()->json(['Descriptor'=>$descriptores]);
+            }
+            return response()->json(['message'=>'descriptor_not_found'],404);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);

@@ -29,6 +29,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         /*Persona_Descriptor*/
         Route::post('Persona/Descriptor','PersonaController@addDescriptor');
         Route::get('Persona/Descriptor','PersonaController@showAllDescriptor');
+        Route::delete('Persona/Descriptor/{id}','PersonaController@detachDescriptor');
 
     /*Validacion de persona*/
     Route::get('Supervisor/Persona','PersonaController@showNotValidated');
