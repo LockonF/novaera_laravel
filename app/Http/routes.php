@@ -31,6 +31,21 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::post('Supervisor/Persona','PersonaController@validatePerson');
 
 
+    /*Tipo Descriptor*/
+    Route::get('TipoDescriptor','TipoDescriptorController@showAll');
+    Route::get('TipoDescriptor/{id}','TipoDescriptorController@show');
+    Route::post('TipoDescriptor','TipoDescriptorController@store');
+    Route::put('TipoDescriptor/{id}','TipoDescriptorController@update');
+    Route::delete('TipoDescriptor/{id}','TipoDescriptorController@destroy');
+
+
+    /*Descriptores*/
+    Route::get('Descriptor','DescriptorController@showAll');
+    Route::get('Descriptor/{id}','DescriptorController@show');
+    Route::post('Descriptor','DescriptorController@store');
+    Route::put('Descriptor/{id}','DescriptorController@update');
+    Route::delete('Descriptor/{id}','DescriptorController@destroy');
+
 
     /*Organizacion*/
     Route::get('Organizacion','OrganizacionController@showAll');
