@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Descriptor extends Model
 {
     protected $table = 'Descriptor';
-    protected $fillable = ['idTipoDescriptor','Titulo','Descripcion',
-    'CatalogoDescriptorescol'];
+    protected $fillable = ['idTipoDescriptor','Titulo','Descripcion'];
 
     public function TipoDescriptor()
     {

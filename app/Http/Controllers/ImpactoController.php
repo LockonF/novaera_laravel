@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FileNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Exceptions;

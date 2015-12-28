@@ -19,7 +19,7 @@ class DescriptorController extends Controller
 
     public function showAll()
     {
-        $descriptores  = Descriptor::all();
+        $descriptores  = Descriptor::with('TipoDescriptor')->get();
         return response()->json(['Descriptor'=>$descriptores]);
     }
 
