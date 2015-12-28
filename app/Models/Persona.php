@@ -21,6 +21,13 @@ class Persona extends Model
         return $this->belongsToMany('App\Models\Proyecto', 'Persona_Proyecto', 'idPersona', 'idProyecto')->withPivot('Owner');
     }
 
+    public function Descriptor()
+    {
+        return $this->belongsToMany('App\Models\Descriptor','Descriptor_Persona','idPersona','idDescriptor')
+            ->withPivot('FechaInicio','FechaTermino','TipoResultado','NumeroRegistro')->withTimestamps();
+    }
+
+
 
     public function Organizacion(){
         return $this->belongsToMany('App\Models\Organizacion', 'Persona_Organizacion', 'idPersona', 'idOrganizacion')

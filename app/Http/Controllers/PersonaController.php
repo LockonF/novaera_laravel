@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\UnauthorizedException;
+use App\Models\Descriptor;
 use App\Models\Persona;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -193,6 +194,68 @@ class PersonaController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
+
+
+
+
+    public function addDescriptor(Request $request)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $persona = $user->Persona;
+            if($persona==null)
+            {
+                return response()->json(['message'=>'persona_not_found'],404);
+            }
+            $descriptor = Descriptor::find($request->idDescriptor);
+            $persona->Descriptor()->save($descriptor,$request->all());
+            $persona->load('Descriptor');
+            return response()->json($persona);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showAllDescriptor()
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $persona = $user->Persona;
+            if($persona==null)
+            {
+                return response()->json(['message'=>'persona_not_found'],404);
+            }
+            foreach($persona->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
 
 
 
