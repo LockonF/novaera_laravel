@@ -193,6 +193,4 @@ class ProgramaFondeoController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
-
-
 }

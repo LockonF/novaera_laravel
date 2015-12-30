@@ -124,13 +124,18 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::get('ModeloNegocio/{idProyecto}','ModeloNegocioController@show');
         Route::get('ModeloNegocio/Archivos/{idProyecto}','ModeloNegocioController@showFileRoutes');
 
-    /*Métodos para registrar el Modelo de Negocio de un proyecto*/
+        /*Métodos para registrar el Modelo de Negocio de un proyecto*/
         Route::post('TransferenciaTecnologica','TransferenciaTecnologicaController@store');
         Route::get('TransferenciaTecnologica/Archivos/{id}','TransferenciaTecnologicaController@showFileRoutes');
         Route::get('TransferenciaTecnologica/{id}','TransferenciaTecnologicaController@show');
         Route::delete('TransferenciaTecnologica/{id}','TransferenciaTecnologicaController@destroy');
         Route::post('TransferenciaTecnologica/Update','TransferenciaTecnologicaController@update');
         Route::get('Proyecto/TransferenciaTecnologica/{idProyecto}','TransferenciaTecnologicaController@showAll');
+
+        /*Métodos para registrar etapas en un proyecto*/
+        Route::get('Proyecto/EtapaProyecto/{id}','ProyectoController@showEtapas');
+        Route::post('EtapaProyecto','EtapaProyectoController@store');
+
 
 
     /*Programa de Fondeo*/

@@ -23,6 +23,8 @@ class Proyecto extends Model
         withPivot('id','Solicitud','MontoSolicitado','MontoApoyado','TRLInicial','TRLFinal','FechaRegistro','FechaCierre','Resultado');
     }
 
+
+
     public function Impacto()
     {
         return $this->hasOne('App\Models\Impacto','idProyecto');
@@ -41,6 +43,12 @@ class Proyecto extends Model
     {
         return $this->hasMany('App\Models\TransferenciaTecnologica','idProyecto');
     }
+
+    public function EtapaProyecto()
+    {
+        return $this->hasMany('App\Models\EtapaProyecto','idProyecto');
+    }
+
 
     public function TRL()
     {
