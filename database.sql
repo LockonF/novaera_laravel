@@ -1,16 +1,9 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: December 27, 2015 at 2:30:48 PM CST
+# Created: January 6, 2016 at 4:50:16 PM CST
 # Encoding: Unicode (UTF-8)
 #
-
-
-DROP DATABASE IF EXISTS `Novaera`;
-CREATE DATABASE `Novaera` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-USE `Novaera`;
-
-
 
 
 SET @PREVIOUS_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS;
@@ -25,9 +18,8 @@ DROP TABLE IF EXISTS `TipoDescriptor`;
 DROP TABLE IF EXISTS `TipoArchivo`;
 DROP TABLE IF EXISTS `TareaEtapa`;
 DROP TABLE IF EXISTS `RubrosApoyo`;
-DROP TABLE IF EXISTS `Resultado`;
+DROP TABLE IF EXISTS `ProyectoResultado`;
 DROP TABLE IF EXISTS `ResultadoDescriptor`;
-DROP TABLE IF EXISTS `ProyectoResultados`;
 DROP TABLE IF EXISTS `ProyectoTRL`;
 DROP TABLE IF EXISTS `proyectoDescriptor`;
 DROP TABLE IF EXISTS `Proyecto_Modalidad`;
@@ -38,6 +30,7 @@ DROP TABLE IF EXISTS `ProgramaFondeo`;
 DROP TABLE IF EXISTS `Persona_Proyecto`;
 DROP TABLE IF EXISTS `Persona_Organizacion`;
 DROP TABLE IF EXISTS `Persona`;
+DROP TABLE IF EXISTS `ParqueTecnologico`;
 DROP TABLE IF EXISTS `Pais`;
 DROP TABLE IF EXISTS `OrganizacionLegal`;
 DROP TABLE IF EXISTS `Organizacion_Proyecto`;
@@ -52,7 +45,7 @@ DROP TABLE IF EXISTS `EtapaProyecto`;
 DROP TABLE IF EXISTS `EntidadFederativa`;
 DROP TABLE IF EXISTS `Ejecucion`;
 DROP TABLE IF EXISTS `Direccion`;
-DROP TABLE IF EXISTS `Descriptor_Pesona`;
+DROP TABLE IF EXISTS `Descriptor_Persona`;
 DROP TABLE IF EXISTS `Descriptor_Organizacion`;
 DROP TABLE IF EXISTS `Descriptor`;
 DROP TABLE IF EXISTS `Convocatoria`;
@@ -83,13 +76,13 @@ CREATE TABLE `Archivos` (
   KEY `fk_Archivos_ModeloNegocio1_idx` (`idModeloNegocio`),
   KEY `fk_Archivos_ProgramaFondeo1_idx` (`ProgramaFondeo_id`),
   KEY `fk_Archivos_TransferenciaTecnologica1_idx` (`idTransferenciaTecnologica`),
+  CONSTRAINT `fk_Archivos_OrganizacionLegal1` FOREIGN KEY (`idOrganizacionLegal`) REFERENCES `OrganizacionLegal` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Archivos_TipoArchivo1` FOREIGN KEY (`idTipoArchivo`) REFERENCES `TipoArchivo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_Ejecucion1` FOREIGN KEY (`idEjecucion`) REFERENCES `Ejecucion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Archivos_TareaEtapa1` FOREIGN KEY (`idTareaEtapa`) REFERENCES `TareaEtapa` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_ImpactoyComercializacion1` FOREIGN KEY (`idImpacto`) REFERENCES `ImpactoyComercializacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_ModeloNegocio1` FOREIGN KEY (`idModeloNegocio`) REFERENCES `ModeloNegocio` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Archivos_OrganizacionLegal1` FOREIGN KEY (`idOrganizacionLegal`) REFERENCES `OrganizacionLegal` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_ProgramaFondeo1` FOREIGN KEY (`ProgramaFondeo_id`) REFERENCES `ProgramaFondeo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Archivos_TareaEtapa1` FOREIGN KEY (`idTareaEtapa`) REFERENCES `TareaEtapa` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Archivos_TipoArchivo1` FOREIGN KEY (`idTipoArchivo`) REFERENCES `TipoArchivo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_TransferenciaTecnologica1` FOREIGN KEY (`idTransferenciaTecnologica`) REFERENCES `TransferenciaTecnologica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -109,8 +102,8 @@ CREATE TABLE `Contacto` (
   PRIMARY KEY (`id`),
   KEY `fk_Contacto_Persona1_idx` (`idPersona`),
   KEY `fk_Contacto_Organizacion1_idx` (`idOrganizacion`),
-  CONSTRAINT `fk_Contacto_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Contacto_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_Contacto_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Contacto_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -131,10 +124,9 @@ CREATE TABLE `Convocatoria` (
 
 
 CREATE TABLE `Descriptor` (
-  `id` int(11) NOT NULL,
-  `Titulo` varchar(45) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Titulo` varchar(300) DEFAULT NULL,
   `Descripcion` varchar(450) DEFAULT NULL,
-  `CatalogoDescriptorescol` varchar(45) DEFAULT NULL,
   `idTipoDescriptor` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -155,17 +147,17 @@ CREATE TABLE `Descriptor_Organizacion` (
   PRIMARY KEY (`id`),
   KEY `fk_Descriptor_Organizacion1_idx` (`idOrganizacion`),
   KEY `fk_Descriptor_CatalogoDescriptores1_idx` (`idDescriptor`),
-  CONSTRAINT `fk_Descriptor_CatalogoDescriptores1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Descriptor_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_Descriptor_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Descriptor_CatalogoDescriptores1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `Descriptor_Pesona` (
+CREATE TABLE `Descriptor_Persona` (
   `id` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL,
   `idDescriptor` int(11) NOT NULL,
   `FechaInicio` date DEFAULT NULL,
-  `FechaTemino` date DEFAULT NULL,
+  `FechaTermino` date DEFAULT NULL,
   `TipoResultado` varchar(45) DEFAULT NULL,
   `NumeroRegistro` varchar(45) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -173,8 +165,8 @@ CREATE TABLE `Descriptor_Pesona` (
   PRIMARY KEY (`id`),
   KEY `fk_Descriptor_Pesona_Persona1_idx` (`idPersona`),
   KEY `fk_Descriptor_Pesona_Descriptor1_idx` (`idDescriptor`),
-  CONSTRAINT `fk_Descriptor_Pesona_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Descriptor_Pesona_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_Descriptor_Pesona_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Descriptor_Pesona_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -192,8 +184,8 @@ CREATE TABLE `Direccion` (
   PRIMARY KEY (`id`),
   KEY `fk_Direccion_Municipio1_idx` (`idMunicipio`),
   KEY `fk_Direccion_Contacto1_idx` (`idContacto`),
-  CONSTRAINT `fk_Direccion_Contacto1` FOREIGN KEY (`idContacto`) REFERENCES `Contacto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Direccion_Municipio1` FOREIGN KEY (`idMunicipio`) REFERENCES `Municipio` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_Direccion_Municipio1` FOREIGN KEY (`idMunicipio`) REFERENCES `Municipio` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Direccion_Contacto1` FOREIGN KEY (`idContacto`) REFERENCES `Contacto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -232,13 +224,15 @@ CREATE TABLE `EntidadFederativa` (
 
 
 CREATE TABLE `EtapaProyecto` (
-  `idEtapaProyecto` int(11) NOT NULL,
-  `NombreEtapa` varchar(45) DEFAULT NULL,
-  `EntregableEtapa` varchar(45) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `description` varchar(45) DEFAULT NULL,
   `idProyecto` int(11) NOT NULL,
-  PRIMARY KEY (`idEtapaProyecto`),
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY `fk_EtapaProyecto_Proyecto1_idx` (`idProyecto`),
-  CONSTRAINT `fk_EtapaProyecto_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_EtapaProyecto_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -328,7 +322,7 @@ CREATE TABLE `Organizacion` (
   `Descripcion` varchar(450) DEFAULT NULL,
   `Mision` varchar(450) DEFAULT NULL,
   `Vision` varchar(450) DEFAULT NULL,
-  `isValidated` int(1) DEFAULT '0',
+  `isValidated` varchar(45) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -347,8 +341,8 @@ CREATE TABLE `Organizacion_Modalidad` (
   PRIMARY KEY (`id`),
   KEY `fk_Organizacion_Modalidad_Organizacion1_idx` (`idOrganizacion`),
   KEY `fk_Organizacion_Modalidad_Modalidad1_idx` (`idModalidad`),
-  CONSTRAINT `fk_Organizacion_Modalidad_Modalidad1` FOREIGN KEY (`idModalidad`) REFERENCES `Modalidad` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Organizacion_Modalidad_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_Organizacion_Modalidad_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Organizacion_Modalidad_Modalidad1` FOREIGN KEY (`idModalidad`) REFERENCES `Modalidad` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -366,7 +360,7 @@ CREATE TABLE `Organizacion_Proyecto` (
 
 
 CREATE TABLE `OrganizacionLegal` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `Titulo` varchar(45) DEFAULT NULL,
   `RepresentanteLegal` varchar(45) DEFAULT NULL,
   `RazonSocial` varchar(45) DEFAULT NULL,
@@ -391,6 +385,13 @@ CREATE TABLE `Pais` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE `ParqueTecnologico` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Nombre` varchar(300) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 CREATE TABLE `Persona` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(60) DEFAULT NULL,
@@ -398,14 +399,14 @@ CREATE TABLE `Persona` (
   `ApellidoM` varchar(45) DEFAULT NULL,
   `Notas` varchar(450) DEFAULT NULL,
   `Descripcion` varchar(450) DEFAULT NULL,
+  `isValidated` int(11) DEFAULT NULL,
   `idUser` int(11) NOT NULL,
-  `isValidated` int(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_Persona_User1_idx` (`idUser`),
   CONSTRAINT `fk_Persona_User1` FOREIGN KEY (`idUser`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Persona_Organizacion` (
@@ -419,8 +420,8 @@ CREATE TABLE `Persona_Organizacion` (
   PRIMARY KEY (`id`),
   KEY `fk_Persona_Organizacion_Persona1_idx` (`idPersona`),
   KEY `fk_Persona_Organizacion_Organizacion1_idx` (`idOrganizacion`),
-  CONSTRAINT `fk_Persona_Organizacion_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Persona_Organizacion_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_Persona_Organizacion_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Persona_Organizacion_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -435,9 +436,9 @@ CREATE TABLE `Persona_Proyecto` (
   UNIQUE KEY `unique_proyecto_persona` (`idProyecto`,`idPersona`) USING BTREE,
   KEY `fk_Proyecto_has_Persona_Persona1_idx` (`idPersona`),
   KEY `fk_Proyecto_has_Persona_Proyecto1_idx` (`idProyecto`),
-  CONSTRAINT `fk_Proyecto_has_Persona_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Proyecto_has_Persona_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  CONSTRAINT `fk_Proyecto_has_Persona_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Proyecto_has_Persona_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProgramaFondeo` (
@@ -488,13 +489,14 @@ CREATE TABLE `Proyecto` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Proyecto_Modalidad` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idModalidad` int(11) NOT NULL,
   `idProyecto` int(11) NOT NULL,
+  `idParque` int(11) NOT NULL,
   `Solicitud` varchar(1000) DEFAULT NULL,
   `MontoSolicitado` float DEFAULT NULL,
   `MontoApoyado` float DEFAULT NULL,
@@ -509,8 +511,10 @@ CREATE TABLE `Proyecto_Modalidad` (
   PRIMARY KEY (`id`),
   KEY `fk_Proyecto_Modalidad_Modalidad1_idx` (`idModalidad`),
   KEY `fk_Proyecto_Modalidad_Proyecto1_idx` (`idProyecto`),
+  KEY `fk_Proyecto_Modalidad_ParqueTecnologico1_idx` (`idParque`),
   CONSTRAINT `fk_Proyecto_Modalidad_Modalidad1` FOREIGN KEY (`idModalidad`) REFERENCES `Modalidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Proyecto_Modalidad_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_Proyecto_Modalidad_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Proyecto_Modalidad_ParqueTecnologico1` FOREIGN KEY (`idParque`) REFERENCES `ParqueTecnologico` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -522,8 +526,8 @@ CREATE TABLE `proyectoDescriptor` (
   PRIMARY KEY (`idproyectoDescriptor`),
   KEY `fk_proyectoDescriptor_Proyecto1_idx` (`Proyecto_id`),
   KEY `fk_proyectoDescriptor_Descriptor1_idx` (`Descriptor_id`),
-  CONSTRAINT `fk_proyectoDescriptor_Descriptor1` FOREIGN KEY (`Descriptor_id`) REFERENCES `Descriptor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_proyectoDescriptor_Proyecto1` FOREIGN KEY (`Proyecto_id`) REFERENCES `Proyecto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_proyectoDescriptor_Proyecto1` FOREIGN KEY (`Proyecto_id`) REFERENCES `Proyecto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_proyectoDescriptor_Descriptor1` FOREIGN KEY (`Descriptor_id`) REFERENCES `Descriptor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -540,20 +544,6 @@ CREATE TABLE `ProyectoTRL` (
   KEY `fk_Proyecto_has_TRL_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_has_TRL_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_has_TRL_TRL1` FOREIGN KEY (`idTRL`) REFERENCES `TRL` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
-
-CREATE TABLE `ProyectoResultados` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `idProyectoTRL` int(11) NOT NULL,
-  `Avance` varchar(45) DEFAULT NULL,
-  `Status` varchar(45) DEFAULT NULL,
-  `Fecha` date DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_ProyectoResultados_Proyecto_TRL1_idx` (`idProyectoTRL`),
-  CONSTRAINT `fk_ProyectoResultados_Proyecto_TRL1` FOREIGN KEY (`idProyectoTRL`) REFERENCES `ProyectoTRL` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -569,19 +559,23 @@ CREATE TABLE `ResultadoDescriptor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `Resultado` (
+CREATE TABLE `ProyectoResultado` (
   `idResultado` int(11) NOT NULL AUTO_INCREMENT,
+  `idProyectoTRL` int(11) NOT NULL,
   `Tipo` varchar(45) NOT NULL,
   `NombreTitulo` varchar(45) NOT NULL,
   `DescripcionResumen` varchar(450) CHARACTER SET cp850 NOT NULL,
   `NumeroRegistro` varchar(45) DEFAULT NULL,
-  `idProyectoResultados` int(11) NOT NULL,
   `idResultadoDescriptor` int(11) NOT NULL,
+  `Status` varchar(45) DEFAULT NULL,
+  `Fecha` varchar(45) DEFAULT NULL,
+  `created_at` varchar(45) DEFAULT NULL,
+  `updated_at` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`idResultado`),
-  KEY `fk_Resultado_ProyectoResultados1_idx` (`idProyectoResultados`),
   KEY `fk_Resultado_ResultadoDescriptor1_idx` (`idResultadoDescriptor`),
-  CONSTRAINT `fk_Resultado_ProyectoResultados1` FOREIGN KEY (`idProyectoResultados`) REFERENCES `ProyectoResultados` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Resultado_ResultadoDescriptor1` FOREIGN KEY (`idResultadoDescriptor`) REFERENCES `ResultadoDescriptor` (`idResultadoDescriptor`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `fk_Resultado_ProyectoTRL1_idx` (`idProyectoTRL`),
+  CONSTRAINT `fk_Resultado_ResultadoDescriptor1` FOREIGN KEY (`idResultadoDescriptor`) REFERENCES `ResultadoDescriptor` (`idResultadoDescriptor`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Resultado_ProyectoTRL1` FOREIGN KEY (`idProyectoTRL`) REFERENCES `ProyectoTRL` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -594,18 +588,17 @@ CREATE TABLE `RubrosApoyo` (
 
 
 CREATE TABLE `TareaEtapa` (
-  `id` int(11) NOT NULL,
-  `Tarea` varchar(45) DEFAULT NULL,
-  `EntregableTarea` varchar(45) DEFAULT NULL,
-  `ArchivoEntregableTarea` varchar(45) DEFAULT NULL,
-  `Descripcion` varchar(45) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `from` date DEFAULT NULL,
+  `to` date DEFAULT NULL,
   `idEtapa` int(11) NOT NULL,
-  `idPredecesora` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_TareaEtapa_EtapaProyecto1_idx` (`idEtapa`),
-  KEY `fk_TareaEtapa_TareaEtapa1_idx` (`idPredecesora`),
-  CONSTRAINT `fk_TareaEtapa_EtapaProyecto1` FOREIGN KEY (`idEtapa`) REFERENCES `EtapaProyecto` (`idEtapaProyecto`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_TareaEtapa_TareaEtapa1` FOREIGN KEY (`idPredecesora`) REFERENCES `TareaEtapa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_TareaEtapa_EtapaProyecto1` FOREIGN KEY (`idEtapa`) REFERENCES `EtapaProyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -620,8 +613,8 @@ CREATE TABLE `TipoArchivo` (
 
 
 CREATE TABLE `TipoDescriptor` (
-  `id` int(11) NOT NULL,
-  `Nombre` varchar(45) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Nombre` varchar(300) DEFAULT NULL,
   `Aplicable` char(1) DEFAULT NULL,
   `Activo` tinyint(1) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -631,17 +624,15 @@ CREATE TABLE `TipoDescriptor` (
 
 
 CREATE TABLE `TransferenciaTecnologica` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ProductosDePropiedad` varchar(1000) DEFAULT NULL,
-  `ProcesosDeTransferencia` varchar(1000) DEFAULT NULL,
-  `ValuacionTecnologica` varchar(1000) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `ProductosDePropiedad` varchar(45) DEFAULT NULL,
+  `ProcesosDeTransferencia` varchar(45) DEFAULT NULL,
+  `ValuacionTecnologica` varchar(45) DEFAULT NULL,
   `idProyecto` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_Proyecto_TT_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_TT_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `TRL` (
@@ -656,10 +647,11 @@ CREATE TABLE `User` (
   `username` varchar(45) DEFAULT NULL,
   `password` varchar(300) NOT NULL,
   `type` enum('User','Supervisor','Admin') NOT NULL DEFAULT 'User',
+  `isValidated` tinyint(4) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Validacion_Criterio` (
@@ -670,8 +662,8 @@ CREATE TABLE `Validacion_Criterio` (
   PRIMARY KEY (`id`),
   KEY `fk_Validacion_Modalidad_Proyecto_Modalidad1_idx` (`idProyectoModalidad`),
   KEY `fk_Validacion_Modalidad_Modaliad_Criterios1_idx` (`idCriterio`),
-  CONSTRAINT `fk_Validacion_Modalidad_Modaliad_Criterios1` FOREIGN KEY (`idCriterio`) REFERENCES `Modaliad_Criterios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Validacion_Modalidad_Proyecto_Modalidad1` FOREIGN KEY (`idProyectoModalidad`) REFERENCES `Proyecto_Modalidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_Validacion_Modalidad_Proyecto_Modalidad1` FOREIGN KEY (`idProyectoModalidad`) REFERENCES `Proyecto_Modalidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Validacion_Modalidad_Modaliad_Criterios1` FOREIGN KEY (`idCriterio`) REFERENCES `Modaliad_Criterios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -707,9 +699,9 @@ ALTER TABLE `Descriptor_Organizacion` ENABLE KEYS;
 UNLOCK TABLES;
 
 
-LOCK TABLES `Descriptor_Pesona` WRITE;
-ALTER TABLE `Descriptor_Pesona` DISABLE KEYS;
-ALTER TABLE `Descriptor_Pesona` ENABLE KEYS;
+LOCK TABLES `Descriptor_Persona` WRITE;
+ALTER TABLE `Descriptor_Persona` DISABLE KEYS;
+ALTER TABLE `Descriptor_Persona` ENABLE KEYS;
 UNLOCK TABLES;
 
 
@@ -797,11 +789,16 @@ ALTER TABLE `Pais` ENABLE KEYS;
 UNLOCK TABLES;
 
 
+LOCK TABLES `ParqueTecnologico` WRITE;
+ALTER TABLE `ParqueTecnologico` DISABLE KEYS;
+ALTER TABLE `ParqueTecnologico` ENABLE KEYS;
+UNLOCK TABLES;
+
+
 LOCK TABLES `Persona` WRITE;
 ALTER TABLE `Persona` DISABLE KEYS;
-INSERT INTO `Persona` (`id`, `Nombre`, `ApellidoP`, `ApellidoM`, `Notas`, `Descripcion`, `idUser`, `isValidated`, `created_at`, `updated_at`) VALUES 
-	(1,'Daniel','Franco','Rodríguez',NULL,NULL,1,1,'2015-12-26 01:34:28','2015-12-27 18:26:39'),
-	(2,'José','Pedro','De la Mar',NULL,NULL,2,1,NULL,'2015-12-27 18:26:39');
+INSERT INTO `Persona` (`id`, `Nombre`, `ApellidoP`, `ApellidoM`, `Notas`, `Descripcion`, `isValidated`, `idUser`, `created_at`, `updated_at`) VALUES 
+	(1,'Daniel','Franco','Rodríguez',NULL,NULL,NULL,1,'2016-01-06 22:44:22','2016-01-06 22:44:22');
 ALTER TABLE `Persona` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -814,8 +811,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `Persona_Proyecto` WRITE;
 ALTER TABLE `Persona_Proyecto` DISABLE KEYS;
-INSERT INTO `Persona_Proyecto` (`id`, `idProyecto`, `idPersona`, `Owner`, `created_at`, `updated_at`) VALUES 
-	(1,1,1,1,NULL,NULL);
 ALTER TABLE `Persona_Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -840,8 +835,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `Proyecto` WRITE;
 ALTER TABLE `Proyecto` DISABLE KEYS;
-INSERT INTO `Proyecto` (`id`, `Titulo`, `Descripcion`, `Antecedentes`, `Justificacion`, `Objetivos`, `Alcances`, `created_at`, `updated_at`) VALUES 
-	(1,'Proyecto 2','Lalalala','Lalalala','Lalalala','xD','Alcances','2015-12-26 01:34:41','2015-12-26 01:34:41');
 ALTER TABLE `Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -864,21 +857,15 @@ ALTER TABLE `ProyectoTRL` ENABLE KEYS;
 UNLOCK TABLES;
 
 
-LOCK TABLES `ProyectoResultados` WRITE;
-ALTER TABLE `ProyectoResultados` DISABLE KEYS;
-ALTER TABLE `ProyectoResultados` ENABLE KEYS;
-UNLOCK TABLES;
-
-
 LOCK TABLES `ResultadoDescriptor` WRITE;
 ALTER TABLE `ResultadoDescriptor` DISABLE KEYS;
 ALTER TABLE `ResultadoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
 
-LOCK TABLES `Resultado` WRITE;
-ALTER TABLE `Resultado` DISABLE KEYS;
-ALTER TABLE `Resultado` ENABLE KEYS;
+LOCK TABLES `ProyectoResultado` WRITE;
+ALTER TABLE `ProyectoResultado` DISABLE KEYS;
+ALTER TABLE `ProyectoResultado` ENABLE KEYS;
 UNLOCK TABLES;
 
 
@@ -908,33 +895,20 @@ UNLOCK TABLES;
 
 LOCK TABLES `TransferenciaTecnologica` WRITE;
 ALTER TABLE `TransferenciaTecnologica` DISABLE KEYS;
-INSERT INTO `TransferenciaTecnologica` (`id`, `ProductosDePropiedad`, `ProcesosDeTransferencia`, `ValuacionTecnologica`, `idProyecto`, `created_at`, `updated_at`) VALUES 
-	(2,'<p>Nuevo Actualizado</p>','<p>Registro</p>','<p>Lalala</p>',1,'2015-12-26 05:14:17','2015-12-26 05:14:28');
 ALTER TABLE `TransferenciaTecnologica` ENABLE KEYS;
 UNLOCK TABLES;
 
 
 LOCK TABLES `TRL` WRITE;
 ALTER TABLE `TRL` DISABLE KEYS;
-INSERT INTO `TRL` (`id`, `Descripcion`) VALUES 
-	(1,'TRL1'),
-	(2,'TRL2'),
-	(3,'TRL3'),
-	(4,'TRL4'),
-	(5,'TRL5'),
-	(6,'TRL6'),
-	(7,'TRL7'),
-	(8,'TRL8'),
-	(9,'TRL9');
 ALTER TABLE `TRL` ENABLE KEYS;
 UNLOCK TABLES;
 
 
 LOCK TABLES `User` WRITE;
 ALTER TABLE `User` DISABLE KEYS;
-INSERT INTO `User` (`id`, `username`, `password`, `type`, `created_at`, `updated_at`) VALUES 
-	(1,'Lockon','$2y$10$jkCmVcQsgPcmCqKT5HbRSO3jaQgmtmDZjb7IZeG1rzkwk6/R41i6O','Supervisor','2015-12-26 01:34:19','2015-12-26 01:34:19'),
-	(2,'Daniel','$2y$10$jkCmVcQsgPcmCqKT5HbRSO3jaQgmtmDZjb7IZeG1rzkwk6/R41i6O','User','2015-12-26 01:34:19','2015-12-26 01:34:19');
+INSERT INTO `User` (`id`, `username`, `password`, `type`, `isValidated`, `created_at`, `updated_at`) VALUES 
+	(1,'Lockon','$2y$10$G/AEmlDdzf6VDIh9OW.MHe86ylcBpXti2A8CCW0yJ.6blW7BMoURy','User',0,'2016-01-06 22:43:56','2016-01-06 22:43:56');
 ALTER TABLE `User` ENABLE KEYS;
 UNLOCK TABLES;
 

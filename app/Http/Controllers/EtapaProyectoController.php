@@ -25,10 +25,15 @@ class EtapaProyectoController extends Controller
     {
         try{
             AuthenticateController::checkUser(null);
+
             return DB::transaction(function() use ($request){
+                $etapas = EtapaProyecto::where('idProyecto',$request->idProyecto)->delete();
                 $savedEtapas = [];
                 foreach($request->EtapaProyecto as $etapa)
                {
+
+                   $tasks = [];
+                   $etapa['idProyecto']=$request->idProyecto;
                    $newEtapa = new EtapaProyecto($etapa);
                    $newEtapa->save();
                    foreach($etapa['tasks'] as $task)
@@ -38,6 +43,8 @@ class EtapaProyectoController extends Controller
                    $newEtapa->tasks()->saveMany($tasks);
                    $newEtapa->load('tasks');
                    $savedEtapas[] = $newEtapa;
+                   $newEtapa = null;
+
                }
                 return response()->json(['EtapaProyecto'=>$savedEtapas]);
 
