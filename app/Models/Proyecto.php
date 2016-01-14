@@ -50,6 +50,11 @@ class Proyecto extends Model
     }
 
 
+    public function ProyectoTRL()
+    {
+        return $this->hasMany('App\Models\ProyectoTRL','idProyecto');
+    }
+
     public function TRL()
     {
         return $this->belongsToMany('App\Models\TRL','ProyectoTRL','idProyecto','idTRL')->

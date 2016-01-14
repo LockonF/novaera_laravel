@@ -11,6 +11,9 @@
 |
 */
 
+
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -135,6 +138,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         /*Métodos para registrar etapas en un proyecto*/
         Route::get('Proyecto/EtapaProyecto/{id}','ProyectoController@showEtapas');
         Route::post('EtapaProyecto','EtapaProyectoController@store');
+
+        /*Métodos para registrar resultados de un proyecto*/
+        Route::post('Proyecto/Resultados','ProyectoController@addResult');
+        Route::get('Proyecto/Resultados/{id}/{type?}','ProyectoController@showResults')
+            ->where(['id'=>'[0-9]+','type'=>'(Patente|Producto|Servicio|Proceso|Todos)']);
 
 
 
