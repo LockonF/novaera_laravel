@@ -14,4 +14,10 @@ class Organizacion extends Model
         return $this->belongsToMany('App\Models\Persona', 'Persona_Organizacion', 'idOrganizacion', 'idPersona')
             ->withPivot('Owner','FechaInicio','FechaTermino','Owner');
     }
+
+    public function Descriptor()
+    {
+        return $this->belongsToMany('App\Models\Descriptor','Descriptor_Organizacion','idOrganizacion','idDescriptor')
+            ->withPivot('FechaInicio','FechaTermino','TipoResultado','NumeroRegistro');
+    }
 }
