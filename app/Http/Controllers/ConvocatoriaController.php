@@ -24,6 +24,10 @@ class ConvocatoriaController extends Controller
             $convocatoria = Convocatoria::with('Modalidad')->find($id);
             if($convocatoria!=null)
             {
+                foreach($convocatoria->Modalidad as $modaliad)
+                {
+                    $modaliad->load('Criterios');
+                }
                 return response()->json($convocatoria->Modalidad);
             }
             return response()->json(['message'=>'convocatoria_not_found'],404);

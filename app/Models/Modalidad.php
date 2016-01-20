@@ -22,5 +22,10 @@ class Modalidad extends Model
         withPivot('id','Solicitud','MontoSolicitado','MontoApoyado','TRLInicial','TRLFinal','FechaRegistro','FechaCierre','Resultado');
     }
 
+    public function Criterios()
+    {
+        return $this->hasMany('App\Models\ModalidadCriterios','idModalidad');
+    }
+
 
 }
