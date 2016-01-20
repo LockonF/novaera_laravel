@@ -19,7 +19,7 @@ class PaisController extends Controller
 
    public function showAll()
    {
-       return response()->json(Pais::all());
+       return response()->json(['Pais'=>Pais::all()]);
    }
 
     /**

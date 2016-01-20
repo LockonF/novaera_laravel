@@ -141,6 +141,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
         /*Métodos para registrar resultados de un proyecto*/
         Route::post('Proyecto/Resultados','ProyectoController@addResult');
+        Route::put('Proyecto/Resultados','ProyectoController@editResult');
         Route::get('Proyecto/Resultados/{id}/{type?}','ProyectoController@showResults')
             ->where(['id'=>'[0-9]+','type'=>'(Patente|Producto|Servicio|Proceso|Todos)']);
 

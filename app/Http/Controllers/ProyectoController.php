@@ -606,6 +606,49 @@ class ProyectoController extends Controller
     }
 
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function editResult(Request $request)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
+            if($proyecto == null)
+            {
+                return response()->json(['message'=>'proyecto_not_found'],500);
+            }
+            if($proyecto->pivot->Owner!=1)
+            {
+                return response()->json(['message'=>'owner_not_matching'],500);
+            }
+            else
+            {
+                $resultado  = ProyectoResultado::find($request->id);
+
+                if($resultado==null)
+                {
+                    return response()->json(['message'=>'resultado_not_found'],404);
+                }
+                $resultado->fill($request->all());
+                $resultado->save();
+                return response()->json($resultado);
+
+            }
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
 
 
 
