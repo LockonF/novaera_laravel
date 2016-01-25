@@ -91,7 +91,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
         /*Metodos para cuando personas inscriben un proyecto */
         Route::get('Proyecto/Persona','ProyectoController@showProjects');
-        Route::get('Proyecto/Persona/{id}','ProyectoController@showOneProject');
+        Route::get('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@showOneProject')
+            ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::post('Proyecto/Persona','ProyectoController@storeByPerson');
         Route::put('Proyecto/Persona/{id}','ProyectoController@editProject');
         Route::delete('Proyecto/Persona/{id}','ProyectoController@removeProject');

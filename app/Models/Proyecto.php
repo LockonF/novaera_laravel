@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
+use App\Exceptions\NotFoundException;
+use App\User;
+use App\Exceptions\InvalidAccessException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Proyecto extends Model
 {
@@ -11,6 +15,60 @@ class Proyecto extends Model
         'Titulo','Descripcion', 'Antecedentes',
         'Justificacion','Objetivos', 'Alcances',
         'idEjecucion','idImpacto','idModeloNegocio'];
+
+
+    /**
+     * @param int $idProyecto
+     * @param User $user
+     * @param string $type
+     * @param int|null $idOrganizacion
+     * @param int $strict
+     * @return Proyecto
+     * @throws InvalidAccessException
+     * @throws NotFoundException
+     */
+    public static function validateProyecto($idProyecto,$user,$type = 'Persona',$idOrganizacion = null,$strict=1)
+    {
+        if($type=='Persona')
+        {
+            $proyecto  = $user->Persona->Proyecto()
+                ->where('Proyecto.id',$idProyecto)
+                ->first();
+            if($proyecto == null)
+            {
+                throw new NotFoundException;
+            }
+            if(($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id) && $strict==1)
+            {
+                throw new InvalidAccessException;
+            }
+
+        }
+        if($type=='Organizacion')
+        {
+            $proyecto =
+                DB::table('Persona')
+                ->join('Persona_Organizacion','Persona.id','=','Persona_Organizacion.idPersona')
+                ->join('Organizacion','Organizacion.id','=','Persona_Organizacion.idOrganizacion')
+                ->join('Organizacion_Proyecto','Organizacion.id','=','Organizacion_Proyecto.idOrganizacion')
+                ->join('Proyecto','Proyecto.id','=','Organizacion_Proyecto.idProyecto')
+                ->where('Persona.id',$user->Persona->id)
+                ->where('Organizacion.id',$idOrganizacion)
+                ->where('Proyecto.id',$idProyecto)
+                ->where('Persona_Organizacion.WritePermissions',$strict)
+                ->select('Proyecto.*')
+                ->get();
+            if($proyecto==null)
+            {
+                throw new InvalidAccessException;
+            }
+            $proyecto = new Proyecto($proyecto);
+        }
+        return $proyecto;
+    }
+
+
+
 
     //Relationships
 
