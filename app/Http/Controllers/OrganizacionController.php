@@ -25,7 +25,7 @@ class OrganizacionController extends Controller
     public function showAll()
     {
         try{
-            $user = AuthenticateController::checkUser(null);
+            $user = AuthenticateController::checkUser('Supervisor');
             return response()->json(Organizacion::all());
 
         }catch (QueryException $e)

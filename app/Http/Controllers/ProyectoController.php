@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\InvalidAccessException;
 use App\Exceptions\NotFoundException;
 use App\Models\Impacto;
+use App\Models\Organizacion;
 use App\Models\Persona;
 use App\Models\Proyecto;
 use App\Models\ProyectoModalidad;
@@ -30,7 +31,7 @@ class ProyectoController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function storeByPerson(Request $request)
+    public function storeByPerson(Request $request,$type='Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
@@ -40,7 +41,21 @@ class ProyectoController extends Controller
             {
                 return response()->json(['message'=>'associated_persona_not_found'],500);
             }
-            $user->Persona->Proyecto()->save($new_proyecto,['Owner'=>1]);
+            if($type=='Persona')
+            {
+                $user->Persona->Proyecto()->save($new_proyecto,['Owner'=>1,'WritePermissions'=>1]);
+            }
+            else
+            {
+                $organizacion = $user->Persona->Organizacion()->where('idOrganizacion',$idOrganizacion)->first();
+                if($organizacion==null)
+                {
+                    return response()->json(['message'=>'associated_organizacion_not_found'],500);
+                }
+                $organizacion->Proyecto()->save($new_proyecto,['Owner'=>1]);
+            }
+
+
             return response()->json($new_proyecto,200);
         }catch (QueryException $e)
         {
@@ -58,13 +73,27 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function showProjects()
+    public function showProjects($type='Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $user->Persona->load('Proyecto');
-            return response()->json(['Proyectos'=>$user->Persona->Proyecto],200);
+            if($type=='Persona')
+            {
+                $user->Persona->load('Proyecto');
+                return response()->json(['Proyectos'=>$user->Persona->Proyecto],200);
+            }
+            else
+            {
+                $organizacion = $user->Persona->Organizacion()->find($idOrganizacion);
+                if($organizacion==null)
+                {
+                    return response()->json(['message'=>'organizacion_not_found'],500);
+                }
+                $organizacion->load('Proyecto');
+                return response()->json(['Proyectos'=>$organizacion->Proyecto]);
+            }
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -115,11 +144,11 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function editProject(Request $request, $id)
+    public function editProject(Request $request, $type = 'Persona',$id=null,$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $proyecto = Proyecto::validateProyecto($id,$user);
+            $proyecto = Proyecto::validateProyecto($id,$user,$type,$idOrganizacion);
             $proyecto->fill($request->all());
             $proyecto->save();
             return response()->json($proyecto,200);
@@ -146,25 +175,14 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function removeProject($id)
+    public function removeProject($type='Persona',$id=null,$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$id)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $proyecto->delete();
-                return response()->json(['message'=>'success'],200);
-            }
+            $proyecto = Proyecto::validateProyecto($id,$user,$type,$idOrganizacion);
+            $proyecto->delete();
+            return response()->json(['message'=>'success'],200);
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

@@ -56,13 +56,14 @@ class Proyecto extends Model
                 ->where('Organizacion.id',$idOrganizacion)
                 ->where('Proyecto.id',$idProyecto)
                 ->where('Persona_Organizacion.WritePermissions',$strict)
-                ->select('Proyecto.*')
-                ->get();
+                ->select('Proyecto.id')
+                ->first();
             if($proyecto==null)
             {
                 throw new InvalidAccessException;
             }
-            $proyecto = new Proyecto($proyecto);
+
+            return Proyecto::find($proyecto->id);
         }
         return $proyecto;
     }
@@ -74,6 +75,10 @@ class Proyecto extends Model
 
     public function Persona(){
         return $this->belongsToMany('App\Models\Persona', 'Persona_Proyecto', 'idProyecto', 'idPersona')->withPivot('Owner');
+    }
+
+    public function Organizacion(){
+        return $this->belongsToMany('App\Models\Organizacion', 'Organizacion_Proyecto', 'idProyecto', 'idOrganizacion')->withPivot('Owner');
     }
 
     public function Modalidad(){

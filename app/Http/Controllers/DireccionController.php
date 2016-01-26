@@ -6,6 +6,7 @@ use App\Models\Direccion;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Exceptions\UnauthorizedException;
+use ErrorException;
 use Tymon\JWTAuth\Exceptions;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -29,7 +30,7 @@ class DireccionController extends Controller
             $contacto = $user->Contacto[0];
             if($user->Contacto ==null)
             {
-                return response()->json(['message'=>'contacto_not_found'],500);
+                return response()->json(['message'=>'contacto_not_found'],404);
             }
 
             $hasOther = Direccion::where('idContacto',$contacto->id)->count();
@@ -47,7 +48,10 @@ class DireccionController extends Controller
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
-        }catch (Exceptions\TokenExpiredException $e) {
+        }catch(ErrorException $e) {
+            return response()->json(['message'=>'contacto_does_not_exist'],500);
+        }
+        catch (Exceptions\TokenExpiredException $e) {
             return response()->json(['token_expired'], $e->getStatusCode());
         } catch (Exceptions\TokenInvalidException $e) {
             return response()->json(['token_invalid'], $e->getStatusCode());
@@ -79,6 +83,8 @@ class DireccionController extends Controller
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch(ErrorException $e) {
+            return response()->json(['message'=>'contacto_does_not_exist'],500);
         }catch (Exceptions\TokenExpiredException $e) {
             return response()->json(['token_expired'], $e->getStatusCode());
         } catch (Exceptions\TokenInvalidException $e) {
@@ -102,7 +108,7 @@ class DireccionController extends Controller
             $contacto = $user->Contacto[0];
             if($user->Contacto ==null)
             {
-                return response()->json(['message'=>'contacto_not_found'],500);
+                return response()->json(['message'=>'contacto_not_found'],404);
             }
 
             $contacto->load('Direccion');
@@ -116,6 +122,8 @@ class DireccionController extends Controller
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch(ErrorException $e) {
+            return response()->json(['message'=>'contacto_does_not_exist'],500);
         }catch (Exceptions\TokenExpiredException $e) {
             return response()->json(['token_expired'], $e->getStatusCode());
         } catch (Exceptions\TokenInvalidException $e) {

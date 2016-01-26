@@ -90,12 +90,16 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     /*Proyecto*/
 
         /*Metodos para cuando personas inscriben un proyecto */
-        Route::get('Proyecto/Persona','ProyectoController@showProjects');
+        Route::get('Proyecto/{type}/{idOrganizacion?}','ProyectoController@showProjects')
+            ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::get('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@showOneProject')
             ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
-        Route::post('Proyecto/Persona','ProyectoController@storeByPerson');
-        Route::put('Proyecto/Persona/{id}','ProyectoController@editProject');
-        Route::delete('Proyecto/Persona/{id}','ProyectoController@removeProject');
+        Route::post('Proyecto/{type}/{idOrganizacion?}','ProyectoController@storeByPerson')
+            ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
+        Route::put('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@editProject')
+            ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
+        Route::delete('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@removeProject')
+            ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         /*Metodos para personas colaboradoras del proyecto*/
         Route::post('Proyecto/Persona/Inscribir','ProyectoController@addCollaborator');
         Route::post('Proyecto/Persona/Eliminar','ProyectoController@removeCollaborator');

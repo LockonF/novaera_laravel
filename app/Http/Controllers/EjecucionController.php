@@ -196,6 +196,8 @@ class EjecucionController extends Controller
         }
     }
 
+
+
     public function show($idProyecto)
     {
         try{
