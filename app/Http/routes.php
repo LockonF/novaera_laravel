@@ -87,6 +87,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
 
 
+    /*TipoArchivo*/
+    Route::get('TipoArchivo/{type?}','TipoArchivoController@showAll');
     /*Proyecto*/
 
         /*Metodos para cuando personas inscriben un proyecto */
@@ -110,29 +112,39 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::get('Proyecto/Modalidad/{id}','ProyectoController@showModalidades');
 
         /*Metodos para registrar el impacto de un proyecto*/
-        Route::post('Impacto','ImpactoController@store');
-        Route::post('Impacto/Update','ImpactoController@update');
-        Route::get('Impacto/{idProyecto}','ImpactoController@show');
+        Route::post('Impacto/{whoIs?}/{idOrganizacion?}','ImpactoController@store')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::post('Impacto/Update/{whoIs?}/{idOrganizacion?}','ImpactoController@update')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::get('Impacto/{idProyecto}/{whoIs?}/{idOrganizacion?}','ImpactoController@show')
+            ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::get('Impacto/Archivos/{idProyecto}','ImpactoController@showFileRoutes');
 
-        /*Metodos para registrar el TRL de un proyecto */
+
+    /*Metodos para registrar el TRL de un proyecto */
         Route::post('Proyecto/TRL','ProyectoController@addTRL');
         Route::post('Proyecto/TRL/Delete','ProyectoController@deleteTRLs');
         Route::get('Proyecto/TRL/{id}','ProyectoController@viewTRL');
 
         /*Métodos para registrar la ejecución de un proyecto*/
-        Route::post('Ejecucion','EjecucionController@store');
-        Route::post('Ejecucion/Update','EjecucionController@update');
-        Route::get('Ejecucion/{idProyecto}','EjecucionController@show');
+        Route::post('Ejecucion/{whoIs?}/{idOrganizacion?}','EjecucionController@store')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::post('Ejecucion/Update/{whoIs?}/{idOrganizacion?}','EjecucionController@update')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::get('Ejecucion/{idProyecto}/{whoIs?}/{idOrganizacion?}','EjecucionController@show')
+            ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::get('Ejecucion/Archivos/{idProyecto}','EjecucionController@showFileRoutes');
 
         /*Métodos para registrar el Modelo de Negocio de un proyecto*/
-        Route::post('ModeloNegocio','ModeloNegocioController@store');
-        Route::post('ModeloNegocio/Update','ModeloNegocioController@update');
-        Route::get('ModeloNegocio/{idProyecto}','ModeloNegocioController@show');
+        Route::post('ModeloNegocio/{whoIs?}/{idOrganizacion?}','ModeloNegocioController@store')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::post('ModeloNegocio/Update/{whoIs?}/{idOrganizacion?}','ModeloNegocioController@update')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::get('ModeloNegocio/{idProyecto}/{whoIs?}/{idOrganizacion?}','ModeloNegocioController@show')
+            ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::get('ModeloNegocio/Archivos/{idProyecto}','ModeloNegocioController@showFileRoutes');
 
-        /*Métodos para registrar el Modelo de Negocio de un proyecto*/
+    /*Métodos para registrar el Modelo de Negocio de un proyecto*/
         Route::post('TransferenciaTecnologica','TransferenciaTecnologicaController@store');
         Route::get('TransferenciaTecnologica/Archivos/{id}','TransferenciaTecnologicaController@showFileRoutes');
         Route::get('TransferenciaTecnologica/{id}','TransferenciaTecnologicaController@show');

@@ -31,6 +31,7 @@ class Proyecto extends Model
     {
         if($type=='Persona')
         {
+            $user->load('Persona');
             $proyecto  = $user->Persona->Proyecto()
                 ->where('Proyecto.id',$idProyecto)
                 ->first();

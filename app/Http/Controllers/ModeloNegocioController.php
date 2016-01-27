@@ -23,59 +23,49 @@ class ModeloNegocioController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
+            $proyecto = Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
 
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
+            $proyecto->load('ModeloNegocio');
+            if($proyecto->ModeloNegocio==null)
             {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $proyecto->load('ModeloNegocio');
-                if($proyecto->ModeloNegocio==null)
+                $request->ModeloNegocio = $this->processValue($request->ModeloNegocio);
+                $modeloNegocio = new ModeloNegocio($request->ModeloNegocio);
+                if($request->type!=null)
                 {
-                    $request->ModeloNegocio = $this->processValue($request->ModeloNegocio);
-                    $modeloNegocio = new ModeloNegocio($request->ModeloNegocio);
-                    if($request->type!=null)
-                    {
-                        $data['user']=$user;
-                        $data['proyecto']=$proyecto;
-                        $data['request']=$request;
-                        $ruta = $user->username."/".$request->type."_".$request->name;
-                        $tipo = TipoArchivo::where('Titulo',$request->type)->first();
-                        $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
-                        $data['modeloNegocio']=$modeloNegocio;
-                        $data['archivo']=$archivo;
+                    $data['user']=$user;
+                    $data['proyecto']=$proyecto;
+                    $data['request']=$request;
+                    $ruta = $user->username."/".$request->type."_".$request->name;
+                    $tipo = TipoArchivo::where('Titulo',$request->type)->first();
+                    $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
+                    $data['modeloNegocio']=$modeloNegocio;
+                    $data['archivo']=$archivo;
 
-                        return DB::transaction(function () use($data) {
-                            $proyecto = $data['proyecto'];
-                            $proyecto->ModeloNegocio()->save($data['modeloNegocio']);
-                            $proyecto = Proyecto::find($proyecto->id);
-                            $proyecto->load('ModeloNegocio');
-                            $proyecto->ModeloNegocio->load('Archivos');
-                            $proyecto->ModeloNegocio->Archivos()->save($data['archivo']);
-                            $data['request']->file('file')->move('files/'.$data['user']->username,$data['request']->type."_".$data['request']->name);
-                            return response()->json(['ModeloNegocio'=>$proyecto->ModeloNegocio,'Archivo'=>$data['archivo']]);
-                        });
-                    }
-                    else
-                    {
-                        $proyecto->ModeloNegocio()->save($modeloNegocio);
-                        return response()->json(['ModeloNegocio'=>$modeloNegocio]);
-                    }
-
+                    return DB::transaction(function () use($data) {
+                        $proyecto = $data['proyecto'];
+                        $proyecto->ModeloNegocio()->save($data['modeloNegocio']);
+                        $proyecto = Proyecto::find($proyecto->id);
+                        $proyecto->load('ModeloNegocio');
+                        $proyecto->ModeloNegocio->load('Archivos');
+                        $proyecto->ModeloNegocio->Archivos()->save($data['archivo']);
+                        $data['request']->file('file')->move('files/'.$data['user']->username,$data['request']->type."_".$data['request']->name);
+                        return response()->json(['ModeloNegocio'=>$proyecto->ModeloNegocio,'Archivo'=>$data['archivo']]);
+                    });
                 }
-                return response()->json(['message'=>'modeloNegocio_already_exists'],500);
+                else
+                {
+                    $proyecto->ModeloNegocio()->save($modeloNegocio);
+                    return response()->json(['ModeloNegocio'=>$modeloNegocio]);
+                }
+
             }
+            return response()->json(['message'=>'modeloNegocio_already_exists'],500);
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -97,89 +87,79 @@ class ModeloNegocioController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function update(Request $request)
+    public function update(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
 
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
+            $proyecto = Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
+            $proyecto->load('ModeloNegocio');
+            if($proyecto->ModeloNegocio!=null)
             {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $proyecto->load('ModeloNegocio');
-                if($proyecto->ModeloNegocio!=null)
+                $request->ModeloNegocio = $this->processValue($request->ModeloNegocio);
+                if($request->type!=null)
                 {
-                    $request->ModeloNegocio = $this->processValue($request->ModeloNegocio);
-                    if($request->type!=null)
-                    {
-                        $data['user']=$user;
-                        $data['proyecto']=$proyecto;
-                        $data['request']=$request;
+                    $data['user']=$user;
+                    $data['proyecto']=$proyecto;
+                    $data['request']=$request;
 
-                        DB::transaction(function () use($data) {
-                            $user= $data['user'];
-                            $proyecto=$data['proyecto'];
-                            $request=$data['request'];
+                    DB::transaction(function () use($data) {
+                        $user= $data['user'];
+                        $proyecto=$data['proyecto'];
+                        $request=$data['request'];
 
 
-                            //Guardamos la ejecución
-                            $proyecto->ModeloNegocio->fill($request->ModeloNegocio);
-                            $proyecto->ModeloNegocio->save();
-                            $proyecto->ModeloNegocio->load('Archivos');
-
-                            //Ponemos el tipo de archivo junto con su ruta
-                            $tipo = TipoArchivo::where('Titulo',$request->type)->first();
-                            $ruta = $user->username."/".$request->type."_".$request->name;
-
-                            //Obtenemos el archivo viejo
-                            $storedFile = Archivos::where('idModeloNegocio',$proyecto->ModeloNegocio->id)->where('idTipoArchivo',$tipo->id)->first();
-
-                            if($storedFile!=null)
-                            {
-                                //Borramos el archivo viejo
-                                try{
-                                    Storage::delete($storedFile->Ruta);
-                                }catch(FileNotFoundException $e){}
-
-                                //Actualizamos la información
-                                $storedFile->Ruta = $ruta;
-                                $storedFile->save();
-                            }
-                            else
-                            {
-                                $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
-                                $proyecto->ModeloNegocio->Archivos()->save($archivo);
-                            }
-
-                            //Movemos el archivo
-                            $request->file('file')->move('files/'.$user->username,$request->type."_".$request->name);
-
-                        });
-                        $proyecto->load('ModeloNegocio');
-                        $tipo = TipoArchivo::where('Titulo',$request->type)->first();
-                        $storedFile = Archivos::where('idModeloNegocio',$proyecto->ModeloNegocio->id)->where('idTipoArchivo',$tipo->id)->first();
-                        return response()->json(
-                            ['ModeloNegocio'=>$proyecto->ModeloNegocio,'Archivo'=>$storedFile]);
-                    }
-                    else
-                    {
+                        //Guardamos la ejecución
                         $proyecto->ModeloNegocio->fill($request->ModeloNegocio);
                         $proyecto->ModeloNegocio->save();
-                        return response()->json(['ModeloNegocio'=>$proyecto->ModeloNegocio]);
-                    }
+                        $proyecto->ModeloNegocio->load('Archivos');
 
+                        //Ponemos el tipo de archivo junto con su ruta
+                        $tipo = TipoArchivo::where('Titulo',$request->type)->first();
+                        $ruta = $user->username."/".$request->type."_".$request->name;
 
+                        //Obtenemos el archivo viejo
+                        $storedFile = Archivos::where('idModeloNegocio',$proyecto->ModeloNegocio->id)->where('idTipoArchivo',$tipo->id)->first();
+
+                        if($storedFile!=null)
+                        {
+                            //Borramos el archivo viejo
+                            try{
+                                Storage::delete($storedFile->Ruta);
+                            }catch(FileNotFoundException $e){}
+
+                            //Actualizamos la información
+                            $storedFile->Ruta = $ruta;
+                            $storedFile->save();
+                        }
+                        else
+                        {
+                            $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
+                            $proyecto->ModeloNegocio->Archivos()->save($archivo);
+                        }
+
+                        //Movemos el archivo
+                        $request->file('file')->move('files/'.$user->username,$request->type."_".$request->name);
+
+                    });
+                    $proyecto->load('ModeloNegocio');
+                    $tipo = TipoArchivo::where('Titulo',$request->type)->first();
+                    $storedFile = Archivos::where('idModeloNegocio',$proyecto->ModeloNegocio->id)->where('idTipoArchivo',$tipo->id)->first();
+                    return response()->json(
+                        ['ModeloNegocio'=>$proyecto->ModeloNegocio,'Archivo'=>$storedFile]);
                 }
-                return response()->json(['message'=>'modeloNegocio_not_found'],404);
+                else
+                {
+                    $proyecto->ModeloNegocio->fill($request->ModeloNegocio);
+                    $proyecto->ModeloNegocio->save();
+                    return response()->json(['ModeloNegocio'=>$proyecto->ModeloNegocio]);
+                }
+
+
             }
+            return response()->json(['message'=>'modeloNegocio_not_found'],404);
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -196,35 +176,21 @@ class ModeloNegocioController extends Controller
         }
     }
 
-    public function show($idProyecto)
+    public function show($idProyecto=null,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
             $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$idProyecto)->first();
-            if($proyecto == null)
+            $proyecto = Proyecto::validateProyecto($idProyecto, $user, $whoIs, $idOrganizacion);
+            $proyecto->load('ModeloNegocio');
+
+            if($proyecto->ModeloNegocio!=null)
             {
-                return response()->json(['message'=>'server_error'],500);
+                $proyecto->ModeloNegocio->load('Archivos');
+                return response()->json($proyecto->ModeloNegocio);
             }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-
-
-
-                $proyecto->load('ModeloNegocio');
-
-                if($proyecto->ModeloNegocio!=null)
-                {
-                    $proyecto->ModeloNegocio->load('Archivos');
-                    return response()->json($proyecto->ModeloNegocio);
-                }
-                return response()->json(['message'=>'modeloNegocio_not_found'],500);
-
-            }
+            return response()->json(['message'=>'modeloNegocio_not_found'],500);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

@@ -24,24 +24,13 @@ class ImpactoController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $proyecto->load('Impacto');
+            $proyecto = Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
+            $proyecto->load('Impacto');
                 if($proyecto->Impacto==null)
                 {
                     $request->Impacto = $this->processValue($request->Impacto);
@@ -76,7 +65,7 @@ class ImpactoController extends Controller
 
                 }
                 return response()->json(['message'=>'impacto_already_exists'],500);
-            }
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -98,24 +87,14 @@ class ImpactoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function update(Request $request)
+    public function update(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
 
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $proyecto->load('Impacto');
+            $proyecto = Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
+            $proyecto->load('Impacto');
                 if($proyecto->Impacto!=null)
                 {
                     $request->Impacto = $this->processValue($request->Impacto);
@@ -180,7 +159,7 @@ class ImpactoController extends Controller
 
                 }
                 return response()->json(['message'=>'impacto_not_found'],404);
-            }
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -197,47 +176,28 @@ class ImpactoController extends Controller
         }
     }
 
-    public function show($idProyecto)
+    public function show($idProyecto=null,$whoIs='Persona',$idOrganizacion=null)
     {
-        try{
+        try {
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
+            $proyecto = Proyecto::validateProyecto($idProyecto, $user, $whoIs, $idOrganizacion);
+            $proyecto->load('Impacto');
+
+            if ($proyecto->Impacto != null) {
+                $proyecto->Impacto->load('Archivos');
+                return response()->json($proyecto->Impacto);
             }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-
-
-
-                $proyecto->load('Impacto');
-
-                if($proyecto->Impacto!=null)
-                {
-                    $proyecto->Impacto->load('Archivos');
-                    return response()->json($proyecto->Impacto);
-                }
-                return response()->json(['message'=>'impacto_not_found'],500);
-
-            }
-        }catch (QueryException $e)
-        {
-            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
-        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['message' => 'impacto_not_found'], 500);
+        } catch (QueryException $e) {
+            return response()->json(['message' => 'server_error', 'exception' => $e->getMessage()], 500);
+        } catch (Exceptions\TokenExpiredException $e) {
             return response()->json(['token_expired'], $e->getStatusCode());
         } catch (Exceptions\TokenInvalidException $e) {
             return response()->json(['token_invalid'], $e->getStatusCode());
-        }catch(UnauthorizedException $e)
-        {
+        } catch (UnauthorizedException $e) {
             return response()->json(['unauthorized'], $e->getStatusCode());
-        }
-        catch (Exceptions\JWTException $e) {
+        } catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
 

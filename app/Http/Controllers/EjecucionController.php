@@ -23,59 +23,47 @@ class EjecucionController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $user->load('Persona');
-
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
+            $proyecto = Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
+            $proyecto->load('Ejecucion');
+            if($proyecto->Ejecucion==null)
             {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $proyecto->load('Ejecucion');
-                if($proyecto->Ejecucion==null)
+                $request->Ejecucion = $this->processValue($request->Ejecucion);
+                $ejecucion = new Ejecucion($request->Ejecucion);
+                if($request->type!=null)
                 {
-                    $request->Ejecucion = $this->processValue($request->Ejecucion);
-                    $ejecucion = new Ejecucion($request->Ejecucion);
-                    if($request->type!=null)
-                    {
-                        $data['user']=$user;
-                        $data['proyecto']=$proyecto;
-                        $data['request']=$request;
-                        $ruta = $user->username."/".$request->type."_".$request->name;
-                        $tipo = TipoArchivo::where('Titulo',$request->type)->first();
-                        $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
-                        $data['ejecucion']=$ejecucion;
-                        $data['archivo']=$archivo;
+                    $data['user']=$user;
+                    $data['proyecto']=$proyecto;
+                    $data['request']=$request;
+                    $ruta = $user->username."/".$request->type."_".$request->name;
+                    $tipo = TipoArchivo::where('Titulo',$request->type)->first();
+                    $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
+                    $data['ejecucion']=$ejecucion;
+                    $data['archivo']=$archivo;
 
-                        return DB::transaction(function () use($data) {
-                            $proyecto = $data['proyecto'];
-                            $proyecto->Ejecucion()->save($data['ejecucion']);
-                            $proyecto = Proyecto::find($proyecto->id);
-                            $proyecto->load('Ejecucion');
-                            $proyecto->Ejecucion->load('Archivos');
-                            $proyecto->Ejecucion->Archivos()->save($data['archivo']);
-                            $data['request']->file('file')->move('files/'.$data['user']->username,$data['request']->type."_".$data['request']->name);
-                            return response()->json(['Ejecucion'=>$proyecto->Ejecucion,'Archivo'=>$data['archivo']]);
-                        });
-                    }
-                    else
-                    {
-                        $proyecto->Ejecucion()->save($ejecucion);
-                        return response()->json(['Ejecucion'=>$ejecucion]);
-                    }
-
+                    return DB::transaction(function () use($data) {
+                        $proyecto = $data['proyecto'];
+                        $proyecto->Ejecucion()->save($data['ejecucion']);
+                        $proyecto = Proyecto::find($proyecto->id);
+                        $proyecto->load('Ejecucion');
+                        $proyecto->Ejecucion->load('Archivos');
+                        $proyecto->Ejecucion->Archivos()->save($data['archivo']);
+                        $data['request']->file('file')->move('files/'.$data['user']->username,$data['request']->type."_".$data['request']->name);
+                        return response()->json(['Ejecucion'=>$proyecto->Ejecucion,'Archivo'=>$data['archivo']]);
+                    });
                 }
-                return response()->json(['message'=>'ejecucion_already_exists'],500);
+                else
+                {
+                    $proyecto->Ejecucion()->save($ejecucion);
+                    return response()->json(['Ejecucion'=>$ejecucion]);
+                }
+
             }
+            return response()->json(['message'=>'ejecucion_already_exists'],500);
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -97,23 +85,13 @@ class EjecucionController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function update(Request $request)
+    public function update(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
 
             $user = AuthenticateController::checkUser(null);
-            $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
+            $proyecto = Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
+
                 $proyecto->load('Ejecucion');
                 if($proyecto->Ejecucion!=null)
                 {
@@ -179,7 +157,7 @@ class EjecucionController extends Controller
 
                 }
                 return response()->json(['message'=>'ejecucion_not_found'],404);
-            }
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -198,35 +176,22 @@ class EjecucionController extends Controller
 
 
 
-    public function show($idProyecto)
+
+    public function show($idProyecto=null,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
+
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
+            $proyecto = Proyecto::validateProyecto($idProyecto, $user, $whoIs, $idOrganizacion);
+            $proyecto->load('Ejecucion');
+            if ($proyecto->Ejecucion != null) {
+                $proyecto->Ejecucion->load('Archivos');
+                return response()->json($proyecto->Ejecucion);
             }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
+            return response()->json(['message' => 'ejecucion_not_found'], 500);
 
 
-
-                $proyecto->load('Ejecucion');
-
-                if($proyecto->Ejecucion!=null)
-                {
-                    $proyecto->Ejecucion->load('Archivos');
-                    return response()->json($proyecto->Ejecucion);
-                }
-                return response()->json(['message'=>'ejecucion_not_found'],500);
-
-            }
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

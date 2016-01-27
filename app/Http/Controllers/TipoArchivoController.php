@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TipoArchivo;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -37,7 +38,7 @@ class TipoArchivoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -46,9 +47,17 @@ class TipoArchivoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function showAll($type=null)
     {
-        //
+        if($type==null)
+        {
+            return response()->json(['TipoArchivo'=>TipoArchivo::all()]);
+        }
+        else
+        {
+            return response()->json(['TipoArchivo'=>TipoArchivo::where('Aplicable',$type)->get()]);
+        }
+
     }
 
     /**
@@ -59,7 +68,7 @@ class TipoArchivoController extends Controller
      */
     public function edit($id)
     {
-        //
+
     }
 
     /**
