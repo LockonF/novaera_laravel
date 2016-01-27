@@ -25,8 +25,9 @@ class OrganizacionController extends Controller
     public function showAll()
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
-            return response()->json(Organizacion::all());
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            return response()->json(['Organizacion'=>$user->Persona->Organizacion()->get()]);
 
         }catch (QueryException $e)
         {
@@ -53,7 +54,11 @@ class OrganizacionController extends Controller
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            return response()->json(Organizacion::find($id));
+            $user->load('Persona');
+            return response()->json($user->Persona->Organizacion()
+                ->where('Persona_Organizacion.idPersona',$user->Persona->id)
+                ->where('Persona_Organizacion.idOrganizacion',$id)->first()
+            );
 
         }catch (QueryException $e)
         {
