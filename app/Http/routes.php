@@ -59,9 +59,17 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('Organizacion','OrganizacionController@showAll');
     Route::post('Organizacion','OrganizacionController@store');
     Route::post('Organizacion/Upload','OrganizacionController@upload');
-    Route::get('Organizacion/{id}','OrganizacionController@show');
-    Route::put('Organizacion/{id}','OrganizacionController@update');
-    Route::delete('Organizacion/{id}','OrganizacionController@destroy');
+    Route::get('Organizacion/{id}','OrganizacionController@show')->where(['id'=>'[0-9]+']);
+    Route::put('Organizacion/{id}','OrganizacionController@update')->where(['id'=>'[0-9]+']);
+    Route::delete('Organizacion/{id}','OrganizacionController@destroy')->where(['id'=>'[0-9]+']);
+    Route::post('Organizacion/Persona','OrganizacionController@addPersona');
+    Route::get('Organizacion/Persona/{id}','OrganizacionController@showPersonasOrganizacion')->where(['id'=>'[0-9]+']);
+    Route::delete('Organizacion/Persona/{idOrganizacion}/{idPersona}','OrganizacionController@removePersonaOrganizacion')
+        ->where(['idOrganizacion'=>'[0-9]+','idPersona'=>'[0-9]+']);
+        /*Consultables por todos*/
+        Route::get('Organizacion/General','OrganizacionController@showAllGeneral');
+        Route::get('Organizacion/General/{id}','OrganizacionController@showOneGeneral')->where(['id'=>'[0-9]+']);
+
 
     /*Contacto*/
     Route::post('Contacto','ContactoController@store');

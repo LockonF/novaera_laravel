@@ -31,7 +31,7 @@ class Persona extends Model
 
     public function Organizacion(){
         return $this->belongsToMany('App\Models\Organizacion', 'Persona_Organizacion', 'idPersona', 'idOrganizacion')
-            ->withPivot('Owner','FechaInicio','FechaTermino','Owner');
+            ->withPivot('Puesto','FechaInicio','FechaTermino','Owner','WritePermissions');
     }
 
 
