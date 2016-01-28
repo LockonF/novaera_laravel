@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: January 27, 2016 at 10:05:43 PM CST
+# Created: January 27, 2016 at 11:59:05 PM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -214,7 +214,7 @@ CREATE TABLE `EntidadFederativa` (
   PRIMARY KEY (`id`),
   KEY `fk_EntidadFederativa_Pais_idx` (`idPais`),
   CONSTRAINT `fk_EntidadFederativa_Pais` FOREIGN KEY (`idPais`) REFERENCES `Pais` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `EtapaProyecto` (
@@ -309,7 +309,7 @@ CREATE TABLE `Municipio` (
   PRIMARY KEY (`id`),
   KEY `fk_Municipio_EntidadFederativa1_idx` (`idEntidadFederativa`),
   CONSTRAINT `fk_Municipio_EntidadFederativa1` FOREIGN KEY (`idEntidadFederativa`) REFERENCES `EntidadFederativa` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Organizacion` (
@@ -320,6 +320,7 @@ CREATE TABLE `Organizacion` (
   `RFC` varchar(45) DEFAULT NULL,
   `Vision` varchar(450) DEFAULT NULL,
   `idContacto` int(11) DEFAULT NULL,
+  `idMunicipio` int(11) DEFAULT '0',
   `RepresentanteLegal` varchar(200) DEFAULT NULL,
   `RazonSocial` varchar(45) DEFAULT NULL,
   `Archivos` json DEFAULT NULL,
@@ -332,7 +333,7 @@ CREATE TABLE `Organizacion` (
   PRIMARY KEY (`id`),
   KEY `fk_Organizacion_Contacto1_idx` (`idContacto`),
   CONSTRAINT `fk_Organizacion_Contacto1` FOREIGN KEY (`idContacto`) REFERENCES `Contacto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Organizacion_Modalidad` (
@@ -370,7 +371,7 @@ CREATE TABLE `Pais` (
   `Nombre` varchar(45) NOT NULL,
   `Abrev` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ParqueTecnologico` (
@@ -719,6 +720,9 @@ UNLOCK TABLES;
 
 LOCK TABLES `EntidadFederativa` WRITE;
 ALTER TABLE `EntidadFederativa` DISABLE KEYS;
+INSERT INTO `EntidadFederativa` (`id`, `clave`, `Nombre`, `abrev`, `idPais`) VALUES 
+	(1,'1','Ciudad de México','CDMX',1),
+	(2,'2','Guanajuato','GTO',1);
 ALTER TABLE `EntidadFederativa` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -755,14 +759,17 @@ UNLOCK TABLES;
 
 LOCK TABLES `Municipio` WRITE;
 ALTER TABLE `Municipio` DISABLE KEYS;
+INSERT INTO `Municipio` (`id`, `clave`, `Nombre`, `sigla`, `idEntidadFederativa`) VALUES 
+	(1,'GAM','Gustavo A Madero','GAM',1),
+	(2,NULL,'Leon','LEO',2);
 ALTER TABLE `Municipio` ENABLE KEYS;
 UNLOCK TABLES;
 
 
 LOCK TABLES `Organizacion` WRITE;
 ALTER TABLE `Organizacion` DISABLE KEYS;
-INSERT INTO `Organizacion` (`id`, `Titulo`, `Descripcion`, `Mision`, `RFC`, `Vision`, `idContacto`, `RepresentanteLegal`, `RazonSocial`, `Archivos`, `isValidated`, `RENIECyTValidated`, `RFCValidated`, `ActaValidated`, `created_at`, `updated_at`) VALUES 
-	(1,'Mi Organizacion','Una Nueva Organizacion','Ser la mejor organizacion','FARD921018','Seremos la mejor organizacion dentro de 20 años',1,'Chadwick Carreto Arellano','Empresa S.A de C.V','{"RFCFile": "files/Organizaciones/1/RFC_Database.sql", "ActaFile": "files/Organizaciones/1/Acta_Endpoint%20Paw.zip", "RENIECyTFile": "files/Organizaciones/1/RENIECyT_BD.png"}',0,0,0,0,'2016-01-28 01:13:03','2016-01-28 03:10:35');
+INSERT INTO `Organizacion` (`id`, `Titulo`, `Descripcion`, `Mision`, `RFC`, `Vision`, `idContacto`, `idMunicipio`, `RepresentanteLegal`, `RazonSocial`, `Archivos`, `isValidated`, `RENIECyTValidated`, `RFCValidated`, `ActaValidated`, `created_at`, `updated_at`) VALUES 
+	(1,'Mi Organizacion','Una Nueva Organizacion','Ser la mejor organizacion','FARD921018','Seremos la mejor organizacion dentro de 20 años',1,0,'Chadwick Carreto Arellano','Empresa S.A de C.V','{"RFCFile": "files/Organizaciones/1/RFC_Database.sql", "ActaFile": "files/Organizaciones/1/Acta_Endpoint%20Paw.zip", "RENIECyTFile": "files/Organizaciones/1/RENIECyT_BD.png"}',0,0,0,0,'2016-01-28 01:13:03','2016-01-28 03:10:35');
 ALTER TABLE `Organizacion` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -781,6 +788,9 @@ UNLOCK TABLES;
 
 LOCK TABLES `Pais` WRITE;
 ALTER TABLE `Pais` DISABLE KEYS;
+INSERT INTO `Pais` (`id`, `Nombre`, `Abrev`) VALUES 
+	(1,'Mexico','MX'),
+	(2,'EUA','USA');
 ALTER TABLE `Pais` ENABLE KEYS;
 UNLOCK TABLES;
 
