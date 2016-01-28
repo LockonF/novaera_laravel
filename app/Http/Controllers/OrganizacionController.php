@@ -12,6 +12,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\FileNotFoundException;
 use Tymon\JWTAuth\Exceptions;
 
 
@@ -26,6 +28,7 @@ class OrganizacionController extends Controller
         try {
             AuthenticateController::checkUser(null);
             $organizacion = Organizacion::find($id);
+            $organizacion->Archivos = json_decode($organizacion->Archivos);
             if ($organizacion == null) {
                 return response()->json(['message' => 'organizacion_not_found'],404);
             }
@@ -58,7 +61,10 @@ class OrganizacionController extends Controller
     {
         try{
             AuthenticateController::checkUser(null);
-            return response()->json(['Organizacion'=>Organizacion::all()]);
+            $organizaciones = Organizacion::all();
+            foreach($organizaciones as $organizacion)
+            {$organizacion->Archivos = json_decode($organizacion->Archivos);}
+            return response()->json(['Organizacion'=>$organizaciones]);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -88,7 +94,11 @@ class OrganizacionController extends Controller
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            return response()->json(['Organizacion'=>$user->Persona->Organizacion()->get()]);
+            $organizaciones = $user->Persona->Organizacion()->get();
+            foreach($organizaciones as $organizacion)
+            {$organizacion->Archivos = json_decode($organizacion->Archivos);}
+
+            return response()->json(['Organizacion'=>$organizaciones]);
 
         }catch (QueryException $e)
         {
@@ -121,6 +131,7 @@ class OrganizacionController extends Controller
                 ->where('Persona_Organizacion.idOrganizacion',$id)->first();
 
             if($organizacion == null) {
+                $organizacion->Archivos = json_decode($organizacion->Archivos);
                 return response()->json(['message' => 'organizacion_not_found'],404);
             }
             return response()->json($organizacion);
@@ -263,8 +274,52 @@ class OrganizacionController extends Controller
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $request->file('file')->move('files/'.$user->username,$request->type."_".$request->name);
-            return response()->json();
+            $record= $user->Persona->Organizacion()->where('Organizacion.id',$request->idOrganizacion)->where('idPersona',$user->Persona->id)->where('Owner',1)->first();
+            if($record!=null)
+            {
+                $record->Archivos = json_decode($record->Archivos);
+                return DB::transaction(function() use($record,$request){
+                    if($request->ActaFile!=null)
+                    {
+                        if($record->Archivos->ActaFile!=null)
+                        {
+                            try{
+                                Storage::delete($record->Archivos->ActaFile);
+                            }catch(FileNotFoundException $e){}
+                        }
+                        $record->Archivos->ActaFile = 'files/Organizaciones/'.$record->id.'/'.'Acta_'.$request->ActaFile->getClientOriginalName();
+                        $request->ActaFile->move('files/Organizaciones/'.$record->id,"Acta_".$request->ActaFile->getClientOriginalName());
+                    }
+                    if($request->RFCFile!=null)
+                    {
+                        if($record->Archivos->RFCFile!=null)
+                        {
+                            try{
+                                Storage::delete($record->Archivos->RFCFile);
+                            }catch(FileNotFoundException $e){}
+                        }
+                        $record->Archivos->RFCFile = 'files/Organizaciones/'.$record->id.'/'.'RFC_'.$request->RFCFile->getClientOriginalName();
+                        $request->RFCFile->move('files/Organizaciones/'.$record->id,"RFC_".$request->RFCFile->getClientOriginalName());
+                    }
+                    if($request->RENIECyTFile!=null)
+                    {
+                        if($record->Archivos->RENIECyTFile!=null)
+                        {
+                            try{
+                                Storage::delete($record->Archivos->RENIECyTFile);
+                            }catch(FileNotFoundException $e){}
+                        }
+                        $record->Archivos->RENIECyTFile = 'files/Organizaciones/'.$record->id.'/'.'RENIECyT_'.$request->RENIECyTFile->getClientOriginalName();
+                        $request->RENIECyTFile->move('files/Organizaciones/'.$record->id,"RENIECyT_".$request->RENIECyTFile->getClientOriginalName());
+                    }
+                    $record->Archivos = json_encode($record->Archivos);
+                    $record->save();
+
+                    return response()->json($record);
+                });
+
+            }
+            return response(['organizacion_not_found'],404)->json();
 
         }catch (QueryException $e)
         {
@@ -333,6 +388,12 @@ class OrganizacionController extends Controller
         $organizacion->load('Persona');
         return response()->json(['Persona'=>$organizacion->Persona]);
     }
+
+    /**
+     * @param $idOrganizacion
+     * @param $idPersona
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function removePersonaOrganizacion($idOrganizacion,$idPersona)
     {

@@ -18,4 +18,9 @@ class Contacto extends Model
     {
         return $this->hasOne('App\Models\Direccion','idContacto');
     }
+
+    public function Organizacion()
+    {
+        return $this->hasMany('App\Models\Organizacion','idContacto');
+    }
 }

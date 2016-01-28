@@ -7,8 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Organizacion extends Model
 {
     protected $table = 'Organizacion';
-    protected $fillable = ['Titulo','Descripcion','Mision','Vision'];
+    protected $fillable = ['Titulo','Descripcion','Mision','Vision','RFC','idContacto','RepresentanteLegal'
+    ,'RazonSocial','ActaFile','RFCFile','RENIECyTFile'];
 
+    public function Contacto()
+    {
+        return $this->belongsTo('App\Models\Contacto','idContacto');
+    }
 
     public function Persona(){
         return $this->belongsToMany('App\Models\Persona', 'Persona_Organizacion', 'idOrganizacion', 'idPersona')
