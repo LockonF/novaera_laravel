@@ -386,6 +386,10 @@ class OrganizacionController extends Controller
             return response()->json(['message'=>'organizacion_not_found'],404);
         }
         $organizacion->load('Persona');
+        foreach($organizacion->Persona as $persona)
+        {
+            $persona->load('Contacto');
+        }
         return response()->json(['Persona'=>$organizacion->Persona]);
     }
 
