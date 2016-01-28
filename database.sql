@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: January 27, 2016 at 11:59:05 PM CST
+# Created: January 28, 2016 at 12:12:06 AM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -319,6 +319,8 @@ CREATE TABLE `Organizacion` (
   `Mision` varchar(450) DEFAULT NULL,
   `RFC` varchar(45) DEFAULT NULL,
   `Vision` varchar(450) DEFAULT NULL,
+  `Giro` varchar(128) DEFAULT NULL,
+  `DireccionFiscal` varchar(500) DEFAULT NULL,
   `idContacto` int(11) DEFAULT NULL,
   `idMunicipio` int(11) DEFAULT '0',
   `RepresentanteLegal` varchar(200) DEFAULT NULL,
@@ -421,6 +423,7 @@ CREATE TABLE `Persona_Proyecto` (
   `idProyecto` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL,
   `Owner` tinyint(4) NOT NULL DEFAULT '0',
+  `WritePermissions` tinyint(4) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -429,7 +432,7 @@ CREATE TABLE `Persona_Proyecto` (
   KEY `fk_Proyecto_has_Persona_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_has_Persona_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_has_Persona_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProgramaFondeo` (
@@ -480,7 +483,7 @@ CREATE TABLE `Proyecto` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Proyecto_Modalidad` (
@@ -768,8 +771,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `Organizacion` WRITE;
 ALTER TABLE `Organizacion` DISABLE KEYS;
-INSERT INTO `Organizacion` (`id`, `Titulo`, `Descripcion`, `Mision`, `RFC`, `Vision`, `idContacto`, `idMunicipio`, `RepresentanteLegal`, `RazonSocial`, `Archivos`, `isValidated`, `RENIECyTValidated`, `RFCValidated`, `ActaValidated`, `created_at`, `updated_at`) VALUES 
-	(1,'Mi Organizacion','Una Nueva Organizacion','Ser la mejor organizacion','FARD921018','Seremos la mejor organizacion dentro de 20 años',1,0,'Chadwick Carreto Arellano','Empresa S.A de C.V','{"RFCFile": "files/Organizaciones/1/RFC_Database.sql", "ActaFile": "files/Organizaciones/1/Acta_Endpoint%20Paw.zip", "RENIECyTFile": "files/Organizaciones/1/RENIECyT_BD.png"}',0,0,0,0,'2016-01-28 01:13:03','2016-01-28 03:10:35');
+INSERT INTO `Organizacion` (`id`, `Titulo`, `Descripcion`, `Mision`, `RFC`, `Vision`, `Giro`, `DireccionFiscal`, `idContacto`, `idMunicipio`, `RepresentanteLegal`, `RazonSocial`, `Archivos`, `isValidated`, `RENIECyTValidated`, `RFCValidated`, `ActaValidated`, `created_at`, `updated_at`) VALUES 
+	(1,'Mi Organizacion','Una Nueva Organizacion','Ser la mejor organizacion','FARD921018','Seremos la mejor organizacion dentro de 20 años',NULL,NULL,1,0,'Chadwick Carreto Arellano','Empresa S.A de C.V','{"RFCFile": "files/Organizaciones/1/RFC_Database.sql", "ActaFile": "files/Organizaciones/1/Acta_Endpoint%20Paw.zip", "RENIECyTFile": "files/Organizaciones/1/RENIECyT_BD.png"}',0,0,0,0,'2016-01-28 01:13:03','2016-01-28 03:10:35');
 ALTER TABLE `Organizacion` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -819,6 +822,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `Persona_Proyecto` WRITE;
 ALTER TABLE `Persona_Proyecto` DISABLE KEYS;
+INSERT INTO `Persona_Proyecto` (`id`, `idProyecto`, `idPersona`, `Owner`, `WritePermissions`, `created_at`, `updated_at`) VALUES 
+	(1,5,1,1,1,NULL,NULL);
 ALTER TABLE `Persona_Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -843,6 +848,12 @@ UNLOCK TABLES;
 
 LOCK TABLES `Proyecto` WRITE;
 ALTER TABLE `Proyecto` DISABLE KEYS;
+INSERT INTO `Proyecto` (`id`, `Titulo`, `Descripcion`, `Antecedentes`, `Justificacion`, `Objetivos`, `Alcances`, `created_at`, `updated_at`) VALUES 
+	(1,'Proyecto 2','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-01-28 06:07:41','2016-01-28 06:07:41'),
+	(2,'Proyecto 2','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-01-28 06:08:05','2016-01-28 06:08:05'),
+	(3,'Proyecto 2','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-01-28 06:09:47','2016-01-28 06:09:47'),
+	(4,'Proyecto 2','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-01-28 06:09:48','2016-01-28 06:09:48'),
+	(5,'Proyecto 2','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-01-28 06:10:55','2016-01-28 06:10:55');
 ALTER TABLE `Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
