@@ -24,6 +24,10 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::post('Authenticate', 'AuthenticateController@authenticate');
     Route::post('Register', 'AuthenticateController@register');
     Route::get('User', 'AuthenticateController@getUser');
+
+    /*Refresh Token*/
+    Route::get('RefreshToken','AuthenticateController@refreshToken');
+
     /*Persona*/
     Route::get('Persona','PersonaController@show');
     Route::post('Persona','PersonaController@store');

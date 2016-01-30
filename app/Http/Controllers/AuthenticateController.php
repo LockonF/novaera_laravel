@@ -11,11 +11,28 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Mockery\CountValidator\Exception;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Tymon\JWTAuth\Exceptions;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticateController extends Controller
 {
+
+    public function refreshToken()
+    {
+        $token = JWTAuth::getToken();
+        if(!$token){
+            throw new Exceptions\JWTException('Token not provided');
+        }
+        try{
+            $token = JWTAuth::refresh($token);
+        }catch(TokenInvalidException $e){
+            throw new AccessDeniedHttpException('The token is invalid');
+        }
+        return response()->json(['token'=>$token]);
+    }
+
 
     /**
      * @param Request $request

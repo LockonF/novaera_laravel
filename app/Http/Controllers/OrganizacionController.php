@@ -379,18 +379,27 @@ class OrganizacionController extends Controller
 
     public function showPersonasOrganizacion($id)
     {
-        $user = AuthenticateController::checkUser(null);
-        $organizacion= $user->Persona->Organizacion()->find($id);
-        if($organizacion==null)
+        try {
+            $user = AuthenticateController::checkUser(null);
+            $organizacion = $user->Persona->Organizacion()->find($id);
+            if ($organizacion == null) {
+                return response()->json(['message' => 'organizacion_not_found'], 404);
+            }
+            $organizacion->load('Persona');
+            foreach ($organizacion->Persona as $persona) {
+                $persona->load('Contacto');
+            }
+            return response()->json(['Persona' => $organizacion->Persona]);
+        }catch (QueryException $e)
         {
-            return response()->json(['message'=>'organizacion_not_found'],404);
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
         }
-        $organizacion->load('Persona');
-        foreach($organizacion->Persona as $persona)
-        {
-            $persona->load('Contacto');
-        }
-        return response()->json(['Persona'=>$organizacion->Persona]);
     }
 
     /**
