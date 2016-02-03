@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 2, 2016 at 11:52:01 PM CST
+# Created: February 2, 2016 at 11:55:51 PM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -403,7 +403,7 @@ CREATE TABLE `Pais` (
   `Nombre` varchar(45) NOT NULL,
   `Abrev` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ParqueTecnologico` (
@@ -828,6 +828,9 @@ UNLOCK TABLES;
 
 LOCK TABLES `Pais` WRITE;
 ALTER TABLE `Pais` DISABLE KEYS;
+INSERT INTO `Pais` (`id`, `Nombre`, `Abrev`) VALUES 
+	(1,'Mexico','MEX'),
+	(2,'Alemania','GER');
 ALTER TABLE `Pais` ENABLE KEYS;
 UNLOCK TABLES;
 
