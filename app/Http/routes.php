@@ -134,9 +134,12 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
 
     /*Metodos para registrar el TRL de un proyecto */
-        Route::post('Proyecto/TRL','ProyectoController@addTRL');
-        Route::post('Proyecto/TRL/Delete','ProyectoController@deleteTRLs');
-        Route::get('Proyecto/TRL/{id}','ProyectoController@viewTRL');
+        Route::post('Proyecto/TRL/{whoIs?}/{idOrganizacion?}','ProyectoController@addTRL')
+            ->where(['whoIs'=>'(Organizacion)','idOrganizacion'=>'[0-9]+']);
+        Route::post('Proyecto/TRL/Delete/{whoIs?}/{idOrganizacion?}','ProyectoController@deleteTRLs')
+            ->where(['whoIs'=>'(Organizacion)','idOrganizacion'=>'[0-9]+']);
+        Route::get('Proyecto/TRL/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@viewTRL')
+            ->where(['id'=>'[0-9]+','whoIs'=>'(Organizacion)','idOrganizacion'=>'[0-9]+']);
 
         /*Métodos para registrar la ejecución de un proyecto*/
         Route::post('Ejecucion/{whoIs?}/{idOrganizacion?}','EjecucionController@store')
@@ -169,7 +172,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::post('EtapaProyecto','EtapaProyectoController@store');
 
         /*Métodos para registrar resultados de un proyecto*/
-        Route::post('Proyecto/Resultados','ProyectoController@addResult');
+        Route::post('Proyecto/Resultados/{whoIs?}/{idOrganizacion?}','ProyectoController@addResult')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::put('Proyecto/Resultados','ProyectoController@editResult');
         Route::get('Proyecto/Resultados/{id}/{type?}','ProyectoController@showResults')
             ->where(['id'=>'[0-9]+','type'=>'(Patente|Producto|Servicio|Proceso|Todos)']);
@@ -183,7 +187,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::put('ProgramaFondeo/{id}','ProgramaFondeoController@update');
     Route::delete('ProgramaFondeo/{id}','ProgramaFondeoController@destroy');
         /*Convocatorias del Programa de Fondeo */
-        Route::get('ProgramaFondeo/Convocatoria/{id}','ProgramaFondeoController@showConvocatorias');
+        Route::get('ProgramaFondeo/Modalidad/{id}','ProgramaFondeoController@showModalidades');
 
     /*Convocatorias*/
     Route::post('Convocatoria','ConvocatoriaController@store');

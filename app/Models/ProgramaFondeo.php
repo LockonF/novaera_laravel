@@ -9,9 +9,9 @@ class ProgramaFondeo extends Model
     protected $table = 'ProgramaFondeo';
     protected $fillable = ['Titulo','PublicoObjetivo','FondoTotal','CriteriosElegibilidad'];
 
-    public function Convocatoria()
+    public function Modalidad()
     {
-        return $this->hasMany('App\Models\Convocatoria','idProgramaFondeo');
+        return $this->hasMany('App\Models\Modalidad','idProgramaFondeo');
     }
 
 }

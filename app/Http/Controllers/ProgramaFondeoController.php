@@ -73,13 +73,13 @@ class ProgramaFondeoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function showConvocatorias($id)
+    public function showModalidades($id)
     {
         try{
-            $programaFondeo = ProgramaFondeo::with('Convocatoria')->find($id);
+            $programaFondeo = ProgramaFondeo::with('Modalidad')->find($id);
             if($programaFondeo!=null)
             {
-                return response()->json($programaFondeo->Convocatoria);
+                return response()->json($programaFondeo->Modalidad);
             }
             return response()->json(['message'=>'programa_fondeo_not_found'],404);
         }catch (QueryException $e)

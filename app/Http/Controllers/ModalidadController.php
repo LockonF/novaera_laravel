@@ -24,24 +24,8 @@ class ModalidadController extends Controller
     {
         try{
             AuthenticateController::checkUser('Supervisor');
-            return DB::transaction(function() use ($request)
-            {
                 $modalidad = new Modalidad($request->all());
                 $modalidad->save();
-
-                if($request->Criterios!=null)
-                {
-                    $criterios = [];
-                    foreach($request->Criterios as $criterio)
-                    {
-                        $criterios[]= new ModalidadCriterios($criterio);
-                    }
-                    $modalidad->Criterios()->saveMany($criterios);
-                    $modalidad->load('Criterios');
-                }
-                return response()->json($modalidad);
-            });
-
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

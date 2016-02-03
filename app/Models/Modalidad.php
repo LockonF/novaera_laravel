@@ -7,24 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Modalidad extends Model
 {
     protected $table = 'Modalidad';
-    protected $fillable = ['Nombre','Montos','CriteriosEvaluacion','Entregables','FigurasApoyo','idConvocatoria'];
+    protected $fillable = ['Nombre','Montos','CriteriosEvaluacion','Entregables','FigurasApoyo','idProgramaFondeo'];
 
     /*Relationships*/
 
+    public function ProgramaFondeo()
+    {
+        return $this->belongsTo('App\Models\ProgramaFondeo','idProgramaFondeo');
+    }
+
     public function Convocatoria()
     {
-        return $this->belongsTo('App\Models\Convocatoria','idConvocatoria');
-    }
-
-    public function Proyecto()
-    {
-        return $this->belongsToMany('App\Models\Proyecto', 'Proyecto_Modalidad', 'idProyecto', 'idModalidad')->
-        withPivot('id','Solicitud','MontoSolicitado','MontoApoyado','TRLInicial','TRLFinal','FechaRegistro','FechaCierre','Resultado');
-    }
-
-    public function Criterios()
-    {
-        return $this->hasMany('App\Models\ModalidadCriterios','idModalidad');
+        return $this->belongsToMany('App\Models\Convocatoria','Convocatoria_Modalidad','idModalidad','idConvocatoria');
     }
 
 

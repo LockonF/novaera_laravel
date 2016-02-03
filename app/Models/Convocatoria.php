@@ -20,7 +20,7 @@ class Convocatoria extends Model
 
     public function Modalidad()
     {
-        return $this->hasMany('App\Models\Modalidad','idConvocatoria');
+        return $this->belongsToMany('App\Models\Convocatoria','Convocatoria_Modalidad','idConvocatoria','idModalidad');
     }
 
 
