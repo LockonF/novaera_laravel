@@ -226,8 +226,8 @@ class ImpactoController extends Controller
             {
                 $results = DB::table('TipoArchivo')
                     ->join('Archivos','Archivos.idTipoArchivo','=','TipoArchivo.id')
-                    ->join('ImpactoyComercializacion','Archivos.idImpacto','=','ImpactoyComercializacion.id')
-                    ->join('Proyecto','ImpactoyComercializacion.idProyecto','=','Proyecto.id')
+                    ->join('ImpactoYComercializacion','Archivos.idImpacto','=','ImpactoYComercializacion.id')
+                    ->join('Proyecto','ImpactoYComercializacion.idProyecto','=','Proyecto.id')
                     ->where('Proyecto.id',$idProyecto)
                     ->select('Archivos.Ruta as Ruta','TipoArchivo.Titulo as Tipo')
                     ->get();
