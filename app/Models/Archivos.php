@@ -21,7 +21,7 @@ class Archivos extends Model
 
     public function Impacto()
     {
-        return $this->belongsTo('App\Models\Ejecucion','idImpacto');
+        return $this->belongsTo('App\Models\Impacto','idImpacto');
     }
 
     public function TipoArchivo()
