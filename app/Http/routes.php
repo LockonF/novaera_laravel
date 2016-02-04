@@ -130,7 +130,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::get('Impacto/{idProyecto}/{whoIs?}/{idOrganizacion?}','ImpactoController@show')
             ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
-        Route::get('Impacto/Archivos/{idProyecto}','ImpactoController@showFileRoutes');
+        Route::get('Impacto/Archivos/{idProyecto}/{whoIs?}/{idOrganizacion?}','ImpactoController@showFileRoutes')
+            ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);;
 
 
     /*Metodos para registrar el TRL de un proyecto */
