@@ -40,7 +40,7 @@ class ModeloNegocioController extends Controller
                     $data['user']=$user;
                     $data['proyecto']=$proyecto;
                     $data['request']=$request;
-                    $ruta = $user->username."/".$request->type."_".$request->name;
+                    $ruta = "files/".$user->username."/".$request->type."_".$request->name;
                     $tipo = TipoArchivo::where('Titulo',$request->type)->first();
                     $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
                     $data['modeloNegocio']=$modeloNegocio;
@@ -117,7 +117,7 @@ class ModeloNegocioController extends Controller
 
                         //Ponemos el tipo de archivo junto con su ruta
                         $tipo = TipoArchivo::where('Titulo',$request->type)->first();
-                        $ruta = $user->username."/".$request->type."_".$request->name;
+                        $ruta = "files/".$user->username."/".$request->type."_".$request->name;
 
                         //Obtenemos el archivo viejo
                         $storedFile = Archivos::where('idModeloNegocio',$proyecto->ModeloNegocio->id)->where('idTipoArchivo',$tipo->id)->first();

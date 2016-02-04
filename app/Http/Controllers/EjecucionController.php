@@ -38,7 +38,7 @@ class EjecucionController extends Controller
                     $data['user']=$user;
                     $data['proyecto']=$proyecto;
                     $data['request']=$request;
-                    $ruta = $user->username."/".$request->type."_".$request->name;
+                    $ruta = "files/".$user->username."/".$request->type."_".$request->name;
                     $tipo = TipoArchivo::where('Titulo',$request->type)->first();
                     $archivo = new Archivos(["Ruta"=>$ruta,"idTipoArchivo"=>$tipo->id]);
                     $data['ejecucion']=$ejecucion;
@@ -115,7 +115,7 @@ class EjecucionController extends Controller
 
                             //Ponemos el tipo de archivo junto con su ruta
                             $tipo = TipoArchivo::where('Titulo',$request->type)->first();
-                            $ruta = $user->username."/".$request->type."_".$request->name;
+                            $ruta = "files/".$user->username."/".$request->type."_".$request->name;
 
                             //Obtenemos el archivo viejo
                             $storedFile = Archivos::where('idEjecucion',$proyecto->Ejecucion->id)->where('idTipoArchivo',$tipo->id)->first();

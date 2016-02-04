@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 2, 2016 at 11:55:51 PM CST
+# Created: February 3, 2016 at 9:24:54 PM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -635,12 +635,12 @@ CREATE TABLE `TareaEtapa` (
 
 CREATE TABLE `TipoArchivo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `Titulo` varchar(45) NOT NULL,
-  `Aplicable` char(1) DEFAULT NULL,
+  `Titulo` varchar(50) NOT NULL,
+  `Aplicable` varchar(45) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `TipoDescriptor` (
@@ -940,6 +940,37 @@ UNLOCK TABLES;
 
 LOCK TABLES `TipoArchivo` WRITE;
 ALTER TABLE `TipoArchivo` DISABLE KEYS;
+INSERT INTO `TipoArchivo` (`id`, `Titulo`, `Aplicable`, `created_at`, `updated_at`) VALUES 
+	(1,'Requisitos','Ejecucion',NULL,NULL),
+	(2,'AnalisisEntornoP','Ejecucion',NULL,NULL),
+	(3,'FactibilidadTecnicaP','Ejecucion',NULL,NULL),
+	(4,'FactibilidadEconomicaP','Ejecucion',NULL,NULL),
+	(5,'FactibilidadComercialP','Ejecucion',NULL,NULL),
+	(6,'BenchmarkComercialP','Ejecucion',NULL,NULL),
+	(7,'BenchmarkTecnologicoP','Ejecucion',NULL,NULL),
+	(8,'RecursosHumanosP','Ejecucion',NULL,NULL),
+	(9,'RecursosFinancierosP','Ejecucion',NULL,NULL),
+	(10,'RecursosTecnologicosP','Ejecucion',NULL,NULL),
+	(11,'RecursosMaterialesP','Ejecucion',NULL,NULL),
+	(12,'ImpactoAmbiental','Impacto',NULL,NULL),
+	(13,'ImpactoCientifico','Impacto',NULL,NULL),
+	(14,'ImpactoTecnologico','Impacto',NULL,NULL),
+	(15,'ImpactoSocial','Impacto',NULL,NULL),
+	(16,'ImpactoEconomico','Impacto',NULL,NULL),
+	(17,'PropuestaDeValor','Impacto',NULL,NULL),
+	(18,'SegmentosDeClientes','Impacto',NULL,NULL),
+	(19,'SolucionPropuesta','Impacto',NULL,NULL),
+	(20,'Metricas','Impacto',NULL,NULL),
+	(21,'SolucionActual','Impacto',NULL,NULL),
+	(22,'Canales','ModeloNegocio',NULL,NULL),
+	(23,'VentajaCompetitiva','ModeloNegocio',NULL,NULL),
+	(24,'Problematica','ModeloNegocio',NULL,NULL),
+	(25,'Costos','ModeloNegocio',NULL,NULL),
+	(26,'Ingresos','ModeloNegocio',NULL,NULL),
+	(27,'ActividadesClave','ModeloNegocio',NULL,NULL),
+	(28,'RelacionesCliente','ModeloNegocio',NULL,NULL),
+	(29,'RecursosClave','ModeloNegocio',NULL,NULL),
+	(30,'AliadosClave','ModeloNegocio',NULL,NULL);
 ALTER TABLE `TipoArchivo` ENABLE KEYS;
 UNLOCK TABLES;
 
