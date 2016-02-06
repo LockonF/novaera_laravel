@@ -217,7 +217,9 @@ class ConvocatoriaController extends Controller
             $convocatoria = Convocatoria::find($id);
             if($convocatoria!=null)
             {
+                $requisitos = json_encode($request->Requisitos);
                 $convocatoria->fill($request->all());
+                $convocatoria->Requisitos = $requisitos;
                 $convocatoria->save();
                 return response()->json($convocatoria,200);
             }
