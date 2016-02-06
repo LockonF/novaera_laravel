@@ -161,16 +161,24 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::get('ModeloNegocio/Archivos/{idProyecto}','ModeloNegocioController@showFileRoutes');
 
     /*Métodos para registrar el Modelo de Negocio de un proyecto*/
-        Route::post('TransferenciaTecnologica','TransferenciaTecnologicaController@store');
+
+
+        Route::post('TransferenciaTecnologica/{whoIs?}/{idOrganizacion?}','TransferenciaTecnologicaController@store')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::get('TransferenciaTecnologica/Archivos/{id}','TransferenciaTecnologicaController@showFileRoutes');
         Route::get('TransferenciaTecnologica/{id}','TransferenciaTecnologicaController@show');
-        Route::delete('TransferenciaTecnologica/{id}','TransferenciaTecnologicaController@destroy');
-        Route::post('TransferenciaTecnologica/Update','TransferenciaTecnologicaController@update');
-        Route::get('Proyecto/TransferenciaTecnologica/{idProyecto}','TransferenciaTecnologicaController@showAll');
+        Route::delete('TransferenciaTecnologica/{id}/{whoIs?}/{idOrganizacion?}','TransferenciaTecnologicaController@destroy')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::post('TransferenciaTecnologica/Update/{whoIs?}/{idOrganizacion?}','TransferenciaTecnologicaController@update')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::get('Proyecto/TransferenciaTecnologica/{idProyecto}/{whoIs?}/{idOrganizacion?}','TransferenciaTecnologicaController@showAll')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
 
         /*Métodos para registrar etapas en un proyecto*/
-        Route::get('Proyecto/EtapaProyecto/{id}','ProyectoController@showEtapas');
-        Route::post('EtapaProyecto','EtapaProyectoController@store');
+        Route::get('Proyecto/EtapaProyecto/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@showEtapas')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::post('EtapaProyecto/{whoIs?}/{idOrganizacion?}','EtapaProyectoController@store')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
 
         /*Métodos para registrar resultados de un proyecto*/
         Route::post('Proyecto/Resultados/{whoIs?}/{idOrganizacion?}','ProyectoController@addResult')

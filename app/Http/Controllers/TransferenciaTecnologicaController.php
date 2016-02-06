@@ -23,13 +23,13 @@ class TransferenciaTecnologicaController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
+            $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
+            //$proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
             if($proyecto == null)
             {
                 return response()->json(['message'=>'server_error'],500);
@@ -92,13 +92,14 @@ class TransferenciaTecnologicaController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function update(Request $request)
+    public function update(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
 
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
+            $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
+            //$proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
             if($proyecto == null)
             {
                 return response()->json(['message'=>'server_error'],500);
@@ -192,10 +193,12 @@ class TransferenciaTecnologicaController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function destroy($id)
+    public function destroy($id,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto = Proyecto::validateProyecto($id, $user, $whoIs, $idOrganizacion);
             $transferencia = TransferenciaTecnologica::find($id);
             if($transferencia==null)
             {
@@ -266,12 +269,14 @@ class TransferenciaTecnologicaController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function showAll($idProyecto)
+    public function showAll($idProyecto,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
            AuthenticateController::checkUser(null);
-
-            $proyecto  = Proyecto::where('Proyecto.id',$idProyecto)->first();
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto = Proyecto::validateProyecto($idProyecto, $user, $whoIs, $idOrganizacion);
+            //$proyecto  = Proyecto::where('Proyecto.id',$idProyecto)->first();
             if($proyecto == null)
             {
                 return response()->json(['message'=>'server_error'],500);
