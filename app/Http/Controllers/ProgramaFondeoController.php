@@ -22,7 +22,7 @@ class ProgramaFondeoController extends Controller
     public function show($id)
     {
         try{
-            $programaFondeo = ProgramaFondeo::find($id);
+            $programaFondeo = ProgramaFondeo::with('Modalidad')->find($id);
             if($programaFondeo!=null)
             return response()->json($programaFondeo);
             return response()->json(['message'=>'programa_fondeo_not_found'],404);
@@ -50,7 +50,7 @@ class ProgramaFondeoController extends Controller
     {
         try{
             $programaFondeo = ProgramaFondeo::get();
-            return response()->json($programaFondeo);
+            return response()->json(['ProgramaFondeo'=>$programaFondeo]);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

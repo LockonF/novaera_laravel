@@ -43,7 +43,7 @@ class AuthenticateController extends Controller
      * @throws \Exception
      */
 
-    public static function checkUser($permissions)
+    public static function checkUser($permissions ='User')
     {
 
         $admin = ['Admin'];

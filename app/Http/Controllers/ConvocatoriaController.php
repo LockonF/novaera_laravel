@@ -107,17 +107,18 @@ class ConvocatoriaController extends Controller
                 if ($convocatoria == null) {
                     return response()->json(['message' => 'convocatoria_not_found'], 500);
                 }
-                foreach($request->idModalidad as $modalidad) {
+                foreach($request->Modalidad as $modalidad) {
                     $storedModalidad = Modalidad::find($modalidad);
+                    if ($storedModalidad == null) {
+                        return response()->json(['message' => 'modalidad_not_found'], 500);
+                    }
                     if ($convocatoria->ProgramaAsociado == null) {
                         $convocatoria->ProgramaAsociado = $storedModalidad->idProgramaFondeo;
                         $convocatoria->save();
                     }
                     if ($convocatoria->ProgramaAsociado != $storedModalidad->idProgramaFondeo) {
-                        return response()->json(['message' => 'can_only_add_convocatoria_to_one_programafondeo']);
-                    }
-                    if ($storedModalidad == null) {
-                        return response()->json(['message' => 'modalidad_not_found'], 500);
+                        DB::rollBack();
+                        return response()->json(['message' => 'can_only_add_convocatoria_to_one_programafondeo'],500);
                     }
                     $convocatoria->Modalidad()->save($storedModalidad);
                 }
@@ -237,6 +238,28 @@ class ConvocatoriaController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
 
+    }
+
+    public function showAll()
+    {
+        try{
+            $user = AuthenticateController::checkUser();
+            $convocatoria = Convocatoria::all();
+            return response()->json(['Convocatoria'=>$convocatoria]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
     }
 
 

@@ -191,6 +191,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::get('ProgramaFondeo/Modalidad/{id}','ProgramaFondeoController@showModalidades');
 
     /*Convocatorias*/
+    Route::get('Convocatoria','ConvocatoriaController@showAll');
     Route::post('Convocatoria','ConvocatoriaController@store');
     Route::put('Convocatoria/{id}','ConvocatoriaController@update');
     Route::delete('Convocatoria/{id}','ConvocatoriaController@destroy');
@@ -201,9 +202,12 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::delete('Convocatoria/{idConvocatoria}/Modalidad','ConvocatoriaController@detachFromAll')
             ->where(['idConvocatoria'=>'[0-9]+']);
     /*Modalidades*/
+    Route::get('Modalidad/Convocatoria/{id}','ModalidadController@showConvocatorias')
+        ->where(['id'=>'[0-9]+']);
     Route::post('Modalidad','ModalidadController@store');
     Route::delete('Modalidad/{id}','ModalidadController@destroy');
     Route::put('Modalidad/{id}','ModalidadController@update');
+    Route::get('Modalidad','ModalidadController@show');
 
     /*TRL*/
     Route::get('TRL','TRLController@show');
