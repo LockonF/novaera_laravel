@@ -18,7 +18,8 @@ class Modalidad extends Model
 
     public function Convocatoria()
     {
-        return $this->belongsToMany('App\Models\Convocatoria','Convocatoria_Modalidad','idModalidad','idConvocatoria');
+        return $this->belongsToMany('App\Models\Convocatoria','Convocatoria_Modalidad','idModalidad','idConvocatoria')
+            ->withTimestamps();
     }
 
 

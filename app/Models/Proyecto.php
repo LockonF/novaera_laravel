@@ -125,4 +125,10 @@ class Proyecto extends Model
         withPivot('id','Descripcion','Fecha','created_at','updated_at');
     }
 
+    public function RegistroProyecto()
+    {
+        return $this->hasMany('App\Models\RegistroProyecto','idProyecto');
+    }
+
+
 }

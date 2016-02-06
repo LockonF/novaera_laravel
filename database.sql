@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 4, 2016 at 2:21:46 AM CST
+# Created: February 4, 2016 at 12:49:16 PM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -83,7 +83,7 @@ CREATE TABLE `Archivos` (
   CONSTRAINT `fk_Archivos_TareaEtapa1` FOREIGN KEY (`idTareaEtapa`) REFERENCES `TareaEtapa` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_TipoArchivo1` FOREIGN KEY (`idTipoArchivo`) REFERENCES `TipoArchivo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_TransferenciaTecnologica1` FOREIGN KEY (`idTransferenciaTecnologica`) REFERENCES `TransferenciaTecnologica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Asociacion` (
@@ -139,8 +139,11 @@ CREATE TABLE `Convocatoria_Modalidad` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idModalidad` int(11) NOT NULL,
   `idConvocatoria` int(11) NOT NULL,
+  `idProgramaFondeo` int(11) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_Convocatoria_Modalidad` (`idModalidad`,`idConvocatoria`),
+  UNIQUE KEY `uq_Convocatoria_Modalidad` (`idConvocatoria`,`idProgramaFondeo`) USING BTREE,
   KEY `fk_Modalidad_has_Convocatoria_Convocatoria1_idx` (`idModalidad`),
   KEY `fk_Modalidad_has_Convocatoria_Modalidad1_idx` (`idConvocatoria`),
   CONSTRAINT `fk_Modalidad_has_Convocatoria_Convocatoria1` FOREIGN KEY (`idModalidad`) REFERENCES `Convocatoria` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -279,7 +282,7 @@ CREATE TABLE `ImpactoYComercializacion` (
   PRIMARY KEY (`id`),
   KEY `fk_ImpactoyComercializacion_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_ImpactoyComercializacion_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Modalidad` (
@@ -705,7 +708,7 @@ CREATE TABLE `Validacion_Criterio` (
 LOCK TABLES `Archivos` WRITE;
 ALTER TABLE `Archivos` DISABLE KEYS;
 INSERT INTO `Archivos` (`id`, `Ruta`, `ProgramaFondeo_id`, `idOrganizacionLegal`, `idEjecucion`, `idTareaEtapa`, `idImpacto`, `idModeloNegocio`, `idTransferenciaTecnologica`, `validado`, `idTipoArchivo`, `created_at`, `updated_at`) VALUES 
-	(1,'files/Lockon/ImpactoAmbiental_BD.png',NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,12,'2016-02-04 03:25:34','2016-02-04 07:31:14');
+	(2,'files/Lockon/ImpactoAmbiental_BD.png',NULL,NULL,NULL,NULL,2,NULL,NULL,NULL,12,'2016-02-04 08:27:46','2016-02-04 08:27:46');
 ALTER TABLE `Archivos` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -781,7 +784,7 @@ UNLOCK TABLES;
 LOCK TABLES `ImpactoYComercializacion` WRITE;
 ALTER TABLE `ImpactoYComercializacion` DISABLE KEYS;
 INSERT INTO `ImpactoYComercializacion` (`id`, `ImpactoAmbiental`, `ImpactoCientifico`, `ImpactoTecnologico`, `ImpactoSocial`, `ImpactoEconomico`, `PropuestaDeValor`, `SegmentosDeClientes`, `SolucionPropuesta`, `Metricas`, `SolucionActual`, `idProyecto`, `created_at`, `updated_at`) VALUES 
-	(1,'<p>Texto</p>',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2016-02-04 03:25:13','2016-02-04 07:30:54');
+	(2,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2016-02-04 08:27:46','2016-02-04 08:27:46');
 ALTER TABLE `ImpactoYComercializacion` ENABLE KEYS;
 UNLOCK TABLES;
 

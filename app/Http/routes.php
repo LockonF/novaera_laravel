@@ -195,7 +195,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::put('Convocatoria/{id}','ConvocatoriaController@update');
     Route::delete('Convocatoria/{id}','ConvocatoriaController@destroy');
         /*Modalidades Asociadas a la Convocatoria*/
-        Route::get('Convocatoria/Modalidad/{id}','ConvocatoriaController@showModalidades');
+        Route::post('Convocatoria/Modalidad','ConvocatoriaController@addToModalidad');
+        Route::delete('Convocatoria/{idConvocatoria}/Modalidad/{idModalidad}','ConvocatoriaController@detachFromModaliad')
+            ->where(['idConvocatoria'=>'[0-9]+','idModalidad'=>'[0-9]+']);
+        Route::delete('Convocatoria/{idConvocatoria}/Modalidad','ConvocatoriaController@detachFromAll')
+            ->where(['idConvocatoria'=>'[0-9]+']);
     /*Modalidades*/
     Route::post('Modalidad','ModalidadController@store');
     Route::delete('Modalidad/{id}','ModalidadController@destroy');
@@ -204,7 +208,16 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     /*TRL*/
     Route::get('TRL','TRLController@show');
 
+    /*Registro de Proyecto*/
 
+    Route::post('RegistroProyecto/{whoIs?}/{idOrganizacion?}','RegistroProyectoController@store')
+        ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+    Route::get('RegistroProyecto/{id}/{whoIs?}/{idOrganizacion?}','RegistroProyectoController@showAll')
+        ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+    Route::put('RegistroProyecto/{id}/{whoIs?}/{idOrganizacion?}','RegistroProyectoController@validateRequisitos')
+        ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+    Route::delete('RegistroProyecto/{id}/{whoIs?}/{idOrganizacion?}','RegistroProyectoController@delete')
+        ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
 
 
 });
