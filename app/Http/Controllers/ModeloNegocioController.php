@@ -214,22 +214,12 @@ class ModeloNegocioController extends Controller
      */
 
 
-    public function showFileRoutes($idProyecto){
+    public function showFileRoutes($idProyecto,$whoIs='Persona',$idOrganizacion=null){
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $results = DB::table('TipoArchivo')
+            $proyecto = Proyecto::validateProyecto($idProyecto, $user, $whoIs, $idOrganizacion);
+            $results = DB::table('TipoArchivo')
                     ->join('Archivos','Archivos.idTipoArchivo','=','TipoArchivo.id')
                     ->join('ModeloNegocio','Archivos.idModeloNegocio','=','ModeloNegocio.id')
                     ->join('Proyecto','ModeloNegocio.idProyecto','=','Proyecto.id')
@@ -241,7 +231,7 @@ class ModeloNegocioController extends Controller
                     return response()->json(['Archivos'=>$results]);
                 return response()->json(['message'=>'archivos_not_found'],404);
 
-            }
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

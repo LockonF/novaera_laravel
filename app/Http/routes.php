@@ -149,16 +149,20 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::get('Ejecucion/{idProyecto}/{whoIs?}/{idOrganizacion?}','EjecucionController@show')
             ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
-        Route::get('Ejecucion/Archivos/{idProyecto}','EjecucionController@showFileRoutes');
+        Route::get('Ejecucion/Archivos/{idProyecto}/{whoIs?}/{idOrganizacion?}','EjecucionController@showFileRoutes')
+            ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);;
 
-        /*Métodos para registrar el Modelo de Negocio de un proyecto*/
+
+    /*Métodos para registrar el Modelo de Negocio de un proyecto*/
         Route::post('ModeloNegocio/{whoIs?}/{idOrganizacion?}','ModeloNegocioController@store')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::post('ModeloNegocio/Update/{whoIs?}/{idOrganizacion?}','ModeloNegocioController@update')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::get('ModeloNegocio/{idProyecto}/{whoIs?}/{idOrganizacion?}','ModeloNegocioController@show')
             ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
-        Route::get('ModeloNegocio/Archivos/{idProyecto}','ModeloNegocioController@showFileRoutes');
+        Route::get('ModeloNegocio/Archivos/{idProyecto}/{whoIs?}/{idOrganizacion?}','ModeloNegocioController@showFileRoutes')
+            ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);;
+
 
     /*Métodos para registrar el Modelo de Negocio de un proyecto*/
 
