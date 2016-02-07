@@ -30,16 +30,6 @@ class TransferenciaTecnologicaController extends Controller
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
             //$proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
                 $proyecto->load('TransferenciaTecnologica');
                 $request->TransferenciaTecnologica = $this->processValue($request->TransferenciaTecnologica);
                 $transferenciaTecnologica = new TransferenciaTecnologica($request->TransferenciaTecnologica);
@@ -70,7 +60,7 @@ class TransferenciaTecnologicaController extends Controller
                     $proyecto->TransferenciaTecnologica()->save($transferenciaTecnologica);
                     return response()->json(['TransferenciaTecnologica'=>$transferenciaTecnologica]);
                 }
-            }
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -100,16 +90,6 @@ class TransferenciaTecnologicaController extends Controller
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
             //$proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
                 $transferencia = TransferenciaTecnologica::find($request->TransferenciaTecnologica['id']);
                 if($transferencia!=null)
                 {
@@ -170,7 +150,7 @@ class TransferenciaTecnologicaController extends Controller
                     }
                 }
                 return response()->json(['message'=>'transferenciaTecnologica_not_found'],404);
-            }
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -272,17 +252,12 @@ class TransferenciaTecnologicaController extends Controller
     public function showAll($idProyecto,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
-           AuthenticateController::checkUser(null);
+            AuthenticateController::checkUser(null);
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($idProyecto, $user, $whoIs, $idOrganizacion);
             //$proyecto  = Proyecto::where('Proyecto.id',$idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            else
-            {
+
                 $proyecto->load('TransferenciaTecnologica');
                 if($proyecto->TransferenciaTecnologica!=null)
                 {
@@ -290,7 +265,7 @@ class TransferenciaTecnologicaController extends Controller
                     return response()->json(['TransferenciaTecnologica'=>$proyecto->TransferenciaTecnologica]);
                 }
                 return response()->json(['message'=>'transferenciaTecnologica_not_found'],500);
-            }
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -314,21 +289,11 @@ class TransferenciaTecnologicaController extends Controller
      */
 
 
-    public function showFileRoutes($idProyecto){
+    public function showFileRoutes($idProyecto,$whoIs = 'Persona',$idOrganizacion=null){
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'server_error'],500);
-            }
-            if($proyecto->pivot->Owner!=1 || $proyecto->pivot->idPersona!=$user->Persona->id)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
+            $proyecto = Proyecto::validateProyecto($idProyecto, $user, $whoIs, $idOrganizacion);
                 $results = DB::table('TipoArchivo')
                     ->join('Archivos','Archivos.idTipoArchivo','=','TipoArchivo.id')
                     ->join('TransferenciaTecnologica','Archivos.idTransferenciaTecnologica','=','TransferenciaTecnologica.id')
@@ -341,7 +306,6 @@ class TransferenciaTecnologicaController extends Controller
                     return response()->json(['Archivos'=>$results]);
                 return response()->json(['message'=>'archivos_not_found'],404);
 
-            }
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

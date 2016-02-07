@@ -28,9 +28,9 @@ databases:
 #       client-id: foo
 #       client-token: bar
 
-# ports:
-#     - send: 50000
-#       to: 5000
+#ports:
+#  - send: 9000
+#    to: 9000
 #     - send: 7777
 #       to: 777
 #       protocol: udp

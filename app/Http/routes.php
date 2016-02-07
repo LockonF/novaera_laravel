@@ -169,7 +169,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
         Route::post('TransferenciaTecnologica/{whoIs?}/{idOrganizacion?}','TransferenciaTecnologicaController@store')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
-        Route::get('TransferenciaTecnologica/Archivos/{id}','TransferenciaTecnologicaController@showFileRoutes');
+        Route::get('TransferenciaTecnologica/Archivos/{id}/{whoIs}/{idOrganizacion?}','TransferenciaTecnologicaController@showFileRoutes')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::get('TransferenciaTecnologica/{id}','TransferenciaTecnologicaController@show');
         Route::delete('TransferenciaTecnologica/{id}/{whoIs?}/{idOrganizacion?}','TransferenciaTecnologicaController@destroy')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
