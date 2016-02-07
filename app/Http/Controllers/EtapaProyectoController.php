@@ -19,13 +19,12 @@ use App\Exceptions\UnauthorizedException;
 
 class EtapaProyectoController extends Controller
 {
-
-
-    public function store(Request $request)
+    public function store(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
-            AuthenticateController::checkUser(null);
-
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
             return DB::transaction(function() use ($request){
                 $etapas = EtapaProyecto::where('idProyecto',$request->idProyecto)->delete();
                 $savedEtapas = [];
