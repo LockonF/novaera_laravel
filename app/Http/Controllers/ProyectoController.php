@@ -423,11 +423,12 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-
-    public function showEtapas($id)
+    public function showEtapas($id,$whoIs = 'Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyecto = Proyecto::validateProyecto($id, $user, $whoIs, $idOrganizacion);
             $proyecto = Proyecto::find($id);
             if($proyecto == null)
             {
