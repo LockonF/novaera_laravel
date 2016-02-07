@@ -168,6 +168,7 @@ class OrganizacionController extends Controller
                 $organizacion = new Organizacion($request->Organizacion);
                 $personaData = $request->Datos;
                 $personaData['Owner'] = 1;
+                $personaData['WritePermissions']=1;
 
                 $user->Persona->Organizacion()->save($organizacion,$personaData);
                 return response()->json($organizacion);
