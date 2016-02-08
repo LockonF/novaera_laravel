@@ -15,4 +15,15 @@ class RegistroProyecto extends Model
     {
         return $this->belongsTo('App\Models\Proyecto','idProyecto');
     }
+
+    public function ParqueTecnologico()
+    {
+        return $this->belongsTo('App\Models\ParqueTecnologico','idParque');
+    }
+
+    public function ConvocatoriaModalidad()
+    {
+        return $this->belongsTo('App\Models\ConvocatoriaModaliad','idConvocatoriaModalidad');
+    }
+
 }

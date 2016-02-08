@@ -35,7 +35,7 @@ class RegistroProyectoController extends Controller
             $convocatoriaMod = ConvocatoriaModalidad::find($request->idConvocatoriaModalidad);
             if($convocatoriaMod ==null)
             {
-                return response()->json(['message'=>'convocatoria_modalidad_not_found']);
+                return response()->json(['message'=>'convocatoria_modalidad_not_found'],500);
             }
             $convocatoria = Convocatoria::find($convocatoriaMod->idConvocatoria);
             $registro = new RegistroProyecto($request->all());
@@ -68,13 +68,50 @@ class RegistroProyectoController extends Controller
     /**
      * @param Request $request
      * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws Exceptions\JWTException
+     * @throws Exceptions\TokenExpiredException
+     * @throws Exceptions\TokenInvalidException
+     */
+
+
+    public function validateRegistroProyecto(Request $request,$id)
+    {
+        AuthenticateController::checkUser('Supervisor');
+        try{
+            $registro = RegistroProyecto::find($id);
+            if($registro==null)
+                return response()->json(['message'=>'registro_proyecto_not_found'],500);
+            $registro->MontoApoyado = $request->MontoApoyado;
+            $registro->Validado = $request->Validado;
+            $registro->save();
+            return response()->json($registro);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+    }
+
+
+
+    /**
+     * @param Request $request
+     * @param $id
      * @param string $whoIs
      * @param null $idOrganizacion
      * @return \Illuminate\Http\JsonResponse
      * @throws \App\Exceptions\InvalidAccessException
      */
 
-    public function validateRequisitos(Request $request,$id,$whoIs='Persona',$idOrganizacion=null)
+    public function validateRequisitos(Request $request,$id)
     {
         try{
             $user = AuthenticateController::checkUser('Supervisor');
@@ -83,8 +120,6 @@ class RegistroProyectoController extends Controller
             {
                 return response()->json(['message'=>'registro_proyecto_not_found']);
             }
-            Proyecto::validateProyecto($registro->idProyecto,$user,$whoIs,$idOrganizacion);
-
             $requisitos = json_encode($request->Requisitos);
             $registro->Requisitos = $requisitos;
             $registro->save();
@@ -151,6 +186,35 @@ class RegistroProyectoController extends Controller
             $proyecto = Proyecto::validateProyecto($id,$user,$whoIs,$idOrganizacion);
             $proyecto->load('RegistroProyecto');
             return response()->json(['RegistroProyecto'=>$proyecto->RegistroProyecto]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+    }
+
+    /**
+     * @param string $whoIs
+     * @param null $idOrganizacion
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\InvalidAccessException
+     */
+
+
+    public function showRegistroProyecto($whoIs='Persona',$idOrganizacion=null)
+    {
+        try
+        {
+            $user = AuthenticateController::checkUser(null);
+            $proyectos = Proyecto::validateAllProyectos($user,$whoIs,$idOrganizacion);
+            return response()->json(['RegistroProyectos'=>$proyectos]);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

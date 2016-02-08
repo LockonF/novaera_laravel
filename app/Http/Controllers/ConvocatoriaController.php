@@ -242,12 +242,46 @@ class ConvocatoriaController extends Controller
 
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+
     public function showAll()
     {
         try{
             $user = AuthenticateController::checkUser();
             $convocatoria = Convocatoria::all();
             return response()->json(['Convocatoria'=>$convocatoria]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showModalidades($id)
+    {
+        try {
+            $user = AuthenticateController::checkUser();
+            $convocatoria = Convocatoria::find($id);
+            if($convocatoria == null)
+                return response()->json(['message'=>'convocatoria_not_found']);
+            $convocatoria->load('Modalidad');
+            return response()->json($convocatoria);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
