@@ -69,6 +69,55 @@ class ProyectoController extends Controller
         }
     }
 
+
+    /**
+     * @param string $type
+     * @param null $idOrganizacion
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+
+    public function showByDate($type='Persona',$idOrganizacion=null)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            if($type=='Persona')
+            {
+                $proyectos = $user->Persona->Proyecto()->orderBy('created_at','desc')->get();
+                return response()->json(['Proyectos'=>$proyectos],200);
+            }
+            else
+            {
+                $organizacion = $user->Persona->Organizacion()->find($idOrganizacion);
+                if($organizacion==null)
+                {
+                    return response()->json(['message'=>'organizacion_not_found'],500);
+                }
+                $proyectos = $organizacion->Proyecto()->orderBy('created_at','desc')->get();
+                return response()->json(['Proyectos'=>$proyectos]);
+            }
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['invalid_write_permissions'], $e->getStatusCode());
+        }
+    }
+
+
+
+
+
     /**
      * @return \Illuminate\Http\JsonResponse
      */

@@ -22,6 +22,10 @@ class OrganizacionController extends Controller
 
 
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function showOneGeneral($id)
     {

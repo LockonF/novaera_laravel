@@ -108,6 +108,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         /*Metodos para cuando personas inscriben un proyecto */
         Route::get('Proyecto/{type}/{idOrganizacion?}','ProyectoController@showProjects')
             ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
+        Route::get('Proyecto/Date/{type?}/{idOrganizacion?}','ProyectoController@showByDate')
+            ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::get('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@showOneProject')
             ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::post('Proyecto/{type}/{idOrganizacion?}','ProyectoController@storeByPerson')
