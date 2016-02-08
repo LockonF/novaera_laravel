@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\UnauthorizedException;
 use App\Models\ProgramaFondeo;
+use App\Models\ProgramaFondeoDescriptor;
+use App\Models\Descriptor;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -190,6 +192,106 @@ class ProgramaFondeoController extends Controller
             return response()->json(['unauthorized'], $e->getStatusCode());
         }
         catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    public function addDescriptor(Request $request)
+    {
+        try{
+            AuthenticateController::checkUser(null);
+            $programaFondeo =ProgramaFondeo::find($request->idProgramaFondeo);
+            if($programaFondeo==null)
+            {
+                return response()->json(['message'=>'programa_fondeo_not_found'],404);
+            }
+            $descriptor = Descriptor::find($request->idDescriptor);
+            $programaFondeo->Descriptor()->save($descriptor,$request->all());
+            $descriptores = [];
+            foreach($programaFondeo->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showAllDescriptor($id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $programaFondeo =ProgramaFondeo::find($id);
+            if($programaFondeo==null)
+            {
+                return response()->json(['message'=>'programa_fondeo_not_found'],404);
+            }
+            $descriptores = [];
+            foreach($programaFondeo->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function detachDescriptor($idPrograma,$id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $programaFondeo =ProgramaFondeo::find($idPrograma);
+            if($programaFondeo==null)
+            {
+                return response()->json(['message'=>'programa_fondeo_not_found'],404);
+            }
+                ////
+                $pfondeo = ProgramaFondeoDescriptor::find($id);
+                $programaFondeo->Descriptor()->detach($pfondeo->id);
+                ////
+                $programaFondeo->load('Descriptor');
+                $descriptores = [];
+                foreach($programaFondeo->Descriptor as $descriptor)
+                {
+                    $descriptores[] = $descriptor;
+                }
+                return response()->json(['Descriptor'=>$descriptores]);
+
+            return response()->json(['message'=>'descriptor_not_found'],404);
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
