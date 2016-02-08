@@ -93,11 +93,11 @@ class TransferenciaTecnologicaController extends Controller
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
-            //$proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            $transferencia = TransferenciaTecnologica::find($proyecto->id);
+            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
+            $request->TransferenciaTecnologica = $this->processValue($request->TransferenciaTecnologica);
+            $transferencia = TransferenciaTecnologica::find($request->TransferenciaTecnologica->id);
                 if($transferencia!=null)
                 {
-                    $request->TransferenciaTecnologica = $this->processValue($request->TransferenciaTecnologica);
                     $transferencia->fill($request->TransferenciaTecnologica);
                     if($request->type!=null)
                     {
