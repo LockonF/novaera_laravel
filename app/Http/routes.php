@@ -29,14 +29,16 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('RefreshToken','AuthenticateController@refreshToken');
 
     /*Persona*/
-    Route::get('Persona','PersonaController@show');
+    Route::get('Persona/{who?}','PersonaController@show')
+        ->where(['who'=>'(Current)']);
     Route::post('Persona','PersonaController@store');
     Route::delete('Persona','PersonaController@destroy');
     Route::put('Persona','PersonaController@update');
         /*Persona_Descriptor*/
-        Route::post('Persona/Descriptor','PersonaController@addDescriptor');
-        Route::get('Persona/Descriptor','PersonaController@showAllDescriptor');
-        Route::delete('Persona/Descriptor/{id}','PersonaController@detachDescriptor');
+    Route::post('Persona/Descriptor','PersonaController@addDescriptor');
+    Route::get('Persona/Descriptor/{id?}','PersonaController@showAllDescriptor')
+        ->where(['id'=>'[0-9]+']);
+    Route::delete('Persona/Descriptor/{id}','PersonaController@detachDescriptor');
 
     /*Validacion de persona*/
     Route::get('Supervisor/Persona','PersonaController@showNotValidated');
@@ -203,6 +205,10 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::delete('ProgramaFondeo/{id}','ProgramaFondeoController@destroy');
         /*Convocatorias del Programa de Fondeo */
         Route::get('ProgramaFondeo/Modalidad/{id}','ProgramaFondeoController@showModalidades');
+    /*Descriptores de Programa de Fondeo*/
+    Route::post('ProgramaFondeo/Descriptor','ProgramaFondeoController@addDescriptor');
+    Route::get('ProgramaFondeo/Descriptor/{id}','ProgramaFondeoController@showAllDescriptor');
+    Route::delete('ProgramaFondeo/Descriptor/{idPrograma}/{id}','ProgramaFondeoController@detachDescriptor');
 
     /*Convocatorias*/
     Route::get('Convocatoria','ConvocatoriaController@showAll');
