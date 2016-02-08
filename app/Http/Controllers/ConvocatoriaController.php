@@ -281,7 +281,7 @@ class ConvocatoriaController extends Controller
             if($convocatoria == null)
                 return response()->json(['message'=>'convocatoria_not_found']);
             $convocatoria->load('Modalidad');
-            return response()->json($convocatoria);
+            return response()->json(['Modalidad'=>$convocatoria->Modalidad]);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

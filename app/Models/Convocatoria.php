@@ -21,6 +21,7 @@ class Convocatoria extends Model
     public function Modalidad()
     {
         return $this->belongsToMany('App\Models\Modalidad','Convocatoria_Modalidad','idConvocatoria','idModalidad')
+            ->withPivot(['id','idConvocatoria','idModalidad'])
             ->withTimestamps();
     }
 

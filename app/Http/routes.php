@@ -197,6 +197,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     /*Programa de Fondeo*/
     Route::get('ProgramaFondeo','ProgramaFondeoController@showAll');
     Route::get('ProgramaFondeo/{id}','ProgramaFondeoController@show');
+    Route::get('ProgramaFondeo/Convocatoria/{id}','ProgramaFondeoController@showConvocatoriasAsociadas');
     Route::post('ProgramaFondeo','ProgramaFondeoController@store');
     Route::put('ProgramaFondeo/{id}','ProgramaFondeoController@update');
     Route::delete('ProgramaFondeo/{id}','ProgramaFondeoController@destroy');

@@ -14,6 +14,38 @@ use Tymon\JWTAuth\Exceptions;
 class ProgramaFondeoController extends Controller
 {
 
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showConvocatoriasAsociadas($id)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $convocatorias = ProgramaFondeo::Convocatorias_Asociadas($id);
+            if($convocatorias==null)
+            {
+                return response()->json(['convocatoria_not_found'],500);
+            }
+            return response()->json(['Convocatoria'=>$convocatorias]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+
+    }
+
     /**
      * @param $id
      * @return \Illuminate\Http\JsonResponse
