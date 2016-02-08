@@ -309,17 +309,15 @@ class ProgramaFondeoController extends Controller
             {
                 return response()->json(['message'=>'programa_fondeo_not_found'],404);
             }
-
-                $descriptor = ProgramaFondeoDescriptor::find($id);
-                $descriptor->delete();
-
-
-                $programaFondeo->load('Descriptor');
-                foreach($programaFondeo->Descriptor as $descriptor)
-                {
-                    $descriptores[] = $descriptor;
-                }
-                return response()->json(['Descriptor'=>$descriptores]);
+            $pfondeo = ProgramaFondeoDescriptor::find($id);
+            $pfondeo->delete();
+            $programaFondeo->load('Descriptor');
+            $descriptores = [];
+            foreach($programaFondeo->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
 
             return response()->json(['message'=>'descriptor_not_found'],404);
         }catch (QueryException $e) {

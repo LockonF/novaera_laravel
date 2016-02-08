@@ -20,7 +20,7 @@ class Descriptor extends Model
     public function Persona()
     {
         return $this->belongsToMany('App\Models\Persona','Descriptor_Persona','idDescriptor','idPersona')
-            ->withPivot('FechaInicio','FechaTermino','TipoResultado','NumeroRegistro')->withTimestamps();
+            ->withPivot('id','FechaInicio','FechaTermino','TipoResultado','NumeroRegistro')->withTimestamps();
     }
 
     public function ProgramaFondeo()

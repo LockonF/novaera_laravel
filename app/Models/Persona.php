@@ -27,13 +27,10 @@ class Persona extends Model
             ->withPivot('id','FechaInicio','FechaTermino','TipoResultado','NumeroRegistro')->withTimestamps();
     }
 
-
-
     public function Organizacion(){
         return $this->belongsToMany('App\Models\Organizacion', 'Persona_Organizacion', 'idPersona', 'idOrganizacion')
             ->withPivot('Puesto','FechaInicio','FechaTermino','Owner','WritePermissions');
     }
-
 
     public function Contacto()
     {
