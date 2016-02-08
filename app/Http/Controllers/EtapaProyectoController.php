@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EtapaProyecto;
+use App\Models\Proyecto;
 use App\Models\TareaEtapa;
 use Illuminate\Http\Request;
 
