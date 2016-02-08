@@ -19,9 +19,14 @@ use App\Http\Controllers\Controller;
 
 class TransferenciaTecnologicaController extends Controller
 {
+
     /**
      * @param Request $request
+     * @param string $whoIs
+     * @param null $idOrganizacion
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\InvalidAccessException
+     * @throws \App\Exceptions\NotFoundException
      */
     public function store(Request $request,$whoIs = 'Persona',$idOrganizacion=null)
     {
@@ -29,10 +34,9 @@ class TransferenciaTecnologicaController extends Controller
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
-            //$proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-                $proyecto->load('TransferenciaTecnologica');
-                $request->TransferenciaTecnologica = $this->processValue($request->TransferenciaTecnologica);
-                $transferenciaTecnologica = new TransferenciaTecnologica($request->TransferenciaTecnologica);
+            $proyecto->load('TransferenciaTecnologica');
+            $request->TransferenciaTecnologica = $this->processValue($request->TransferenciaTecnologica);
+            $transferenciaTecnologica = new TransferenciaTecnologica($request->TransferenciaTecnologica);
                 if($request->type!=null)
                 {
                     $data['user']=$user;
