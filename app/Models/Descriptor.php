@@ -23,6 +23,13 @@ class Descriptor extends Model
             ->withPivot('FechaInicio','FechaTermino','TipoResultado','NumeroRegistro')->withTimestamps();
     }
 
+    public function ProgramaFondeo()
+    {
+        return $this->belongsToMany('App\Models\ProgramaFondeo','ProgramaFondeoDescriptor','idDescriptor','idProgramaFondeo')
+            ->withPivot('id','observaciones');
+    }
+
+
 
 
 

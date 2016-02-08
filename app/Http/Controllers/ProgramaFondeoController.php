@@ -228,6 +228,11 @@ class ProgramaFondeoController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
     public function addDescriptor(Request $request)
     {
         try{
@@ -304,12 +309,12 @@ class ProgramaFondeoController extends Controller
             {
                 return response()->json(['message'=>'programa_fondeo_not_found'],404);
             }
-                ////
-                $pfondeo = ProgramaFondeoDescriptor::find($id);
-                $programaFondeo->Descriptor()->detach($pfondeo->id);
-                ////
+
+                $descriptor = ProgramaFondeoDescriptor::find($id);
+                $descriptor->delete();
+
+
                 $programaFondeo->load('Descriptor');
-                $descriptores = [];
                 foreach($programaFondeo->Descriptor as $descriptor)
                 {
                     $descriptores[] = $descriptor;

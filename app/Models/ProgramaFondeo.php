@@ -27,4 +27,10 @@ class ProgramaFondeo extends Model
         return $convocatoria;
     }
 
+    public function Descriptor()
+    {
+        return $this->belongsToMany('App\Models\Descriptor','ProgramaFondeoDescriptor','idProgramaFondeo','idDescriptor')
+            ->withPivot('id','observaciones');
+    }
+
 }

@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProgramaFondeoDescriptor extends Model
 {
-    protected $table = 'programafondeodescriptor';
+    protected $table = 'ProgramaFondeoDescriptor';
     protected $fillable = ['observaciones'];
 }
