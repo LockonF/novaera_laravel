@@ -21,6 +21,48 @@ class OrganizacionController extends Controller
 {
 
 
+    public function valiateOrganizaciones(Request $request)
+    {
+        try {
+            AuthenticateController::checkUser('Supervisor');
+            return DB::transaction(function() use ($request)
+            {
+                foreach($request->Organizacion as $id)
+                {
+                    $organizacion = Organizacion::find($id);
+                    if($organizacion==null)
+                    {
+                        DB::rollBack();
+                        return response()->json(['message'=>'organizacion_'.$id.'not_found'],500);
+
+                    }
+                    $organizacion->isValidated = 1;
+                    $organizacion->save();
+
+                }
+                $organizaciones = Organizacion::all();
+                foreach($organizaciones as $organizacion)
+                {$organizacion->Archivos = json_decode($organizacion->Archivos);}
+                return response()->json(['Organizacion'=>$organizaciones]);
+            });
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
 
     /**
      * @param $id
