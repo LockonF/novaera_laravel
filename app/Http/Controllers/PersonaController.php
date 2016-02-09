@@ -8,6 +8,7 @@ use App\Models\Persona;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use App\Models\DescriptorPersona;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\AuthenticateController;
 use Illuminate\Support\Facades\DB;
@@ -50,16 +51,22 @@ class PersonaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show($who=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $user->load('Persona');
-            if($user->Persona==null)
+            if($who=='Current')
             {
-                return response()->json(['message'=>'persona_not_found'],404);
+                $user->load('Persona');
+                if ($user->Persona == null) {
+                    return response()->json(['message' => 'persona_not_found'], 404);
+                }
+                return response()->json(['Persona' => $user->Persona], 200);
             }
-            return response()->json($user->Persona,200);
+            else {
+                $persona = Persona::get();
+                return response()->json(['Personas'=>$persona]);
+            }
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error'],500);
@@ -234,12 +241,17 @@ class PersonaController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function showAllDescriptor()
+    public function showAllDescriptor($id = null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $user->load('Persona');
-            $persona = $user->Persona;
+            if($id!= null) {
+                $persona = Persona::where('id',$id)->get()->first();
+            }
+            else{
+                $user->load('Persona');
+                $persona = $user->Persona;
+            }
             if($persona==null)
             {
                 return response()->json(['message'=>'persona_not_found'],404);
@@ -268,21 +280,27 @@ class PersonaController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function detachDescriptor($id)
+    public function detachDescriptor($id, $idPersona = null)
     {
         try{
-            $user = AuthenticateController::checkUser(null);
-            $user->load('Persona');
-            $persona = $user->Persona;
+            $user = AuthenticateContro  ller::checkUser(null);
+            if($idPersona == null)
+            {
+                $user->load('Persona');
+                $persona = $user->Persona;
+            }
+            else{
+                $persona = Persona::where('id',$idPersona)->get()->first();
+            }
             if($persona==null)
             {
                 return response()->json(['message'=>'persona_not_found'],404);
             }
-            $descriptor = Descriptor::find($id);
+            //return response()->json(['message'=>DescriptorPersona::find($id)],404);
+            $descriptor = DescriptorPersona::find($id);
             if($descriptor!=null)
             {
-                $persona->Descriptor()->detach($descriptor);
-                $persona->load('Descriptor');
+                $descriptor->delete();
                 $descriptores = [];
                 foreach($persona->Descriptor as $descriptor)
                 {
@@ -302,8 +320,4 @@ class PersonaController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
-
-
-
-
 }
