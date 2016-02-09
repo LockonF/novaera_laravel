@@ -212,6 +212,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::post('ProgramaFondeo/Descriptor','ProgramaFondeoController@addDescriptor');
     Route::get('ProgramaFondeo/Descriptor/{id}','ProgramaFondeoController@showAllDescriptor');
     Route::delete('ProgramaFondeo/Descriptor/{idPrograma}/{id}','ProgramaFondeoController@detachDescriptor');
+    Route::put('ProgramaFondeo/Descriptor/{id}','ProgramaFondeoController@modDescriptor');
 
     /*Convocatorias*/
     Route::get('Convocatoria','ConvocatoriaController@showAll');

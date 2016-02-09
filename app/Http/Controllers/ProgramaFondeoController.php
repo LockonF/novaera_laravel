@@ -300,6 +300,46 @@ class ProgramaFondeoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
+    public function modDescriptor(Request $request,$id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+
+            $programa_descriptor = ProgramaFondeoDescriptor::find($id);
+
+            if($programa_descriptor==null)
+            {
+                return response()->json(['programa_descriptor_not_found'],404);
+            }
+
+            $programa_descriptor->observaciones = $request->observaciones;
+            $programa_descriptor->save();
+
+            $programaFondeo = ProgramaFondeo::find($programa_descriptor->idProgramaFondeo);
+            $programaFondeo->load('Descriptor');
+            foreach($programaFondeo->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
     public function detachDescriptor($idPrograma,$id)
     {
         try{
