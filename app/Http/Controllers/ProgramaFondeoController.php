@@ -300,12 +300,11 @@ class ProgramaFondeoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function modDescriptor(Request $request,$id)
+    public function updateDescriptor(Request $request, $id)
     {
         try{
             $user = AuthenticateController::checkUser('Supervisor');
-
-            $programa_descriptor = ProgramaFondeoDescriptor::find($id);
+            $programa_descriptor = ProgramaFondeoDescriptor::find($request->id);
 
             if($programa_descriptor==null)
             {
@@ -315,7 +314,7 @@ class ProgramaFondeoController extends Controller
             $programa_descriptor->observaciones = $request->observaciones;
             $programa_descriptor->save();
 
-            $programaFondeo = ProgramaFondeo::find($programa_descriptor->idProgramaFondeo);
+            $programaFondeo = ProgramaFondeo::find($request->idProgramaFondeo);
             $programaFondeo->load('Descriptor');
             foreach($programaFondeo->Descriptor as $descriptor)
             {

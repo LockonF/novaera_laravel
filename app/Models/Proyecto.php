@@ -200,5 +200,10 @@ class Proyecto extends Model
         return $this->hasMany('App\Models\RegistroProyecto','idProyecto');
     }
 
+    public function Descriptor()
+    {
+        return $this->belongsToMany('App\Models\Descriptor','ProyectoDescriptor','idProyecto','idDescriptor')
+            ->withPivot('id','observaciones');
+    }
 
 }

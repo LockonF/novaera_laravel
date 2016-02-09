@@ -29,6 +29,12 @@ class Descriptor extends Model
             ->withPivot('id','observaciones');
     }
 
+    public function Proyecto()
+    {
+        return $this->belongsToMany('App\Models\Proyecto','ProyectoDescriptor','idDescriptor','idProyecto')
+            ->withPivot('id','observaciones');
+    }
+
 
 
 

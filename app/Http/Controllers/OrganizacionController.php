@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\UnauthorizedException;
+use App\Models\DescriptorOrganizacion;
 use App\Models\Organizacion;
 use App\Models\Persona;
+use App\Models\Descriptor;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -141,6 +143,7 @@ class OrganizacionController extends Controller
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
             $organizaciones = $user->Persona->Organizacion()->get();
+            $organizaciones = Organizacion::get();
             foreach($organizaciones as $organizacion)
             {$organizacion->Archivos = json_decode($organizacion->Archivos);}
 
@@ -483,10 +486,138 @@ class OrganizacionController extends Controller
         } catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
+    }
 
+    public function addDescriptor(Request $request)
+    {
+        try{
+            AuthenticateController::checkUser(null);
+            $organizacion =Organizacion::find($request->idOrganizacion);
+            if($organizacion==null)
+            {
+                return response()->json(['message'=>'organizacion_not_found'],404);
+            }
+            $descriptor = Descriptor::find($request->idDescriptor);
+            $organizacion->Descriptor()->save($descriptor,$request->all());
+            $descriptores = [];
+            foreach($organizacion->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showAllDescriptor($id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $organizacion =Organizacion::find($id);
+            if($organizacion==null)
+            {
+                return response()->json(['message'=>'organizacion_not_found'],404);
+            }
+            $descriptores = [];
+            foreach($organizacion->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    public function updateDescriptor(Request $request, $id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $descriptorOrganizacion = DescriptorOrganizacion::find($request->id);
+
+            if($descriptorOrganizacion ==null)
+            {
+                return response()->json(['descriptor_organizacion_not_found'],404);
+            }
+
+            $descriptorOrganizacion->FechaInicio = $request->FechaInicio;
+            $descriptorOrganizacion->FechaTermino = $request->FechaTermino;
+            $descriptorOrganizacion->TipoResultado = $request->TipoResultado;
+            $descriptorOrganizacion->NumeroRegistro = $request->NumeroRegistro;
+            $descriptorOrganizacion->save();
+
+            $organizacion = Organizacion::find($request->idOrganizacion);
+            $organizacion->load('Descriptor');
+            foreach($organizacion->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
     }
 
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
 
+    public function detachDescriptor($idOrganizacion, $id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $organizacion =Organizacion::find($idOrganizacion);
+            if($organizacion ==null)
+            {
+                return response()->json(['message'=>'organizacion_not_found'],404);
+            }
+            $dorg = DescriptorOrganizacion::find($id);
+            $dorg->delete();
+            $organizacion->load('Descriptor');
+            $descriptores = [];
+            foreach($organizacion->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+
+            return response()->json(['message'=>'descriptor_not_found'],404);
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
 }

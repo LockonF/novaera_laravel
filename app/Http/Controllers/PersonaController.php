@@ -275,6 +275,41 @@ class PersonaController extends Controller
     }
 
 
+    public function updateDescriptor(Request $request, $id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $descriptorPersona = DescriptorPersona::find($request->id);
+
+            if($descriptorPersona ==null)
+            {
+                return response()->json(['descriptor_organizacion_not_found'],404);
+            }
+
+            $descriptorPersona->FechaInicio = $request->FechaInicio;
+            $descriptorPersona->FechaTermino = $request->FechaTermino;
+            $descriptorPersona->TipoResultado = $request->TipoResultado;
+            $descriptorPersona->NumeroRegistro = $request->NumeroRegistro;
+            $descriptorPersona->save();
+
+            $persona = Persona::find($request->idPersona);
+            $persona->load('Descriptor');
+            foreach($persona->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
     /**
      * @param $id
      * @return \Illuminate\Http\JsonResponse
@@ -283,7 +318,7 @@ class PersonaController extends Controller
     public function detachDescriptor($id, $idPersona = null)
     {
         try{
-            $user = AuthenticateContro  ller::checkUser(null);
+            $user = AuthenticateController::checkUser(null);
             if($idPersona == null)
             {
                 $user->load('Persona');

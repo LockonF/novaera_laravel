@@ -23,7 +23,7 @@ class Organizacion extends Model
     public function Descriptor()
     {
         return $this->belongsToMany('App\Models\Descriptor','Descriptor_Organizacion','idOrganizacion','idDescriptor')
-            ->withPivot('FechaInicio','FechaTermino','TipoResultado','NumeroRegistro');
+            ->withPivot('id','FechaInicio','FechaTermino','TipoResultado','NumeroRegistro');
     }
 
 
