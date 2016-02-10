@@ -40,6 +40,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         ->where(['id'=>'[0-9]+']);
     Route::delete('Persona/Descriptor/{id}/{idPersona?}','PersonaController@detachDescriptor')
         ->where(['idPersona'=>'[0-9]+']);
+    Route::put('Persona/Descriptor/{id}','PersonaController@updateDescriptor');
 
     /*Validacion de persona*/
     Route::get('Supervisor/Persona','PersonaController@showNotValidated');
@@ -77,7 +78,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         /*Consultables por todos*/
         Route::get('Organizacion/General','OrganizacionController@showAllGeneral');
         Route::get('Organizacion/General/{id}','OrganizacionController@showOneGeneral')->where(['id'=>'[0-9]+']);
-
+        /*Descriptor de Organizaciones*/
+        Route::post('Organizacion/Descriptor','OrganizacionController@addDescriptor');
+        Route::get('Organizacion/Descriptor/{id}','OrganizacionController@showAllDescriptor');
+        Route::delete('Organizacion/Descriptor/{idPrograma}/{id}','OrganizacionController@detachDescriptor');
+        Route::put('Organizacion/Descriptor/{id}','OrganizacionController@updateDescriptor');
 
     /*Contacto*/
     Route::post('Contacto','ContactoController@store');
@@ -188,7 +193,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         /*Métodos para registrar etapas en un proyecto*/
         Route::get('Proyecto/EtapaProyecto/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@showEtapas')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
-        Route::post('EtapaProyecto/{whoIs?}/{idOrganizacion?}','EtapaProyectoController@store')
+            Route::post('Proyecto/EtapaProyecto/{whoIs?}/{idOrganizacion?}','EtapaProyectoController@store')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
 
         /*Métodos para registrar resultados de un proyecto*/
@@ -197,6 +202,15 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::put('Proyecto/Resultados','ProyectoController@editResult');
         Route::get('Proyecto/Resultados/{id}/{type?}','ProyectoController@showResults')
             ->where(['id'=>'[0-9]+','type'=>'(Patente|Producto|Servicio|Proceso|Todos)']);
+            /* Descriptor de Resultado */
+        Route::get('Proyecto/Resultados/Descriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@showDescriptor')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::post('Proyecto/Resultados/Descriptor/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@store')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::put('Proyecto/Resultados/Descriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@update')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::delete('Proyecto/Resultados/Descriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@destroy')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
 
 
 
@@ -213,6 +227,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::post('ProgramaFondeo/Descriptor','ProgramaFondeoController@addDescriptor');
     Route::get('ProgramaFondeo/Descriptor/{id}','ProgramaFondeoController@showAllDescriptor');
     Route::delete('ProgramaFondeo/Descriptor/{idPrograma}/{id}','ProgramaFondeoController@detachDescriptor');
+    Route::put('ProgramaFondeo/Descriptor/{id}','ProgramaFondeoController@updateDescriptor');
 
     /*Convocatorias*/
     Route::get('Convocatoria','ConvocatoriaController@showAll');
@@ -238,6 +253,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('TRL','TRLController@show');
 
     /*Registro de Proyecto*/
+
+
 
     Route::post('RegistroProyecto/{whoIs?}/{idOrganizacion?}','RegistroProyectoController@store')
         ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);

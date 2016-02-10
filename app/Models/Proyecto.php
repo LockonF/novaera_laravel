@@ -69,6 +69,9 @@ class Proyecto extends Model
         return $proyecto;
     }
 
+
+
+
     /**
      * @param $user
      * @param string $type
@@ -108,7 +111,8 @@ class Proyecto extends Model
                 ->join('Organizacion_Proyecto','Organizacion_Proyecto.idProyecto','=','Proyecto.id')
                 ->join('Organizacion','Organizacion_Proyecto.idOrganizacion','=','Organizacion.id')
                 ->join('Persona_Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
-                ->where('Persona_Organizacion.idPersona',$user->load('Persona'));
+                ->where('Persona_Organizacion.idPersona',$user->load('Persona'))
+                ->where('Organizacion.id',$idOrganizacion);
             if($strict==1)
             {
                 $query->where('Persona_Organizacion.WritePermissions',$strict);
@@ -196,5 +200,10 @@ class Proyecto extends Model
         return $this->hasMany('App\Models\RegistroProyecto','idProyecto');
     }
 
+    public function Descriptor()
+    {
+        return $this->belongsToMany('App\Models\Descriptor','ProyectoDescriptor','idProyecto','idDescriptor')
+            ->withPivot('id','observaciones');
+    }
 
 }
