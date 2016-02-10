@@ -42,6 +42,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
     /*Validacion de persona*/
     Route::get('Supervisor/Persona','PersonaController@showNotValidated');
+    Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
     Route::post('Supervisor/Persona','PersonaController@validatePerson');
     Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
 
