@@ -84,6 +84,10 @@ class Proyecto extends Model
         {
             throw new NotFoundException;
         }
+        foreach($proyectos as $proyecto)
+        {
+            $proyecto->Requisitos = json_decode($proyecto->Requisitos);
+        }
         return $proyectos;
 
     }
@@ -144,6 +148,10 @@ class Proyecto extends Model
             {
                 throw new InvalidAccessException;
             }
+        }
+        foreach($proyectos as $proyecto)
+        {
+            $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
     }
