@@ -40,6 +40,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         ->where(['id'=>'[0-9]+']);
     Route::delete('Persona/Descriptor/{id}/{idPersona?}','PersonaController@detachDescriptor')
         ->where(['idPersona'=>'[0-9]+']);
+    Route::put('Persona/Descriptor/{id}','PersonaController@updateDescriptor');
 
     /*Validacion de persona*/
     Route::get('Supervisor/Persona','PersonaController@showNotValidated');
@@ -77,7 +78,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         /*Consultables por todos*/
         Route::get('Organizacion/General','OrganizacionController@showAllGeneral');
         Route::get('Organizacion/General/{id}','OrganizacionController@showOneGeneral')->where(['id'=>'[0-9]+']);
-
+        /*Descriptor de Organizaciones*/
+        Route::post('Organizacion/Descriptor','OrganizacionController@addDescriptor');
+        Route::get('Organizacion/Descriptor/{id}','OrganizacionController@showAllDescriptor');
+        Route::delete('Organizacion/Descriptor/{idPrograma}/{id}','OrganizacionController@detachDescriptor');
+        Route::put('Organizacion/Descriptor/{id}','OrganizacionController@updateDescriptor');
 
     /*Contacto*/
     Route::post('Contacto','ContactoController@store');
@@ -222,7 +227,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::post('ProgramaFondeo/Descriptor','ProgramaFondeoController@addDescriptor');
     Route::get('ProgramaFondeo/Descriptor/{id}','ProgramaFondeoController@showAllDescriptor');
     Route::delete('ProgramaFondeo/Descriptor/{idPrograma}/{id}','ProgramaFondeoController@detachDescriptor');
-    Route::put('ProgramaFondeo/Descriptor/{id}','ProgramaFondeoController@modDescriptor');
+    Route::put('ProgramaFondeo/Descriptor/{id}','ProgramaFondeoController@updateDescriptor');
 
     /*Convocatorias*/
     Route::get('Convocatoria','ConvocatoriaController@showAll');
