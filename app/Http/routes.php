@@ -29,8 +29,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('RefreshToken','AuthenticateController@refreshToken');
 
     /*Persona*/
+    Route::get('Persona/Lookup/{name}','PersonaController@lookup');
+
+
     Route::get('Persona/{who?}','PersonaController@show')
-        ->where(['who'=>'(Current)']);
+        ->where(['who'=>'Current']);
     Route::post('Persona','PersonaController@store');
     Route::delete('Persona','PersonaController@destroy');
     Route::put('Persona','PersonaController@update');
