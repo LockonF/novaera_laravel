@@ -87,6 +87,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
@@ -106,6 +108,7 @@ class Proyecto extends Model
      */
     public static function validateAllProyectos($user,$type = 'Persona',$idOrganizacion = null,$strict=0)
     {
+
         $query = DB::table('Proyecto')
             ->join('RegistroProyecto','RegistroProyecto.idProyecto','=','Proyecto.id')
             ->join('ParqueTecnologico','ParqueTecnologico.id','=','RegistroProyecto.idParque')
@@ -113,7 +116,7 @@ class Proyecto extends Model
             ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
             ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
             ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
-            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.id as idProgramaFondeo','ProgramaFondeo.Titulo as ProgramaFondeo');
+            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.Titulo as ProgramaFondeo');
 
         if($type=='Persona')
         {
@@ -153,6 +156,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
