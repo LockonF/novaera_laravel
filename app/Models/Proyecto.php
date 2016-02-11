@@ -78,11 +78,18 @@ class Proyecto extends Model
             ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
             ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
             ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
-            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*');
+            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.id as idProgramaFondeo','ProgramaFondeo.Titulo as ProgramaFondeo');
         $proyectos =$query->get();
         if($proyectos==null)
         {
             throw new NotFoundException;
+        }
+        foreach($proyectos as $proyecto)
+        {
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
 
@@ -101,13 +108,15 @@ class Proyecto extends Model
      */
     public static function validateAllProyectos($user,$type = 'Persona',$idOrganizacion = null,$strict=0)
     {
+
         $query = DB::table('Proyecto')
             ->join('RegistroProyecto','RegistroProyecto.idProyecto','=','Proyecto.id')
             ->join('ParqueTecnologico','ParqueTecnologico.id','=','RegistroProyecto.idParque')
             ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
             ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
             ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
-            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*');
+            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.Titulo as ProgramaFondeo');
 
         if($type=='Persona')
         {
@@ -144,6 +153,12 @@ class Proyecto extends Model
             {
                 throw new InvalidAccessException;
             }
+        }
+        foreach($proyectos as $proyecto)
+        {
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
     }

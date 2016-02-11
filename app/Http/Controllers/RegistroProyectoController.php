@@ -225,7 +225,7 @@ class RegistroProyectoController extends Controller
         }catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }catch (NotFoundException $e) {
-            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+            return response()->json(['registro_not_found'], $e->getStatusCode());
         }
     }
 
