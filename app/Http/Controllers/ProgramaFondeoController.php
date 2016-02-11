@@ -215,13 +215,18 @@ class ProgramaFondeoController extends Controller
     {
         try{
              AuthenticateController::checkUser('Supervisor');
-             $programaFondeo =ProgramaFondeo::find($id);
-             if($programaFondeo!=null)
-             {
-                 $programaFondeo->delete();
-                 return response()->json(['message'=>'success']);
-             }
-             return response()->json(['message'=>'programa_fondeo_not_found'],404);
+             return DB::transaction(function() use($id){
+                 $programaFondeo =ProgramaFondeo::find($id);
+                 if($programaFondeo!=null)
+                 {
+                     Storage::deleteDirectory('fondeos/'.$id);
+                     $programaFondeo->delete();
+                     return response()->json(['message'=>'success']);
+                 }
+                 return response()->json(['message'=>'programa_fondeo_not_found'],404);
+
+             });
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
