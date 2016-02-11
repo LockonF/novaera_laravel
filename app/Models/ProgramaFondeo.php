@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\DB;
 class ProgramaFondeo extends Model
 {
     protected $table = 'ProgramaFondeo';
-    protected $fillable = ['Titulo','PublicoObjetivo','FondoTotal','CriteriosElegibilidad'];
+    protected $fillable = ['Titulo','PublicoObjetivo','FondoTotal','CriteriosElegibilidad','Archivos','Descripcion',
+    'RubrosDeApoyo'];
 
     public function Modalidad()
     {
