@@ -212,7 +212,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::delete('Proyecto/Resultados/Descriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@destroy')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
-
+    /*Descriptores de Proyecto*/
+    Route::post('Proyecto/Descriptor','ProyectoController@addDescriptor');
+    Route::get('Proyecto/Descriptor/{id}','ProyectoController@showAllDescriptor');
+    Route::delete('Proyecto/Descriptor/{idProyecto}/{id}','ProyectoController@detachDescriptor');
+    Route::put('Proyecto/DescriptorU/{id}','ProyectoController@updateDescriptor');
 
 
     /*Programa de Fondeo*/
