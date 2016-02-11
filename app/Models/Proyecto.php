@@ -78,7 +78,8 @@ class Proyecto extends Model
             ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
             ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
             ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
-            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*');
+            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.id as idProgramaFondeo','ProgramaFondeo.Titulo as ProgramaFondeo');
         $proyectos =$query->get();
         if($proyectos==null)
         {
@@ -111,7 +112,8 @@ class Proyecto extends Model
             ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
             ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
             ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
-            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*');
+            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.id as idProgramaFondeo','ProgramaFondeo.Titulo as ProgramaFondeo');
 
         if($type=='Persona')
         {
