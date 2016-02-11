@@ -262,8 +262,6 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
     /*Registro de Proyecto*/
 
-
-
     Route::post('RegistroProyecto/{whoIs?}/{idOrganizacion?}','RegistroProyectoController@store')
         ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
     Route::get('RegistroProyecto/{id}/{whoIs?}/{idOrganizacion?}','RegistroProyectoController@showAll')
@@ -275,5 +273,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::delete('RegistroProyecto/{id}/{whoIs?}/{idOrganizacion?}','RegistroProyectoController@delete')
         ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
 
+    /* Parque Tecnologico*/
+    Route::get('ParqueTecnologico','ParqueTecnologicoController@showAll');
 
 });
