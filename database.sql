@@ -1,9 +1,16 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 9, 2016 at 2:50:36 PM CST
+# Created: February 11, 2016 at 1:30:47 AM CST
 # Encoding: Unicode (UTF-8)
 #
+
+
+DROP DATABASE IF EXISTS `Novaera`;
+CREATE DATABASE `Novaera` DEFAULT CHARACTER SET latin1 DEFAULT COLLATE latin1_swedish_ci;
+USE `Novaera`;
+
+
 
 
 SET @PREVIOUS_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS;
@@ -82,7 +89,7 @@ CREATE TABLE `Archivos` (
   CONSTRAINT `fk_Archivos_TareaEtapa1` FOREIGN KEY (`idTareaEtapa`) REFERENCES `TareaEtapa` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_TipoArchivo1` FOREIGN KEY (`idTipoArchivo`) REFERENCES `TipoArchivo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Archivos_TransferenciaTecnologica1` FOREIGN KEY (`idTransferenciaTecnologica`) REFERENCES `TransferenciaTecnologica` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Asociacion` (
@@ -283,7 +290,7 @@ CREATE TABLE `ImpactoYComercializacion` (
   PRIMARY KEY (`id`),
   KEY `fk_ImpactoyComercializacion_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_ImpactoyComercializacion_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Modalidad` (
@@ -403,7 +410,7 @@ CREATE TABLE `ParqueTecnologico` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(300) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Persona` (
@@ -457,7 +464,7 @@ CREATE TABLE `Persona_Proyecto` (
   KEY `fk_Proyecto_has_Persona_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_has_Persona_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_has_Persona_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProgramaFondeo` (
@@ -465,8 +472,9 @@ CREATE TABLE `ProgramaFondeo` (
   `Titulo` varchar(45) DEFAULT NULL,
   `PublicoObjetivo` varchar(1000) DEFAULT NULL,
   `FondoTotal` float DEFAULT NULL,
-  `CriteriosElegibilidad` varchar(1000) DEFAULT NULL,
+  `Descripcion` varchar(1000) DEFAULT NULL,
   `RubrosDeApoyo` varchar(1000) DEFAULT NULL,
+  `CriteriosElegibilidad` varchar(1000) DEFAULT NULL,
   `Archivos` json DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -498,8 +506,8 @@ CREATE TABLE `ProgramaFondeoDescriptor` (
   PRIMARY KEY (`id`),
   KEY `fk_ProgramaFondeoDescriptor_Descriptor1_idx` (`idDescriptor`),
   KEY `fk_ProgramaFondeoDescriptor_ProgramaFondeo1_idx` (`idProgramaFondeo`),
-  CONSTRAINT `fk_ProgramaFondeoDescriptor_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_ProgramaFondeoDescriptor_ProgramaFondeo1` FOREIGN KEY (`idProgramaFondeo`) REFERENCES `ProgramaFondeo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_ProgramaFondeoDescriptor_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_ProgramaFondeoDescriptor_ProgramaFondeo1` FOREIGN KEY (`idProgramaFondeo`) REFERENCES `ProgramaFondeo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
@@ -514,7 +522,7 @@ CREATE TABLE `Proyecto` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `proyectoDescriptor` (
@@ -544,8 +552,8 @@ CREATE TABLE `ProyectoTRL` (
   KEY `fk_Proyecto_has_TRL_TRL1_idx` (`idTRL`),
   KEY `fk_Proyecto_has_TRL_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_has_TRL_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Proyecto_has_TRL_TRL1` FOREIGN KEY (`idTRL`) REFERENCES `TRL` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  CONSTRAINT `fk_Proyecto_has_TRL_TRL1` FOREIGN KEY (`idTRL`) REFERENCES `TRL` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProyectoResultado` (
@@ -567,7 +575,7 @@ CREATE TABLE `ProyectoResultado` (
   PRIMARY KEY (`id`),
   KEY `fk_Resultado_ProyectoTRL1_idx` (`idProyectoTRL`),
   CONSTRAINT `fk_Resultado_ProyectoTRL1` FOREIGN KEY (`idProyectoTRL`) REFERENCES `ProyectoTRL` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `RegistroProyecto` (
@@ -594,7 +602,7 @@ CREATE TABLE `RegistroProyecto` (
   CONSTRAINT `fk_Proyecto_Modalidad_ParqueTecnologico1` FOREIGN KEY (`idParque`) REFERENCES `ParqueTecnologico` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_Modalidad_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_RegistroProyecto_Convocatoria_Modalidad1` FOREIGN KEY (`idConvocatoriaModalidad`) REFERENCES `Convocatoria_Modalidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ResultadoDescriptor` (
@@ -611,7 +619,7 @@ CREATE TABLE `ResultadoDescriptor` (
   KEY `fk_ResultadoDescriptor_ProyectoResultado1_idx` (`idResultado`),
   CONSTRAINT `fk_ResultadoDescriptor_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_ResultadoDescriptor_ProyectoResultado1` FOREIGN KEY (`idResultado`) REFERENCES `ProyectoResultado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `RubrosApoyo` (
@@ -669,7 +677,7 @@ CREATE TABLE `TransferenciaTecnologica` (
   PRIMARY KEY (`id`),
   KEY `fk_Proyecto_TT_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_TT_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `TRL` (
@@ -738,8 +746,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `Convocatoria_Modalidad` WRITE;
 ALTER TABLE `Convocatoria_Modalidad` DISABLE KEYS;
-INSERT INTO `Convocatoria_Modalidad` (`id`, `idModalidad`, `idConvocatoria`, `created_at`, `updated_at`) VALUES 
-	(1,1,3,NULL,NULL);
 ALTER TABLE `Convocatoria_Modalidad` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -800,10 +806,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `Modalidad` WRITE;
 ALTER TABLE `Modalidad` DISABLE KEYS;
-INSERT INTO `Modalidad` (`id`, `idProgramaFondeo`, `Nombre`, `Montos`, `CriteriosEvaluacion`, `Entregables`, `FigurasApoyo`, `created_at`, `updated_at`) VALUES 
-	(1,1,'Modalidad Y',300000,'Criterios','Lista de Entregables','Abogado','2016-02-03 01:15:08','2016-02-03 01:15:08'),
-	(2,2,'Modalidad de Prueba',300000,'Criterios','Lista de Entregables','Abogado','2016-02-04 19:11:12','2016-02-04 19:11:12'),
-	(3,1,'Otra Modalidad de P1',300000,'Criterios','Lista de Entregables','Abogado','2016-02-04 19:22:45','2016-02-04 19:22:45');
 ALTER TABLE `Modalidad` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -856,7 +858,8 @@ UNLOCK TABLES;
 LOCK TABLES `ParqueTecnologico` WRITE;
 ALTER TABLE `ParqueTecnologico` DISABLE KEYS;
 INSERT INTO `ParqueTecnologico` (`id`, `Nombre`) VALUES 
-	(1,'Guanajuato');
+	(1,'Guanajuato'),
+	(2,'Irapuato');
 ALTER TABLE `ParqueTecnologico` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -880,15 +883,14 @@ UNLOCK TABLES;
 
 LOCK TABLES `Persona_Proyecto` WRITE;
 ALTER TABLE `Persona_Proyecto` DISABLE KEYS;
+INSERT INTO `Persona_Proyecto` (`id`, `idProyecto`, `idPersona`, `WritePermissions`, `Owner`, `created_at`, `updated_at`) VALUES 
+	(4,7,1,1,1,NULL,NULL);
 ALTER TABLE `Persona_Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
 
 LOCK TABLES `ProgramaFondeo` WRITE;
 ALTER TABLE `ProgramaFondeo` DISABLE KEYS;
-INSERT INTO `ProgramaFondeo` (`id`, `Titulo`, `PublicoObjetivo`, `FondoTotal`, `CriteriosElegibilidad`, `RubrosDeApoyo`, `Archivos`, `created_at`, `updated_at`) VALUES 
-	(1,'Programa de Fondeo Editado','Publico de todas las edades',20000000,'Algunos Criterios',NULL,NULL,'2016-02-03 01:08:43','2016-02-06 01:58:33'),
-	(2,'Programa de Fondeo 2','Publico de todas las edades',20000000,'Algunos Criterios',NULL,NULL,'2016-02-04 19:10:46','2016-02-04 19:10:46');
 ALTER TABLE `ProgramaFondeo` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -901,9 +903,6 @@ UNLOCK TABLES;
 
 LOCK TABLES `ProgramaFondeoDescriptor` WRITE;
 ALTER TABLE `ProgramaFondeoDescriptor` DISABLE KEYS;
-INSERT INTO `ProgramaFondeoDescriptor` (`id`, `observaciones`, `idDescriptor`, `idProgramaFondeo`, `created_at`, `updated_at`) VALUES 
-	(1,'Este es un programa de fondeo',1,1,NULL,'2016-02-09 00:03:11'),
-	(2,NULL,3,1,NULL,NULL);
 ALTER TABLE `ProgramaFondeoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -912,7 +911,8 @@ LOCK TABLES `Proyecto` WRITE;
 ALTER TABLE `Proyecto` DISABLE KEYS;
 INSERT INTO `Proyecto` (`id`, `Titulo`, `Descripcion`, `Antecedentes`, `Justificacion`, `Objetivos`, `Alcances`, `created_at`, `updated_at`) VALUES 
 	(5,'Proyecto 2','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-09 18:32:02','2016-02-09 18:32:02'),
-	(6,'Proyecto 3','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-09 18:34:12','2016-02-09 18:34:12');
+	(6,'Proyecto 3','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-09 18:34:12','2016-02-09 18:34:12'),
+	(7,'Proyecto de Prueba','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-10 01:19:44','2016-02-10 01:19:44');
 ALTER TABLE `Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
