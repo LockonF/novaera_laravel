@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\UnauthorizedException;
 use App\Models\Descriptor;
 use App\Models\Persona;
+use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -16,6 +17,28 @@ use Tymon\JWTAuth\Exceptions;
 
 class PersonaController extends Controller
 {
+
+    public function lookup($name)
+    {
+        try{
+            AuthenticateController::checkUser();
+            $personas = Persona::where('Nombre','like',$name.'%')->
+            orWhere('ApellidoP','like',$name.'%')->
+            orWhere('ApellidoM','like',$name.'%')->get();
+            return response()->json(['Persona'=>$personas]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+
+    }
+
 
     /**
      * Store a newly created resource in storage.

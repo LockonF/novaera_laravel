@@ -608,8 +608,6 @@ class OrganizacionController extends Controller
                 $descriptores[] = $descriptor;
             }
             return response()->json(['Descriptor'=>$descriptores]);
-
-            return response()->json(['message'=>'descriptor_not_found'],404);
         }catch (QueryException $e) {
             return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
         }catch (Exceptions\TokenExpiredException $e) {

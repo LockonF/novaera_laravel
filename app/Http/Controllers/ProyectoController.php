@@ -8,6 +8,8 @@ use App\Models\Impacto;
 use App\Models\Organizacion;
 use App\Models\Persona;
 use App\Models\Proyecto;
+use App\Models\Descriptor;
+use App\Models\ProyectoDescriptor;
 use App\Models\ProyectoModalidad;
 use App\Models\ProyectoResultado;
 use App\Models\ProyectoTRL;
@@ -763,7 +765,148 @@ class ProyectoController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
 
+    public function addDescriptor(Request $request)
+    {
+        try{
+            AuthenticateController::checkUser(null);
+            $proyecto =Proyecto::find($request->idProyecto);
+            if($proyecto==null)
+            {
+                return response()->json(['message'=>'proyecto_not_found'],404);
+            }
+            $descriptor = Descriptor::find($request->idDescriptor);
+
+            $proyecto->Descriptor()->save($descriptor,$request->all());
+            $descriptores = [];
+            foreach($proyecto->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showAllDescriptor($id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $proyecto =Proyecto::find($id);
+            if($proyecto==null)
+            {
+                return response()->json(['message'=>'proyecto_not_found'],404);
+            }
+            $descriptores = [];
+            foreach($proyecto->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function updateDescriptor(Request $request, $id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $proyectoDescriptor = ProyectoDescriptor::find($request->id);
+            if($proyectoDescriptor==null)
+            {
+                return response()->json(['descriptor_proyecto_not_found'],404);
+            }
+
+            $proyectoDescriptor->idProyecto = $request->idProyecto;
+            $proyectoDescriptor->idDescriptor = $request->idDescriptor;
+            $proyectoDescriptor->id = $request->id;
+            $proyectoDescriptor->observaciones = $request->observaciones;
+            $proyectoDescriptor->save();
+
+            $proyecto = Proyecto::find($request->idProyecto);
+            $proyecto->load('Descriptor');
+            foreach($proyecto->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function detachDescriptor($idProyecto,$id)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $proyecto =Proyecto::find($idProyecto);
+            if($proyecto ==null)
+            {
+                return response()->json(['message'=>'proyecto_fondeo_not_found'],404);
+            }
+            $proyectodes = ProyectoDescriptor::find($id);
+            $proyectodes->delete();
+            $proyecto->load('Descriptor');
+            $descriptores = [];
+            foreach($proyecto->Descriptor as $descriptor)
+            {
+                $descriptores[] = $descriptor;
+            }
+            return response()->json(['Descriptor'=>$descriptores]);
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
 
 
 

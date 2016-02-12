@@ -225,6 +225,31 @@ class RegistroProyectoController extends Controller
         }catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }catch (NotFoundException $e) {
+            return response()->json(['registro_not_found'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     *
+     */
+    public function showRegistroProyectoAdmin()
+    {
+        try
+        {
+            $user = AuthenticateController::checkUser('Supervisor');
+            $proyectos = Proyecto::getAllRegistros();
+            return response()->json(['RegistroProyectos'=>$proyectos]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
             return response()->json(['proyecto_not_found'], $e->getStatusCode());
         }
     }

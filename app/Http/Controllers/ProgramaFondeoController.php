@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\FileNotFoundException;
 use Tymon\JWTAuth\Exceptions;
 
 class ProgramaFondeoController extends Controller
@@ -134,6 +137,9 @@ class ProgramaFondeoController extends Controller
 
 
 
+
+
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -143,9 +149,47 @@ class ProgramaFondeoController extends Controller
     {
         try{
             $user = AuthenticateController::checkUser('Supervisor');
-            $programaFondeo = new ProgramaFondeo($request->all());
-            $programaFondeo->save();
-            return response()->json($programaFondeo);
+
+            return DB::transaction(function() use($request){
+                $programaFondeo = new ProgramaFondeo($request->all());
+                $programaFondeo->save();
+                $programaFondeo->Archivos = new \stdClass;
+                if($request->DescripcionFile!=null)
+                {
+                    $programaFondeo->Archivos->DescripcionFile = 'fondeos/'.$programaFondeo->id.'/'.'Descripcion_'.$request->DescripcionFile->getClientOriginalName();
+                    $request->DescripcionFile->move('files/fondeos/'.$programaFondeo->id,"Acta_".$request->DescripcionFile->getClientOriginalName());
+                }
+                else
+                {
+                    $programaFondeo->Archivos->DescripcionFile = null;
+                }
+                if($request->RubrosDeApoyoFile!=null)
+                {
+                    $programaFondeo->Archivos->RubrosDeApoyoFile = 'fondeos/'.$programaFondeo->id.'/'.'RubrosDeApoyo_'.$request->RubrosDeApoyoFile->getClientOriginalName();
+                    $request->RubrosDeApoyoFile->move('files/fondeos/'.$programaFondeo->id,"Acta_".$request->RubrosDeApoyoFile->getClientOriginalName());
+                }
+                else
+                {
+                    $programaFondeo->Archivos->RubrosDeApoyoFile = null;
+                }
+                if($request->CriteriosDeElegibilidadFile!=null)
+                {
+                    $programaFondeo->Archivos->CriteriosDeElegibilidadFile = 'fondeos/'.$programaFondeo->id.'/'.'CriteriosDeElegibilidadFile_'.$request->CriteriosDeElegibilidadFile->getClientOriginalName();
+                    $request->CriteriosDeElegibilidadFile->move('files/fondeos/'.$programaFondeo->id,"Acta_".$request->CriteriosDeElegibilidadFile->getClientOriginalName());
+                }
+                else
+                {
+                    $programaFondeo->Archivos->CriteriosDeElegibilidadFile = null;
+                }
+
+                $programaFondeo->Archivos = json_encode($programaFondeo->Archivos);
+                $programaFondeo->save();
+
+                return response()->json($programaFondeo);
+
+
+            });
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -171,13 +215,18 @@ class ProgramaFondeoController extends Controller
     {
         try{
              AuthenticateController::checkUser('Supervisor');
-             $programaFondeo =ProgramaFondeo::find($id);
-             if($programaFondeo!=null)
-             {
-                 $programaFondeo->delete();
-                 return response()->json(['message'=>'success']);
-             }
-             return response()->json(['message'=>'programa_fondeo_not_found'],404);
+             return DB::transaction(function() use($id){
+                 $programaFondeo =ProgramaFondeo::find($id);
+                 if($programaFondeo!=null)
+                 {
+                     Storage::deleteDirectory('fondeos/'.$id);
+                     $programaFondeo->delete();
+                     return response()->json(['message'=>'success']);
+                 }
+                 return response()->json(['message'=>'programa_fondeo_not_found'],404);
+
+             });
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -204,14 +253,70 @@ class ProgramaFondeoController extends Controller
     {
         try{
             AuthenticateController::checkUser('Supervisor');
-            $programaFondeo =ProgramaFondeo::find($id);
-            if($programaFondeo!=null)
-            {
-                $programaFondeo->fill($request->all());
-                $programaFondeo->save();
-                return response()->json($programaFondeo);
-            }
-            return response()->json(['message'=>'programa_fondeo_not_found'],404);
+                return DB::transaction(function() use($request,$id){
+                    $programaFondeo =ProgramaFondeo::find($id);
+                    if($programaFondeo!=null) {
+
+                        if($programaFondeo->Archivos==null)
+                        {
+                            $programaFondeo->Archivos = new \stdClass;
+                        }
+                        else
+                        {
+                            $programaFondeo->Archivos = json_decode($programaFondeo->Archivos);
+                        }
+                        if ($request->DescripcionFile != null) {
+                            if($programaFondeo->Archivos->DescripcionFile!=null)
+                            {
+                                try{
+                                    Storage::delete($programaFondeo->Archivos->DescripcionFile);
+                                }catch(FileNotFoundException $e){
+                                    DB::rollBack();
+                                    return response()->json(['file_not_found'],500);
+                                }
+                            }
+
+                            $programaFondeo->Archivos->DescripcionFile = 'fondeos/' . $programaFondeo->id . '/' . 'Descripcion_' . $request->DescripcionFile->getClientOriginalName();
+                            $request->DescripcionFile->move('files/fondeos/' . $programaFondeo->id, "Descripcion_" . $request->DescripcionFile->getClientOriginalName());
+                        }
+                        if ($request->RubrosDeApoyoFile != null) {
+                            if($programaFondeo->Archivos->RubrosDeApoyoFile!=null)
+                            {
+                                try{
+                                    Storage::delete($programaFondeo->Archivos->RubrosDeApoyoFile);
+                                }catch(FileNotFoundException $e){
+                                    DB::rollBack();
+                                    return response()->json(['file_not_found'],500);
+                                }
+                            }
+                            $programaFondeo->Archivos->RubrosDeApoyoFile = 'fondeos/' . $programaFondeo->id . '/' . 'RubrosDeApoyo_' . $request->RubrosDeApoyoFile->getClientOriginalName();
+                            $request->RubrosDeApoyoFile->move('files/fondeos/' . $programaFondeo->id, "RubrosDeApoyo_" . $request->RubrosDeApoyoFile->getClientOriginalName());
+                        }
+                        if ($request->CriteriosDeElegibilidadFile != null) {
+                            if ($programaFondeo->Archivos->CriteriosDeElegibilidadFile != null)
+                            {
+
+                                try {
+                                    Storage::delete($programaFondeo->Archivos->CriteriosDeElegibilidadFile);
+                                } catch (FileNotFoundException $e) {
+                                    DB::rollBack();
+                                    return response()->json(['file_not_found'], 500);
+                                }
+                            }
+                            $programaFondeo->Archivos->CriteriosDeElegibilidadFile = 'fondeos/' . $programaFondeo->id . '/' . 'CriteriosDeElegibilidadFile_' . $request->CriteriosDeElegibilidadFile->getClientOriginalName();
+                            $request->CriteriosDeElegibilidadFile->move('files/fondeos/' . $programaFondeo->id, "CriteriosDeElegibilidadFile_" . $request->CriteriosDeElegibilidadFile->getClientOriginalName());
+                        }
+                        $programaFondeo->fill($request->all());
+                        $programaFondeo->Archivos = json_encode($programaFondeo->Archivos);
+                        $programaFondeo->save();
+                        return response()->json($programaFondeo);
+                    }
+                    return response()->json(['message'=>'programa_fondeo_not_found'],404);
+
+                });
+
+
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -357,8 +462,6 @@ class ProgramaFondeoController extends Controller
                 $descriptores[] = $descriptor;
             }
             return response()->json(['Descriptor'=>$descriptores]);
-
-            return response()->json(['message'=>'descriptor_not_found'],404);
         }catch (QueryException $e) {
             return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
         }catch (Exceptions\TokenExpiredException $e) {

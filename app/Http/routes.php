@@ -29,8 +29,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('RefreshToken','AuthenticateController@refreshToken');
 
     /*Persona*/
+    Route::get('Persona/Lookup/{name}','PersonaController@lookup');
+
+
     Route::get('Persona/{who?}','PersonaController@show')
-        ->where(['who'=>'(Current)']);
+        ->where(['who'=>'Current']);
     Route::post('Persona','PersonaController@store');
     Route::delete('Persona','PersonaController@destroy');
     Route::put('Persona','PersonaController@update');
@@ -44,6 +47,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
     /*Validacion de persona*/
     Route::get('Supervisor/Persona','PersonaController@showNotValidated');
+    Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
     Route::post('Supervisor/Persona','PersonaController@validatePerson');
     Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
 
@@ -211,7 +215,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::delete('Proyecto/Resultados/Descriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@destroy')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
-
+    /*Descriptores de Proyecto*/
+    Route::post('Proyecto/Descriptor','ProyectoController@addDescriptor');
+    Route::get('Proyecto/Descriptor/{id}','ProyectoController@showAllDescriptor');
+    Route::delete('Proyecto/Descriptor/{idProyecto}/{id}','ProyectoController@detachDescriptor');
+    Route::put('Proyecto/DescriptorU/{id}','ProyectoController@updateDescriptor');
 
 
     /*Programa de Fondeo*/
@@ -219,7 +227,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('ProgramaFondeo/{id}','ProgramaFondeoController@show');
     Route::get('ProgramaFondeo/Convocatoria/{id}','ProgramaFondeoController@showConvocatoriasAsociadas');
     Route::post('ProgramaFondeo','ProgramaFondeoController@store');
-    Route::put('ProgramaFondeo/{id}','ProgramaFondeoController@update');
+    Route::post('ProgramaFondeo/Update/{id}','ProgramaFondeoController@update');
     Route::delete('ProgramaFondeo/{id}','ProgramaFondeoController@destroy');
         /*Convocatorias del Programa de Fondeo */
         Route::get('ProgramaFondeo/Modalidad/{id}','ProgramaFondeoController@showModalidades');
