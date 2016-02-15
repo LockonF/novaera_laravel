@@ -124,8 +124,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
-            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
-            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
@@ -154,8 +154,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
-            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
-            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
@@ -223,8 +223,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
-            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
-            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
