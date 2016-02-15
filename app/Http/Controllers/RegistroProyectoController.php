@@ -183,9 +183,8 @@ class RegistroProyectoController extends Controller
         try
         {
             $user = AuthenticateController::checkUser(null);
-            $proyecto = Proyecto::validateProyecto($id,$user,$whoIs,$idOrganizacion);
-            $proyecto->load('RegistroProyecto');
-            return response()->json(['RegistroProyecto'=>$proyecto->RegistroProyecto]);
+            $proyecto = Proyecto::getOneRegister($user,$id,$whoIs,$idOrganizacion);
+            return response()->json(['RegistroProyecto'=>$proyecto]);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
