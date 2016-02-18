@@ -628,6 +628,8 @@ class ProyectoController extends Controller
 
     /**
      * @param Request $request
+     * @param string $whoIs
+     * @param null $idOrganizacion
      * @return \Illuminate\Http\JsonResponse
      */
 
@@ -808,7 +810,7 @@ class ProyectoController extends Controller
     public function showAllDescriptor($id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
+            $user = AuthenticateController::checkUser(null);
             $proyecto =Proyecto::find($id);
             if($proyecto==null)
             {
@@ -841,7 +843,7 @@ class ProyectoController extends Controller
     public function updateDescriptor(Request $request, $id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
+            $user = AuthenticateController::checkUser(null);
             $proyectoDescriptor = ProyectoDescriptor::find($request->id);
             if($proyectoDescriptor==null)
             {
@@ -882,7 +884,7 @@ class ProyectoController extends Controller
     public function detachDescriptor($idProyecto,$id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
+            $user = AuthenticateController::checkUser(null);
             $proyecto =Proyecto::find($idProyecto);
             if($proyecto ==null)
             {

@@ -70,6 +70,73 @@ class Proyecto extends Model
     }
 
 
+    /**
+     *
+     */
+    public static function getOneRegister($user,$id=null,$type = 'Persona',$idOrganizacion = null,$strict=0)
+    {
+
+        $query = DB::table('Proyecto')
+            ->join('RegistroProyecto','RegistroProyecto.idProyecto','=','Proyecto.id')
+            ->join('ParqueTecnologico','ParqueTecnologico.id','=','RegistroProyecto.idParque')
+            ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
+            ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
+            ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
+            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.Titulo as ProgramaFondeo')
+            ->where('Proyecto.id',$id);
+
+        if($type=='Persona')
+        {
+            $user->load('Persona');
+            $query
+                ->join('Persona_Proyecto','Persona_Proyecto.idProyecto','=','Proyecto.id')
+                ->where('Persona_Proyecto.idPersona',$user->Persona->id);
+            if($strict==1)
+            {
+                $query->where('Persona_Proyecto.WritePermissions',$strict);
+            }
+
+            $proyectos =$query->get();
+            if($proyectos==null)
+            {
+                throw new InvalidAccessException;
+            }
+        }
+        if($type=='Organizacion')
+        {
+            $query
+                ->join('Organizacion_Proyecto','Organizacion_Proyecto.idProyecto','=','Proyecto.id')
+                ->join('Organizacion','Organizacion_Proyecto.idOrganizacion','=','Organizacion.id')
+                ->join('Persona_Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
+                ->where('Persona_Organizacion.idPersona',$user->Persona->id)
+                ->where('Organizacion.id',$idOrganizacion);
+            if($strict==1)
+            {
+                $query->where('Persona_Organizacion.WritePermissions',$strict);
+            }
+            $proyectos = $query->get();
+
+            if($proyectos==null)
+            {
+                throw new InvalidAccessException;
+            }
+        }
+        foreach($proyectos as $proyecto)
+        {
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
+            $proyecto->Requisitos = json_decode($proyecto->Requisitos);
+        }
+        return $proyectos;
+    }
+
+
+    /**
+     * @return mixed
+     * @throws NotFoundException
+     */
+
     public static function getAllRegistros()
     {
         $query = DB::table('Proyecto')
@@ -87,8 +154,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
-            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
-            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
@@ -141,7 +208,7 @@ class Proyecto extends Model
                 ->join('Organizacion_Proyecto','Organizacion_Proyecto.idProyecto','=','Proyecto.id')
                 ->join('Organizacion','Organizacion_Proyecto.idOrganizacion','=','Organizacion.id')
                 ->join('Persona_Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
-                ->where('Persona_Organizacion.idPersona',$user->load('Persona'))
+                ->where('Persona_Organizacion.idPersona',$user->Persona->id)
                 ->where('Organizacion.id',$idOrganizacion);
             if($strict==1)
             {
@@ -156,8 +223,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
-            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
-            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
