@@ -121,7 +121,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::get('Proyecto/Date/{type?}/{idOrganizacion?}','ProyectoController@showByDate')
             ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
-        Route::get('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@showOneProject')
+        Route::get('Proyecto/One/{type}/{id}/{idOrganizacion?}','ProyectoController@showOneProject')
             ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::post('Proyecto/{type}/{idOrganizacion?}','ProyectoController@storeByPerson')
             ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);

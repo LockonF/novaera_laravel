@@ -143,9 +143,10 @@ class OrganizacionController extends Controller
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
             $organizaciones = $user->Persona->Organizacion()->get();
-            $organizaciones = Organizacion::get();
             foreach($organizaciones as $organizacion)
-            {$organizacion->Archivos = json_decode($organizacion->Archivos);}
+            {
+                $organizacion->Archivos = json_decode($organizacion->Archivos);
+            }
 
             return response()->json(['Organizacion'=>$organizaciones]);
 
