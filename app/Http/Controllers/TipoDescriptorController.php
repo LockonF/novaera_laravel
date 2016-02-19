@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\UnauthorizedException;
+use App\Models\Descriptor;
 use App\Models\TipoDescriptor;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -12,6 +13,29 @@ use App\Http\Controllers\Controller;
 
 class TipoDescriptorController extends Controller
 {
+
+    /**
+     * @param $classification
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showByClassification($classification)
+    {
+        $tipoDescriptor = TipoDescriptor::where('Aplicable',$classification)->get();
+        return response()->json(['TipoDescriptor'=>$tipoDescriptor]);
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showAssociatedDescriptor($id)
+    {
+        $descriptores = Descriptor::where('Activo',1)->where('idTipoDescriptor',$id);
+        return response()->json(['Descriptor'=>$descriptores]);
+    }
+
+
     /**
      * @return \Illuminate\Http\JsonResponse
      */

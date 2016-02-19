@@ -53,10 +53,13 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
 
     /*Tipo Descriptor*/
+
+    Route::get('TipoDescriptor/Clasificacion/{classification}','TipoDescriptorController@showByClassification');
+    Route::get('TipoDescriptor/Descriptor/{id}','TipoDescriptorController@showAssociatedDescriptor');
     Route::get('TipoDescriptor','TipoDescriptorController@showAll');
-    Route::get('TipoDescriptor/{id}','TipoDescriptorController@show');
+    Route::get('TipoDescriptor/{id}','TipoDescriptorController@show')->where(['id'=>'[0-9]+']);
     Route::post('TipoDescriptor','TipoDescriptorController@store');
-    Route::put('TipoDescriptor/{id}','TipoDescriptorController@update');
+    Route::put('TipoDescriptor/{id}','TipoDescriptorController@update')->where(['id'=>'[0-9]+']);
     Route::delete('TipoDescriptor/{id}','TipoDescriptorController@destroy');
 
 
