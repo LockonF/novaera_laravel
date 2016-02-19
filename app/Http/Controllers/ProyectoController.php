@@ -640,6 +640,7 @@ class ProyectoController extends Controller
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
             $resultado  = new ProyectoResultado($request->Resultado);
+            $resultado->PaisesProteccion = json_encode($resultado->PaisesProteccion);
             $resultado->save();
 
             $proyecto->load('ProyectoTRL');
