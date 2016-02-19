@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 17, 2016 at 7:54:50 PM CST
+# Created: February 19, 2016 at 3:03:18 PM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -164,6 +164,7 @@ CREATE TABLE `Descriptor` (
   `idTipoDescriptor` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `Activo` int(11) DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `fk_Descriptor_TipoDescriptor1_idx` (`idTipoDescriptor`),
   CONSTRAINT `fk_Descriptor_TipoDescriptor1` FOREIGN KEY (`idTipoDescriptor`) REFERENCES `TipoDescriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -351,7 +352,7 @@ CREATE TABLE `Organizacion` (
   `idContacto` int(11) DEFAULT NULL,
   `RepresentanteLegal` varchar(200) DEFAULT NULL,
   `RazonSocial` varchar(45) DEFAULT NULL,
-  `Archivos` varchar(500) DEFAULT NULL,
+  `Archivos` json DEFAULT NULL,
   `isValidated` tinyint(1) DEFAULT '0',
   `RENIECyTValidated` tinyint(1) DEFAULT '0',
   `RFCValidated` tinyint(1) DEFAULT '0',
@@ -363,7 +364,7 @@ CREATE TABLE `Organizacion` (
   PRIMARY KEY (`id`),
   KEY `fk_Organizacion_Contacto1_idx` (`idContacto`),
   CONSTRAINT `fk_Organizacion_Contacto1` FOREIGN KEY (`idContacto`) REFERENCES `Contacto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Organizacion_Modalidad` (
@@ -410,7 +411,7 @@ CREATE TABLE `ParqueTecnologico` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(300) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Persona` (
@@ -420,14 +421,14 @@ CREATE TABLE `Persona` (
   `ApellidoM` varchar(45) DEFAULT NULL,
   `Notas` varchar(450) DEFAULT NULL,
   `Descripcion` varchar(450) DEFAULT NULL,
-  `isValidated` int(11) DEFAULT NULL,
+  `isValidated` int(11) NOT NULL DEFAULT '1',
   `idUser` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_Persona_User1_idx` (`idUser`),
   CONSTRAINT `fk_Persona_User1` FOREIGN KEY (`idUser`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Persona_Organizacion` (
@@ -447,7 +448,7 @@ CREATE TABLE `Persona_Organizacion` (
   KEY `fk_Persona_Organizacion_Organizacion1_idx` (`idOrganizacion`),
   CONSTRAINT `fk_Persona_Organizacion_Organizacion1` FOREIGN KEY (`idOrganizacion`) REFERENCES `Organizacion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Persona_Organizacion_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Persona_Proyecto` (
@@ -522,7 +523,7 @@ CREATE TABLE `Proyecto` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProyectoDescriptor` (
@@ -553,18 +554,18 @@ CREATE TABLE `ProyectoTRL` (
   KEY `fk_Proyecto_has_TRL_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_has_TRL_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_has_TRL_TRL1` FOREIGN KEY (`idTRL`) REFERENCES `TRL` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProyectoResultado` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idProyectoTRL` int(11) NOT NULL,
-  `Tipo` varchar(45) NOT NULL,
-  `Nombre` varchar(45) NOT NULL,
-  `Resumen` varchar(450) CHARACTER SET cp850 NOT NULL,
+  `Tipo` varchar(500) NOT NULL,
+  `Nombre` varchar(500) NOT NULL,
+  `Resumen` varchar(500) CHARACTER SET cp850 NOT NULL,
   `NumeroRegistro` varchar(45) DEFAULT NULL,
-  `Status` varchar(45) DEFAULT NULL,
-  `PaisesProteccion` varchar(1000) DEFAULT NULL,
+  `Status` varchar(500) DEFAULT NULL,
+  `PaisesProteccion` json DEFAULT NULL,
   `AreaDeAplicacion` varchar(45) DEFAULT NULL,
   `PlanDeExplotacion` varchar(45) DEFAULT NULL,
   `Avance` varchar(1000) DEFAULT NULL,
@@ -575,7 +576,7 @@ CREATE TABLE `ProyectoResultado` (
   PRIMARY KEY (`id`),
   KEY `fk_Resultado_ProyectoTRL1_idx` (`idProyectoTRL`),
   CONSTRAINT `fk_Resultado_ProyectoTRL1` FOREIGN KEY (`idProyectoTRL`) REFERENCES `ProyectoTRL` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `RegistroProyecto` (
@@ -602,7 +603,7 @@ CREATE TABLE `RegistroProyecto` (
   CONSTRAINT `fk_Proyecto_Modalidad_ParqueTecnologico1` FOREIGN KEY (`idParque`) REFERENCES `ParqueTecnologico` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_Modalidad_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_RegistroProyecto_Convocatoria_Modalidad1` FOREIGN KEY (`idConvocatoriaModalidad`) REFERENCES `Convocatoria_Modalidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ResultadoDescriptor` (
@@ -658,8 +659,8 @@ CREATE TABLE `TipoArchivo` (
 CREATE TABLE `TipoDescriptor` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(300) DEFAULT NULL,
-  `Aplicable` char(1) DEFAULT NULL,
   `Activo` tinyint(1) DEFAULT NULL,
+  `Aplicable` enum('Persona','Organizacion','Proyecto','Resultado','ProgramaFondeo','Todos') NOT NULL DEFAULT 'Persona',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL COMMENT '		',
   PRIMARY KEY (`id`)
@@ -682,7 +683,8 @@ CREATE TABLE `TransferenciaTecnologica` (
 
 CREATE TABLE `TRL` (
   `id` int(11) NOT NULL,
-  `Descripcion` varchar(45) DEFAULT NULL,
+  `Descripcion` varchar(200) DEFAULT NULL,
+  `Nivel` int(2) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -698,7 +700,7 @@ CREATE TABLE `User` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Validacion_Criterio` (
@@ -760,10 +762,9 @@ UNLOCK TABLES;
 
 LOCK TABLES `Descriptor` WRITE;
 ALTER TABLE `Descriptor` DISABLE KEYS;
-INSERT INTO `Descriptor` (`id`, `Titulo`, `Descripcion`, `idTipoDescriptor`, `created_at`, `updated_at`) VALUES 
-	(1,'Metalurgia','Descripcion',1,NULL,NULL),
-	(2,'Otro Descriptor','Descriptor 2',1,NULL,NULL),
-	(3,'Palabra Clave','Descriptor 3',1,NULL,NULL);
+INSERT INTO `Descriptor` (`id`, `Titulo`, `Descripcion`, `idTipoDescriptor`, `created_at`, `updated_at`, `Activo`) VALUES 
+	(1,'Metalurgia','Proyectos en el área de Metalurgia',1,NULL,NULL,1),
+	(2,'Informática','Proyectos en el área de Informática',1,NULL,NULL,1);
 ALTER TABLE `Descriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -843,7 +844,8 @@ ALTER TABLE `Organizacion` DISABLE KEYS;
 INSERT INTO `Organizacion` (`id`, `Titulo`, `Descripcion`, `Mision`, `RFC`, `Vision`, `idContacto`, `RepresentanteLegal`, `RazonSocial`, `Archivos`, `isValidated`, `RENIECyTValidated`, `RFCValidated`, `Giro`, `DireccionFiscal`, `ActaValidated`, `created_at`, `updated_at`) VALUES 
 	(1,'La Organizacion','Una Organizacion','Ser una organizacion','FARD921018','Seremos una organizacion',1,'Chadwick','Empresa',NULL,1,0,0,NULL,NULL,0,NULL,'2016-02-08 07:37:27'),
 	(2,'Mi Organizacion','Una Nueva Organizacion','Ser la mejor organizacion','FARD921018','Seremos la mejor organizacion dentro de 20 años',1,'Chadwick Carreto Arellano','Empresa S.A de C.V',NULL,1,0,0,NULL,NULL,0,'2016-02-07 03:20:28','2016-02-08 07:37:27'),
-	(3,'Organización','Lalala','Ser los mejores en todo','FARD921018','Tener una vision',NULL,'Chadwick','x S.A de C.V',NULL,1,1,1,NULL,NULL,1,'2016-02-15 21:23:12','2016-02-15 21:23:12');
+	(3,'Organización','Lalala','Ser los mejores en todo','FARD921018','Tener una vision',NULL,'Chadwick','x S.A de C.V',NULL,1,1,1,NULL,NULL,1,'2016-02-15 21:23:12','2016-02-15 21:23:12'),
+	(4,'Organización de Adán','Una Nueva Organizacion','Ser la mejor organizacion','FARD921018','Seremos la mejor organizacion dentro de 20 años',1,'Chadwick Carreto Arellano','Empresa S.A de C.V',NULL,0,0,0,NULL,NULL,0,'2016-02-19 07:12:40','2016-02-19 07:12:40');
 ALTER TABLE `Organizacion` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -875,8 +877,13 @@ UNLOCK TABLES;
 LOCK TABLES `ParqueTecnologico` WRITE;
 ALTER TABLE `ParqueTecnologico` DISABLE KEYS;
 INSERT INTO `ParqueTecnologico` (`id`, `Nombre`) VALUES 
-	(1,'Guanajuato'),
-	(2,'Irapuato');
+	(1,'Parque Tecnológico 100'),
+	(2,'Parque IberoInnovación'),
+	(3,'Parque de Innovación De La Salle'),
+	(4,'Parque de Innovación Agrobioteg'),
+	(5,'Parque Guanajuato Tecno Parque'),
+	(6,'Parque Tecnológico SanMiguelense'),
+	(7,'Centro Mexicano de Energías Renovables (CEMER)');
 ALTER TABLE `ParqueTecnologico` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -884,9 +891,10 @@ UNLOCK TABLES;
 LOCK TABLES `Persona` WRITE;
 ALTER TABLE `Persona` DISABLE KEYS;
 INSERT INTO `Persona` (`id`, `Nombre`, `ApellidoP`, `ApellidoM`, `Notas`, `Descripcion`, `isValidated`, `idUser`, `created_at`, `updated_at`) VALUES 
-	(1,'Daniel','Franco','Rodríguez',NULL,NULL,NULL,2,'2016-02-03 04:55:15','2016-02-03 04:55:15'),
-	(2,'Persona','De','Prueba',NULL,NULL,NULL,1,'2016-02-04 07:42:56','2016-02-04 07:42:56'),
-	(3,'Daniel','Franco','Rodríguez',NULL,NULL,1,3,'2016-02-17 22:28:00','2016-02-17 22:28:00');
+	(1,'Daniel','Franco','Rodríguez',NULL,NULL,1,2,'2016-02-03 04:55:15','2016-02-19 07:00:49'),
+	(2,'Persona','De','Prueba',NULL,NULL,0,1,'2016-02-04 07:42:56','2016-02-04 07:42:56'),
+	(3,'Daniel','Franco','Rodríguez',NULL,NULL,1,3,'2016-02-17 22:28:00','2016-02-17 22:28:00'),
+	(7,'adan2','sdsd','sd',NULL,NULL,1,6,'2016-02-19 05:56:04','2016-02-19 05:56:04');
 ALTER TABLE `Persona` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -895,7 +903,8 @@ LOCK TABLES `Persona_Organizacion` WRITE;
 ALTER TABLE `Persona_Organizacion` DISABLE KEYS;
 INSERT INTO `Persona_Organizacion` (`id`, `Puesto`, `FechaInicio`, `FechaTermino`, `idPersona`, `idOrganizacion`, `Owner`, `WritePermissions`, `created_at`, `updated_at`) VALUES 
 	(1,'CEO','2014-01-01',NULL,1,2,1,1,NULL,NULL),
-	(2,'C.E.O','2016-02-19',NULL,1,3,1,1,NULL,NULL);
+	(2,'C.E.O','2016-02-19',NULL,1,3,1,1,NULL,NULL),
+	(3,'CEO','2014-01-01',NULL,7,4,1,1,NULL,NULL);
 ALTER TABLE `Persona_Organizacion` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -904,7 +913,8 @@ LOCK TABLES `Persona_Proyecto` WRITE;
 ALTER TABLE `Persona_Proyecto` DISABLE KEYS;
 INSERT INTO `Persona_Proyecto` (`id`, `idProyecto`, `idPersona`, `WritePermissions`, `Owner`, `created_at`, `updated_at`) VALUES 
 	(4,7,1,1,1,NULL,NULL),
-	(5,8,3,1,1,NULL,NULL);
+	(5,8,3,1,1,NULL,NULL),
+	(6,10,7,1,1,NULL,NULL);
 ALTER TABLE `Persona_Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -936,7 +946,9 @@ INSERT INTO `Proyecto` (`id`, `Titulo`, `Descripcion`, `Antecedentes`, `Justific
 	(2,'Proyecto 2','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-09 18:32:02','2016-02-09 18:32:02'),
 	(6,'Proyecto 3','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-09 18:34:12','2016-02-09 18:34:12'),
 	(7,'Proyecto de Prueba','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-10 01:19:44','2016-02-10 01:19:44'),
-	(8,'Proyecto 1','Descripción','<p>Antecedentes</p>','<p>Justificación</p>','<p>Objetivo</p>','<p>Alcances</p>','2016-02-17 22:34:30','2016-02-17 22:34:30');
+	(8,'Proyecto 1','Descripción','<p>Antecedentes</p>','<p>Justificación</p>','<p>Objetivo</p>','<p>Alcances</p>','2016-02-17 22:34:30','2016-02-17 22:34:30'),
+	(9,'prueba1','prueba1','<p>adada</p>','<p>adad</p>','<p>adada</p>','<p>adada</p>','2016-02-19 05:20:52','2016-02-19 05:20:52'),
+	(10,'asd','asd','asd','asd','asd','asd',NULL,NULL);
 ALTER TABLE `Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -949,23 +961,25 @@ UNLOCK TABLES;
 
 LOCK TABLES `ProyectoTRL` WRITE;
 ALTER TABLE `ProyectoTRL` DISABLE KEYS;
+INSERT INTO `ProyectoTRL` (`id`, `idProyecto`, `idTRL`, `Descripcion`, `Fecha`, `created_at`, `updated_at`) VALUES 
+	(2,9,1,'ssss','2016-02-18','2016-02-19 05:21:12','2016-02-19 05:21:12'),
+	(3,10,1,'asas','2016-02-19','2016-02-19 06:04:53','2016-02-19 06:04:53');
 ALTER TABLE `ProyectoTRL` ENABLE KEYS;
 UNLOCK TABLES;
 
 
 LOCK TABLES `ProyectoResultado` WRITE;
 ALTER TABLE `ProyectoResultado` DISABLE KEYS;
+INSERT INTO `ProyectoResultado` (`id`, `idProyectoTRL`, `Tipo`, `Nombre`, `Resumen`, `NumeroRegistro`, `Status`, `PaisesProteccion`, `AreaDeAplicacion`, `PlanDeExplotacion`, `Avance`, `Fecha`, `FechaAprobacion`, `created_at`, `updated_at`) VALUES 
+	(3,2,'Proceso','Un Producto','El producto es Pro',NULL,'Sin iniciar',NULL,'Metalurgia','El Plan','Se ha completado una fase del proyecto','2015-12-01',NULL,'2016-02-19 05:33:17','2016-02-19 05:33:17'),
+	(5,2,'Proceso','adada','aad',NULL,'Sin iniciar','[]','adad','adad','adad','2016-02-03',NULL,'2016-02-19 05:46:17','2016-02-19 05:46:17'),
+	(6,2,'Patente','ada','adad','adadad',NULL,'"[{\\"id\\":1,\\"Nombre\\":\\"Mexico\\",\\"Abrev\\":\\"MEX\\"},{\\"id\\":2,\\"Nombre\\":\\"Alemania\\",\\"Abrev\\":\\"GER\\"}]"',NULL,'adadad',NULL,'2016-02-18',NULL,'2016-02-19 05:47:40','2016-02-19 05:47:40');
 ALTER TABLE `ProyectoResultado` ENABLE KEYS;
 UNLOCK TABLES;
 
 
 LOCK TABLES `RegistroProyecto` WRITE;
 ALTER TABLE `RegistroProyecto` DISABLE KEYS;
-INSERT INTO `RegistroProyecto` (`id`, `idProyecto`, `idConvocatoriaModalidad`, `idParque`, `Solicitud`, `MontoSolicitado`, `MontoApoyado`, `idTRLInicial`, `idTRLFinal`, `FechaRegistro`, `FechaCierre`, `Requisitos`, `Resultado`, `Validado`, `created_at`, `updated_at`) VALUES 
-	(1,7,1,1,NULL,300000,0,1,2,'2016-02-15',NULL,'[{"Nombre": "Tener El Sistema Listo", "validated": false, "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "validated": false, "Descripcion": "Nada mas por llenar"}]',NULL,'','2016-02-15 03:20:36','2016-02-15 03:20:36'),
-	(2,7,1,1,NULL,300000,0,1,2,'2016-02-15',NULL,'[{"Nombre": "Tener El Sistema Listo", "validated": false, "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "validated": false, "Descripcion": "Nada mas por llenar"}]',NULL,'','2016-02-15 03:33:13','2016-02-15 03:33:13'),
-	(3,2,1,1,NULL,300000,0,1,2,'2016-02-15',NULL,'[{"Nombre": "Tener El Sistema Listo", "validated": false, "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "validated": false, "Descripcion": "Nada mas por llenar"}]',NULL,'','2016-02-15 03:38:40','2016-02-15 03:38:40'),
-	(4,8,1,1,NULL,20000,0,2,3,'2016-02-17',NULL,'[{"Nombre": "Tener El Sistema Listo", "validated": false, "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "validated": false, "Descripcion": "Nada mas por llenar"}]',NULL,'','2016-02-17 23:08:05','2016-02-17 23:08:05');
 ALTER TABLE `RegistroProyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1034,8 +1048,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `TipoDescriptor` WRITE;
 ALTER TABLE `TipoDescriptor` DISABLE KEYS;
-INSERT INTO `TipoDescriptor` (`id`, `Nombre`, `Aplicable`, `Activo`, `created_at`, `updated_at`) VALUES 
-	(1,'Tipo','P',1,NULL,NULL);
+INSERT INTO `TipoDescriptor` (`id`, `Nombre`, `Activo`, `Aplicable`, `created_at`, `updated_at`) VALUES 
+	(1,'Area de Aplicación',1,'Proyecto',NULL,NULL);
 ALTER TABLE `TipoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1051,10 +1065,17 @@ UNLOCK TABLES;
 
 LOCK TABLES `TRL` WRITE;
 ALTER TABLE `TRL` DISABLE KEYS;
-INSERT INTO `TRL` (`id`, `Descripcion`, `created_at`, `updated_at`) VALUES 
-	(1,'TRL 1',NULL,NULL),
-	(2,'Concepto de Tecnología o Aplicación Formulado',NULL,NULL),
-	(3,'TRL 3',NULL,NULL);
+INSERT INTO `TRL` (`id`, `Descripcion`, `Nivel`, `created_at`, `updated_at`) VALUES 
+	(1,'Idea',0,NULL,NULL),
+	(2,'Investigación Básica',1,NULL,NULL),
+	(3,'Formulación de la tecnología',2,NULL,NULL),
+	(4,'Investigación Aplicada',3,NULL,NULL),
+	(5,'Unidad de Desarrollo de Prototipo a Pequeña Escala',4,NULL,NULL),
+	(6,'Unidad de Desarrollo de Prototipo a Gran Escala',5,NULL,NULL),
+	(7,'Sistemas Prototipo',6,NULL,NULL),
+	(8,'Sistemas de Demostración',7,NULL,NULL),
+	(9,'Primer Sistema de Tipo Comercial',8,NULL,NULL),
+	(10,'Aplicación Operacional completa',9,NULL,NULL);
 ALTER TABLE `TRL` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1064,7 +1085,10 @@ ALTER TABLE `User` DISABLE KEYS;
 INSERT INTO `User` (`id`, `username`, `password`, `type`, `isValidated`, `created_at`, `updated_at`) VALUES 
 	(1,'demo','$2y$10$uCHVSUra3c8.EGIccE.i5eS9iT39pt4oiW9sBieDwCoQqGI6tF0b2','User',0,'2016-02-03 01:07:51','2016-02-03 01:07:51'),
 	(2,'Lockon','$2y$10$8G/Ny5pYu6w1dDg53isLV.mazSHWApEltq4NPPHiVkXPKRpbn6sBW','Supervisor',0,'2016-02-03 01:08:08','2016-02-03 01:08:08'),
-	(3,'Nuevo','$2y$10$1lQfyzLTIkIGtORGIYSpaeVkBWX0BFYQLm2dEPrh4yKiX59Gt7EPy','User',0,'2016-02-17 22:26:01','2016-02-17 22:26:01');
+	(3,'Nuevo','$2y$10$1lQfyzLTIkIGtORGIYSpaeVkBWX0BFYQLm2dEPrh4yKiX59Gt7EPy','User',0,'2016-02-17 22:26:01','2016-02-17 22:26:01'),
+	(6,'adan2','$2y$10$jj/U0pJ.AvEvvZsEmhPHbeMMoMJRHQBe4MGYpsqL7B/bX3drd2Tiq','Supervisor',1,'2016-02-19 05:17:41','2016-02-19 05:17:41'),
+	(7,'novaera1','$2y$10$B1RLdkkZe8axazKht0hd.OeShpPDRToGBMRoVEcOrW0O1RvYH4ofm','User',0,'2016-02-19 06:58:23','2016-02-19 06:58:23'),
+	(8,'novaera2','$2y$10$mYGbaZuG7LTqDcOF38AdMugotiEfMvitor/mf4f7MUaPRNkOXjGuS','Supervisor',0,'2016-02-19 06:58:27','2016-02-19 06:58:27');
 ALTER TABLE `User` ENABLE KEYS;
 UNLOCK TABLES;
 
