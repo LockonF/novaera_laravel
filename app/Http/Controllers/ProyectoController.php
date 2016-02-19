@@ -568,8 +568,13 @@ class ProyectoController extends Controller
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($id, $user, $whoIs, $idOrganizacion);
             $proyecto->load('TRL');
+            $data = [];
+            $i = 0;
             foreach ($proyecto->TRL as $trl) {
-                $data[] = $trl->pivot;
+                $data[$i] = (object) $trl->pivot['attributes'];
+                $data[$i]->TRL = $trl['attributes'];
+                $i++;
+
             }
 
             return response()->json(['TRL' => $data]);

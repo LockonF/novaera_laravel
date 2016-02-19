@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class TRL extends Model
 {
     protected $table = 'TRL';
-    protected $fillable = ['Descripcion'];
+    protected $fillable = ['Descripcion','Nivel'];
 
 
     public function Proyecto()
