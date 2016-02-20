@@ -855,10 +855,7 @@ class ProyectoController extends Controller
                 return response()->json(['descriptor_proyecto_not_found'],404);
             }
 
-            $proyectoDescriptor->idProyecto = $request->idProyecto;
-            $proyectoDescriptor->idDescriptor = $request->idDescriptor;
-            $proyectoDescriptor->id = $request->id;
-            $proyectoDescriptor->observaciones = $request->observaciones;
+            $proyecto->fill($request->all());
             $proyectoDescriptor->save();
 
             $proyecto = Proyecto::find($request->idProyecto);
