@@ -858,13 +858,7 @@ class ProyectoController extends Controller
             $proyectoDescriptor->fill($request->all());
             $proyectoDescriptor->save();
 
-            $proyecto = Proyecto::find($request->idProyecto);
-            $proyecto->load('Descriptor');
-            foreach($proyecto->Descriptor as $descriptor)
-            {
-                $descriptores[] = $descriptor;
-            }
-            return response()->json(['Descriptor'=>$descriptores]);
+            return response()->json($proyectoDescriptor);
 
         }catch (QueryException $e) {
             return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);

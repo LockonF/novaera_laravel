@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class ProyectoDescriptor extends Model
 {
     protected $table = 'ProyectoDescriptor';
-    protected $fillable = ['observaciones'];
+    protected $fillable = ['observaciones','idDescriptor'];
 }
