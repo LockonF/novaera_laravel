@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 19, 2016 at 3:03:18 PM CST
+# Created: February 19, 2016 at 11:48:52 PM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -124,7 +124,7 @@ CREATE TABLE `Contacto` (
   PRIMARY KEY (`id`),
   KEY `fk_Contacto_Persona1_idx` (`idPersona`),
   CONSTRAINT `fk_Contacto_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Convocatoria` (
@@ -168,7 +168,7 @@ CREATE TABLE `Descriptor` (
   PRIMARY KEY (`id`),
   KEY `fk_Descriptor_TipoDescriptor1_idx` (`idTipoDescriptor`),
   CONSTRAINT `fk_Descriptor_TipoDescriptor1` FOREIGN KEY (`idTipoDescriptor`) REFERENCES `TipoDescriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Descriptor_Organizacion` (
@@ -245,7 +245,7 @@ CREATE TABLE `Ejecucion` (
   PRIMARY KEY (`id`),
   KEY `fk_Ejecucion_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Ejecucion_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `EntidadFederativa` (
@@ -291,7 +291,7 @@ CREATE TABLE `ImpactoYComercializacion` (
   PRIMARY KEY (`id`),
   KEY `fk_ImpactoyComercializacion_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_ImpactoyComercializacion_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Modalidad` (
@@ -327,7 +327,7 @@ CREATE TABLE `ModeloNegocio` (
   PRIMARY KEY (`id`),
   KEY `fk_ModeloNegocio_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_ModeloNegocio_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Municipio` (
@@ -428,7 +428,7 @@ CREATE TABLE `Persona` (
   PRIMARY KEY (`id`),
   KEY `fk_Persona_User1_idx` (`idUser`),
   CONSTRAINT `fk_Persona_User1` FOREIGN KEY (`idUser`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Persona_Organizacion` (
@@ -465,7 +465,7 @@ CREATE TABLE `Persona_Proyecto` (
   KEY `fk_Proyecto_has_Persona_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_has_Persona_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_has_Persona_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProgramaFondeo` (
@@ -480,7 +480,7 @@ CREATE TABLE `ProgramaFondeo` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProgramaFondeo_RubrosApoyo` (
@@ -509,7 +509,7 @@ CREATE TABLE `ProgramaFondeoDescriptor` (
   KEY `fk_ProgramaFondeoDescriptor_ProgramaFondeo1_idx` (`idProgramaFondeo`),
   CONSTRAINT `fk_ProgramaFondeoDescriptor_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_ProgramaFondeoDescriptor_ProgramaFondeo1` FOREIGN KEY (`idProgramaFondeo`) REFERENCES `ProgramaFondeo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Proyecto` (
@@ -523,12 +523,12 @@ CREATE TABLE `Proyecto` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProyectoDescriptor` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `observaciones` varchar(45) DEFAULT NULL,
+  `observaciones` varchar(600) DEFAULT NULL,
   `idProyecto` int(11) NOT NULL,
   `idDescriptor` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -538,7 +538,7 @@ CREATE TABLE `ProyectoDescriptor` (
   KEY `fk_proyectoDescriptor_Descriptor1_idx` (`idDescriptor`),
   CONSTRAINT `fk_proyectoDescriptor_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_proyectoDescriptor_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProyectoTRL` (
@@ -664,7 +664,7 @@ CREATE TABLE `TipoDescriptor` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL COMMENT '		',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `TransferenciaTecnologica` (
@@ -700,7 +700,7 @@ CREATE TABLE `User` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Validacion_Criterio` (
@@ -737,7 +737,9 @@ UNLOCK TABLES;
 LOCK TABLES `Contacto` WRITE;
 ALTER TABLE `Contacto` DISABLE KEYS;
 INSERT INTO `Contacto` (`id`, `CorreoElectronico`, `TelefonoLocal`, `TelefonoCelular`, `TelefonoOficina`, `Fax`, `PaginaWeb`, `idPersona`, `created_at`, `updated_at`) VALUES 
-	(1,'correo@correo.com','123456','134556','123456','fax134','www.pagina.com.mx',1,'2016-02-07 03:20:26','2016-02-07 03:20:26');
+	(1,'correo@correo.com','123456','134556','123456','fax134','www.pagina.com.mx',1,'2016-02-07 03:20:26','2016-02-07 03:20:26'),
+	(2,'elariosj@gmail.com','5521992387',NULL,'5521992387',NULL,NULL,8,'2016-02-20 00:16:05','2016-02-20 00:16:05'),
+	(3,'elariosj@gmail.com','5521992387',NULL,'5521992387',NULL,NULL,9,'2016-02-20 00:21:32','2016-02-20 00:21:32');
 ALTER TABLE `Contacto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -763,8 +765,24 @@ UNLOCK TABLES;
 LOCK TABLES `Descriptor` WRITE;
 ALTER TABLE `Descriptor` DISABLE KEYS;
 INSERT INTO `Descriptor` (`id`, `Titulo`, `Descripcion`, `idTipoDescriptor`, `created_at`, `updated_at`, `Activo`) VALUES 
-	(1,'Metalurgia','Proyectos en el área de Metalurgia',1,NULL,NULL,1),
-	(2,'Informática','Proyectos en el área de Informática',1,NULL,NULL,1);
+	(4,'Automotriz y autopartes','Sector Automotriz del Estado de Guanajuato',2,'2016-02-19 23:55:17','2016-02-20 00:03:28',1),
+	(5,'Productos químicos','Productos químicos',2,'2016-02-20 00:02:40','2016-02-20 00:02:40',1),
+	(6,'Textil - Cuero – Calzado Proveeduría','Textil - Cuero – Calzado Proveeduría',2,'2016-02-20 00:03:54','2016-02-20 00:03:54',1),
+	(7,'Agroindustrial','Agroindustrial',2,'2016-02-20 00:04:09','2016-02-20 00:04:09',1),
+	(8,'Minería de metálicos','Minería de metálicos',2,'2016-02-20 00:04:27','2016-02-20 00:04:27',1),
+	(9,'Productos para la construcción','Productos para la construcción',2,'2016-02-20 00:04:48','2016-02-20 00:04:48',1),
+	(10,'Turismo','Turismo',2,'2016-02-20 00:05:03','2016-02-20 00:05:03',1),
+	(11,'Agricultura','Agricultura',3,'2016-02-20 00:08:28','2016-02-20 00:08:28',1),
+	(12,'Pesca','Pesca',3,'2016-02-20 00:08:42','2016-02-20 00:08:42',1),
+	(13,'Ganadería','Ganadería',3,'2016-02-20 00:08:57','2016-02-20 00:08:57',1),
+	(14,'Minería','Minería',3,'2016-02-20 00:09:05','2016-02-20 00:09:05',1),
+	(15,'Aprovechamiento forestal','Aprovechamiento forestal',3,'2016-02-20 00:09:12','2016-02-20 00:09:12',1),
+	(16,'Piel y calzado','Piel y calzado',5,'2016-02-20 00:09:43','2016-02-20 00:09:43',1),
+	(17,'Industria manufacturera','Industria manufacturera',5,'2016-02-20 00:09:55','2016-02-20 00:09:55',1),
+	(18,'Construcción','Construcción',5,'2016-02-20 00:10:09','2016-02-20 00:10:09',1),
+	(19,'Transporte y comunicaciones','Transporte y comunicaciones',6,'2016-02-20 00:10:47','2016-02-20 00:10:47',1),
+	(20,'Comercio','Comercio',6,'2016-02-20 00:10:54','2016-02-20 00:10:54',1),
+	(21,'Turismo','Turismo',6,'2016-02-20 00:11:04','2016-02-20 00:11:04',1);
 ALTER TABLE `Descriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -790,7 +808,8 @@ UNLOCK TABLES;
 LOCK TABLES `Ejecucion` WRITE;
 ALTER TABLE `Ejecucion` DISABLE KEYS;
 INSERT INTO `Ejecucion` (`id`, `Requisitos`, `AnalisisEntornoP`, `FactibilidadTecnicaP`, `FactibilidadEconomicaP`, `FactibilidadComercialP`, `BenchmarkComercialP`, `BenchmarkTecnologicoP`, `RecursosHumanosP`, `RecursosFinancierosP`, `RecursosTecnologicosP`, `RecursosMaterialesP`, `idProyecto`, `created_at`, `updated_at`) VALUES 
-	(1,'<p>Requerimientos</p>','<p>Entorno</p>','<p>Factibilidad Técnica</p>','<p>Factibilidad Eco</p>','<p>Factibilidad Comercial</p>','<p>Benchmark Comercial</p>','<p>Benchmark Tecnológico</p>','<p>Recursos Humanos</p>','<p>Recursos Financieros</p>','<p>Recursos Tecnológicos</p>','<p>Recursos Materiales</p>',8,'2016-02-17 22:42:30','2016-02-17 22:46:20');
+	(1,'<p>Requerimientos</p>','<p>Entorno</p>','<p>Factibilidad Técnica</p>','<p>Factibilidad Eco</p>','<p>Factibilidad Comercial</p>','<p>Benchmark Comercial</p>','<p>Benchmark Tecnológico</p>','<p>Recursos Humanos</p>','<p>Recursos Financieros</p>','<p>Recursos Tecnológicos</p>','<p>Recursos Materiales</p>',8,'2016-02-17 22:42:30','2016-02-17 22:46:20'),
+	(2,'<p>Requerimiento del proyecto</p>','<p>Entorno del Proyecot</p>','<p>Factibilidad Tecnica</p>','<p>Factibilidad Economica</p>','<p>Factibilidad Comercial</p>','<p>Benchmark</p>','<p>BenchMark tecnologicos</p>','<p>Recursos humanos</p>','<p>REcursos Financieros</p>','<p>Recursos Tecnologicos</p>','<p>Recursos Materiales</p>',11,'2016-02-20 01:26:20','2016-02-20 01:27:25');
 ALTER TABLE `Ejecucion` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -814,7 +833,8 @@ UNLOCK TABLES;
 LOCK TABLES `ImpactoYComercializacion` WRITE;
 ALTER TABLE `ImpactoYComercializacion` DISABLE KEYS;
 INSERT INTO `ImpactoYComercializacion` (`id`, `ImpactoAmbiental`, `ImpactoCientifico`, `ImpactoTecnologico`, `ImpactoSocial`, `ImpactoEconomico`, `PropuestaDeValor`, `SegmentosDeClientes`, `SolucionPropuesta`, `Metricas`, `SolucionActual`, `idProyecto`, `created_at`, `updated_at`) VALUES 
-	(1,'<p>Impacto Ambiental</p>','<p>Impacto Científico</p>','<p>Impacto Tecnológico</p>',NULL,NULL,'<p>Texto</p>','<p>Más Texto</p>','<p>Aún Más Texto</p>','<p>Otro texto más</p>','<p>Finalizar</p>',8,'2016-02-17 22:35:28','2016-02-17 22:37:02');
+	(1,'<p>Impacto Ambiental</p>','<p>Impacto Científico</p>','<p>Impacto Tecnológico</p>',NULL,NULL,'<p>Texto</p>','<p>Más Texto</p>','<p>Aún Más Texto</p>','<p>Otro texto más</p>','<p>Finalizar</p>',8,'2016-02-17 22:35:28','2016-02-17 22:37:02'),
+	(2,'<p><span lang="ES">Este proyecto prevé un impacto ambiental positivo, ya que la el producto propuesto favorece al suelo tratando el biocontrol de un hongo causante de enfermedad en un cultivo de importancia y también favoreciendo el proceso de biorre','<p><span lang="ES"> El desarrollo de este producto depende de la investigación para solucionar un problema real usando el biocontrol y los mecanismos de antagonismo y competición microbiano, así mismo la evaluación de los resultados y posibles mejora','<p><span lang="ES"> Con este proyecto se busca desarrollar no solo un producto, sino una opción además de los químicos para tratar enfermedades en los suelos, la aplicación de la biotecnología en el desarrollo de este producto asegura que es viable, ','<p><span lang="ES"> El beneficio directo es hacia los agricultores ya que se tendrá un mayor volumen productivo, cultivos de mejor calidad y sin padecer esta enfermedad, ayudando de distintas comunidades productoras y se establecen alternativas para ','<p><span lang="ES">La actividad económica y comercial de la agricultura en especial del cultivo de cebolla se ve beneficiada al tener un mejor producto, mejores rendimientos de cosecha lo que permite vender el producto en este y mercados extranjeros,','<p><span lang="ES">La pudrición blanca en cebolla es una enfermedad que afecta a los agricultores y a este producto ya que genera pérdidas en el volumen de cosecha e impide el uso de este suelo para cultivar la cebolla ya que es una enfermedad altame','<p><span lang="ES"></span></p><p>Este proyecto pretende formular un producto liquido capaz combatir esta enfermedad mediante el uso de un microorganismo antagónico a una alta concentración el cual coloniza los esclerocios enrollan las hifas, deforman','<p><span lang="ES">Elcontrol biológico de la enfermedad de la pudrición blanca en el suelo es unaalternativa al uso de químicos ya que no solo se encarga de combatirla, tambiénbrinda mecanismos por los cuales el suelo es enriquecida y los cultivosveg','<p>asas  dsfsd</p>','<p><span lang="ES"> Existen diversas formas en cómo se ha tratado esta enfermedad, el combate cultural que comprende la rotación de cultivos, inundación, combate físico por aumento de temperatura en suelo, combate químico que comprende su uso como tr',11,'2016-02-20 01:18:34','2016-02-20 01:19:52');
 ALTER TABLE `ImpactoYComercializacion` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -829,6 +849,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `ModeloNegocio` WRITE;
 ALTER TABLE `ModeloNegocio` DISABLE KEYS;
+INSERT INTO `ModeloNegocio` (`id`, `Canales`, `VentajaCompetitiva`, `Problematica`, `Costos`, `Ingresos`, `ActividadesClave`, `RelacionesCliente`, `RecursosClave`, `AliadosClave`, `idProyecto`, `created_at`, `updated_at`) VALUES 
+	(1,'<p>1212</p>','<p>1212</p>','<p>1212</p>','<p>1212</p>','<p>1212</p>','<p>1212</p>','<p>1212</p>','<p>1212</p>','<p>1212</p>',11,'2016-02-20 01:22:24','2016-02-20 01:22:24');
 ALTER TABLE `ModeloNegocio` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -891,10 +913,12 @@ UNLOCK TABLES;
 LOCK TABLES `Persona` WRITE;
 ALTER TABLE `Persona` DISABLE KEYS;
 INSERT INTO `Persona` (`id`, `Nombre`, `ApellidoP`, `ApellidoM`, `Notas`, `Descripcion`, `isValidated`, `idUser`, `created_at`, `updated_at`) VALUES 
-	(1,'Daniel','Franco','Rodríguez',NULL,NULL,1,2,'2016-02-03 04:55:15','2016-02-19 07:00:49'),
-	(2,'Persona','De','Prueba',NULL,NULL,0,1,'2016-02-04 07:42:56','2016-02-04 07:42:56'),
-	(3,'Daniel','Franco','Rodríguez',NULL,NULL,1,3,'2016-02-17 22:28:00','2016-02-17 22:28:00'),
-	(7,'adan2','sdsd','sd',NULL,NULL,1,6,'2016-02-19 05:56:04','2016-02-19 05:56:04');
+	(1,'Daniel','Franco','Rodríguez',NULL,NULL,0,2,'2016-02-03 04:55:15','2016-02-19 07:00:49'),
+	(2,'Persona','De','Prueba',NULL,NULL,0,1,'2016-02-04 07:42:56','2016-02-20 05:14:57'),
+	(3,'Daniel','Franco','Rodríguez',NULL,NULL,0,3,'2016-02-17 22:28:00','2016-02-17 22:28:00'),
+	(7,'adan2','sdsd','sd',NULL,NULL,1,6,'2016-02-19 05:56:04','2016-02-20 05:16:22'),
+	(8,'Edgar','Larios','Tapia',NULL,NULL,1,9,'2016-02-20 00:15:50','2016-02-20 00:15:50'),
+	(9,'Edgar','Larios','Tapia',NULL,NULL,1,8,'2016-02-20 00:21:11','2016-02-20 00:21:11');
 ALTER TABLE `Persona` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -914,7 +938,8 @@ ALTER TABLE `Persona_Proyecto` DISABLE KEYS;
 INSERT INTO `Persona_Proyecto` (`id`, `idProyecto`, `idPersona`, `WritePermissions`, `Owner`, `created_at`, `updated_at`) VALUES 
 	(4,7,1,1,1,NULL,NULL),
 	(5,8,3,1,1,NULL,NULL),
-	(6,10,7,1,1,NULL,NULL);
+	(6,10,7,1,1,NULL,NULL),
+	(7,11,9,1,1,NULL,NULL);
 ALTER TABLE `Persona_Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -922,8 +947,9 @@ UNLOCK TABLES;
 LOCK TABLES `ProgramaFondeo` WRITE;
 ALTER TABLE `ProgramaFondeo` DISABLE KEYS;
 INSERT INTO `ProgramaFondeo` (`id`, `Titulo`, `PublicoObjetivo`, `FondoTotal`, `Descripcion`, `RubrosDeApoyo`, `CriteriosElegibilidad`, `Archivos`, `created_at`, `updated_at`) VALUES 
-	(3,'Programa de Fondeo 2','Publico de todas las edades',20000000,'La Descripcion','Algunos Rubros','Algunos Criterios','{"DescripcionFile": null, "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-12 03:50:06','2016-02-12 03:50:06'),
-	(4,'hhhhh','Emprendedores',100000,'<p>dsdddasdsas</p>','<p>ssdsddssdsddsds</p>','<p>ssdsdsdsddssd</p>','{"DescripcionFile": null, "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-17 23:13:37','2016-02-17 23:13:37');
+	(3,'Programa de Fondeo 2','Publico de todas las edades',20000000,'La Descripcion','Algunos Rubros','Algunos Criterios','{"DescripcionFile": "fondeos/3/Descripcion_BD.png", "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-12 03:50:06','2016-02-20 03:05:17'),
+	(4,'hhhhh','Emprendedores',100000,'<p>dsdddasdsas</p>','<p>ssdsddssdsddsds</p>','<p>ssdsdsdsddssd</p>','{"DescripcionFile": null, "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-17 23:13:37','2016-02-17 23:13:37'),
+	(5,'PROGRAMA	ESTATAL DE DESARROLLO DE EMPRESAS DE','En esta Convocatoria podrán participar los Parques del Sistema de Parques  e  Innovación,  NOVAERA, quienes prestarán servicios a los beneficiarios finales, que podrán ser personas físicas y/o morales establecidas en el Estado de Guanajuato. Para participar,  los  beneficiarios  finales  deberán  hacerlo  a través de alguno de los Parques del Sistema de Parques Tecnológicos e Innovación del Estado de Guanajuato, NOVAERA.',0,'<p><span style="text-align: justify;">El</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Gobierno</span><span style="text-align: justify;"> </span><span style="text-align: justify;">del</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Estado</span><span style="text-align: justify;"> </span><span style="text-align: justify;">de</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Guanajuato,</span><span style="text-align: justify;"> </span><span style="text-align: justify;">a</span><span style="text-align: justify;"> </span><span style="text-align: justify;">través</span><span style="text-align: justify;"></span><span style="text-align: justify;">de</span><span style="text-align: justify;"> </span><span style="text-align: justify;">la</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Secretaría</span><span style="text-align: justify;"> </span><span styl','<p class="TableParagraph"><b>MONTO MÁXIMO DE APOYO POR SOLICITUD</b><br/></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>TRANSFERENCIA<span> </span>DE<span> </span>TECNOLOGÍA</span></b><span></span></p><p class="TableParagraph"><span>Evaluación </span><span>$70,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><span>Comercialización </span><span>$80,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>CREACIÓN<span> </span>DE<span> </span>EMPRESAS<span> </span>DE<span> </span>BASE<span> </span>TECNOLÓGICA</span></b><span></span></p><p class="TableParagraph"><span>Formalización <span></span>de<span> </span>empresa<span> </span>de<span> </span>base<span> </span>tecnológica </span><span>$26,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>HOSPEDAJE<span> </span>EN<span> </span>PARQUE<span></span>DE<span> </span>NOVAERA</span></b><spa','<p class="MsoBodyText" style="text-align: justify;">Cada<span> </span>miembro<span> </span>del<span> </span>Comité<span> </span>de<span> </span>Revisión<span><span> </span></span>emitirá<span><span> </span></span>una<span><span> </span></span>recomendación<span><span> </span></span>por<span><span> </span></span>solicitud,<span><span> </span></span>basada<span><span> </span></span>en<span><span> </span></span>la<span> </span>pertinencia,<span> </span>el<span> </span>impacto<span> </span>potencial<span> </span>y<span> </span>la<span> </span>viabilidad<span> </span>en<span> </span>la<span> </span>implementación<span> </span>del<span> </span>producto<span> </span>y/o<span> </span>servicio<span> </span>presentado.<span> </span>Las<span> </span>solicitudes<span> </span>con<span> </span>al<span> </span>menos<span> </span>una<span> </span>recomendación<span> </span>positiva<span> </span>serán<span> </span>presentadas<span> </span>ante<span> </span>el<span> </span>Comité<span> </span>Evaluador.','{"DescripcionFile": null, "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-19 23:45:14','2016-02-19 23:45:19');
 ALTER TABLE `ProgramaFondeo` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -936,6 +962,8 @@ UNLOCK TABLES;
 
 LOCK TABLES `ProgramaFondeoDescriptor` WRITE;
 ALTER TABLE `ProgramaFondeoDescriptor` DISABLE KEYS;
+INSERT INTO `ProgramaFondeoDescriptor` (`id`, `observaciones`, `idDescriptor`, `idProgramaFondeo`, `created_at`, `updated_at`) VALUES 
+	(2,NULL,4,5,NULL,NULL);
 ALTER TABLE `ProgramaFondeoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -948,13 +976,16 @@ INSERT INTO `Proyecto` (`id`, `Titulo`, `Descripcion`, `Antecedentes`, `Justific
 	(7,'Proyecto de Prueba','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-10 01:19:44','2016-02-10 01:19:44'),
 	(8,'Proyecto 1','Descripción','<p>Antecedentes</p>','<p>Justificación</p>','<p>Objetivo</p>','<p>Alcances</p>','2016-02-17 22:34:30','2016-02-17 22:34:30'),
 	(9,'prueba1','prueba1','<p>adada</p>','<p>adad</p>','<p>adada</p>','<p>adada</p>','2016-02-19 05:20:52','2016-02-19 05:20:52'),
-	(10,'asd','asd','asd','asd','asd','asd',NULL,NULL);
+	(10,'asd','asd','asd','asd','asd','asd',NULL,NULL),
+	(11,'Elaboración de tratamiento para Sclerotium ce','Este proyecto plantea la formulación y validación de un producto capaz de tratar la enfermedad llamada pudrición blanca que ataca a la cebolla, causada por el hongo Sclerotium cepivorum el cual es difícil de combatir. \n\n','<p style="text-align: justify;">Esteproyecto plantea la formulación y validación de un producto capaz de tratar la enfermedadllamada pudrición blanca que ataca a la cebolla, causada por el hongo <i>Sclerotium cepivorum</i> el cual es difícil decombatir. </p><p style="text-align: justify;">Deacuerdo diversas investigaciones y estudios, el hongo <i>Trichoderma sp </i>es un antagónico y buen biocontrolador para estehongo patógeno, además que cuenta ','<p>La pudrición blanca en cebolla es una enfermedad que afecta a los agricultores y a este producto ya que genera pérdidas en el volumen de cosecha e impide el uso de este suelo para cultivar la cebolla ya que es una enfermedad altamente latente y fácil de propagar.<br/></p>','<p>Este proyectopretende formular un producto liquido capaz combatir esta enfermedad medianteel uso de un microorganismo antagónico a una alta concentración el cualcoloniza los esclerocios enrollan las hifas, deforman y lisan a este patógeno,además este producto contara con otras cepas microbianas que mejorando lascondiciones del suelo facilitando el desarrollo y viabilidad del hongoantagónico, asimismo de participar en el proceso de biorremediac','<p>Listo -------</p>','2016-02-20 00:26:56','2016-02-20 00:26:58');
 ALTER TABLE `Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
 
 LOCK TABLES `ProyectoDescriptor` WRITE;
 ALTER TABLE `ProyectoDescriptor` DISABLE KEYS;
+INSERT INTO `ProyectoDescriptor` (`id`, `observaciones`, `idProyecto`, `idDescriptor`, `created_at`, `updated_at`) VALUES 
+	(1,NULL,11,7,NULL,NULL);
 ALTER TABLE `ProyectoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1049,7 +1080,11 @@ UNLOCK TABLES;
 LOCK TABLES `TipoDescriptor` WRITE;
 ALTER TABLE `TipoDescriptor` DISABLE KEYS;
 INSERT INTO `TipoDescriptor` (`id`, `Nombre`, `Activo`, `Aplicable`, `created_at`, `updated_at`) VALUES 
-	(1,'Area de Aplicación',1,'Proyecto',NULL,NULL);
+	(2,'Sector Estratégico del  Estado de Guanajuato',1,'','2016-02-19 23:54:02','2016-02-20 00:03:01'),
+	(3,'Sector Primario',0,'','2016-02-19 23:54:30','2016-02-20 00:08:06'),
+	(4,'Industria de Aplicacion',NULL,'','2016-02-19 23:54:50','2016-02-19 23:54:50'),
+	(5,'Sector Secundario',NULL,'','2016-02-20 00:09:31','2016-02-20 00:09:31'),
+	(6,'Sector Terceario',NULL,'','2016-02-20 00:10:31','2016-02-20 00:10:31');
 ALTER TABLE `TipoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1088,7 +1123,8 @@ INSERT INTO `User` (`id`, `username`, `password`, `type`, `isValidated`, `create
 	(3,'Nuevo','$2y$10$1lQfyzLTIkIGtORGIYSpaeVkBWX0BFYQLm2dEPrh4yKiX59Gt7EPy','User',0,'2016-02-17 22:26:01','2016-02-17 22:26:01'),
 	(6,'adan2','$2y$10$jj/U0pJ.AvEvvZsEmhPHbeMMoMJRHQBe4MGYpsqL7B/bX3drd2Tiq','Supervisor',1,'2016-02-19 05:17:41','2016-02-19 05:17:41'),
 	(7,'novaera1','$2y$10$B1RLdkkZe8axazKht0hd.OeShpPDRToGBMRoVEcOrW0O1RvYH4ofm','User',0,'2016-02-19 06:58:23','2016-02-19 06:58:23'),
-	(8,'novaera2','$2y$10$mYGbaZuG7LTqDcOF38AdMugotiEfMvitor/mf4f7MUaPRNkOXjGuS','Supervisor',0,'2016-02-19 06:58:27','2016-02-19 06:58:27');
+	(8,'novaera2','$2y$10$mYGbaZuG7LTqDcOF38AdMugotiEfMvitor/mf4f7MUaPRNkOXjGuS','Supervisor',0,'2016-02-19 06:58:27','2016-02-19 06:58:27'),
+	(9,'elariosj@gmail.com','$2y$10$qyA1DdAM9aBc92y3M3i/suP0AqoBR/dMKmMIbR.cGJUMJl.pQBPfS','User',0,'2016-02-20 00:14:18','2016-02-20 00:14:18');
 ALTER TABLE `User` ENABLE KEYS;
 UNLOCK TABLES;
 

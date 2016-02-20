@@ -26,6 +26,7 @@ class ModalidadController extends Controller
             AuthenticateController::checkUser('Supervisor');
                 $modalidad = new Modalidad($request->all());
                 $modalidad->save();
+                return response()->json($modalidad);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
