@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProyectoDescriptor extends Model
 {
-    protected $table = 'proyectodescriptor';
+    protected $table = 'ProyectoDescriptor';
     protected $fillable = ['observaciones'];
 }
