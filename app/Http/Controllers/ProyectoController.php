@@ -778,15 +778,11 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function addDescriptor(Request $request)
+    public function addDescriptor(Request $request,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
-            AuthenticateController::checkUser(null);
-            $proyecto =Proyecto::find($request->idProyecto);
-            if($proyecto==null)
-            {
-                return response()->json(['message'=>'proyecto_not_found'],404);
-            }
+            $user = AuthenticateController::checkUser(null);
+            $proyecto =Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
             $descriptor = Descriptor::find($request->idDescriptor);
 
             $proyecto->Descriptor()->save($descriptor,$request->all());
@@ -805,6 +801,8 @@ class ProyectoController extends Controller
             return response()->json(['token_invalid'], $e->getStatusCode());
         } catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
         }
     }
 
@@ -813,11 +811,11 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function showAllDescriptor($id)
+    public function showAllDescriptor($id,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $proyecto =Proyecto::find($id);
+            $proyecto =Proyecto::validateProyecto($id,$user,$whoIs,$idOrganizacion);
             if($proyecto==null)
             {
                 return response()->json(['message'=>'proyecto_not_found'],404);
@@ -846,11 +844,12 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function updateDescriptor(Request $request, $id)
+    public function updateDescriptor(Request $request, $id,$whoIs=null,$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $proyectoDescriptor = ProyectoDescriptor::find($request->id);
+            $proyecto =Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
+            $proyectoDescriptor = ProyectoDescriptor::find($id);
             if($proyectoDescriptor==null)
             {
                 return response()->json(['descriptor_proyecto_not_found'],404);
@@ -887,11 +886,11 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function detachDescriptor($idProyecto,$id)
+    public function detachDescriptor($idProyecto,$id,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $proyecto =Proyecto::find($idProyecto);
+            $proyecto =Proyecto::validateProyecto($idProyecto,$user,$whoIs,$idOrganizacion);
             if($proyecto ==null)
             {
                 return response()->json(['message'=>'proyecto_fondeo_not_found'],404);
