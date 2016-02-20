@@ -225,7 +225,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
     Route::delete('Proyecto/Descriptor/{idProyecto}/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@detachDescriptor')
         ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
-    Route::put('Proyecto/Descriptor/{id}','ProyectoController@updateDescriptor')
+    Route::put('Proyecto/Descriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@updateDescriptor')
         ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
 
 
