@@ -844,11 +844,11 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function updateDescriptor(Request $request, $id,$whoIs=null,$idOrganizacion=null)
+    public function updateDescriptor(Request $request,$id,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $proyecto =Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
+            $proyecto = Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
             $proyectoDescriptor = ProyectoDescriptor::find($id);
             if($proyectoDescriptor==null)
             {
