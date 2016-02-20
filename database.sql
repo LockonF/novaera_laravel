@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 19, 2016 at 11:48:52 PM CST
+# Created: February 20, 2016 at 12:42:21 AM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -307,7 +307,7 @@ CREATE TABLE `Modalidad` (
   PRIMARY KEY (`id`),
   KEY `fk_Modalidad_ProgramaFondeo1_idx` (`idProgramaFondeo`),
   CONSTRAINT `fk_Modalidad_ProgramaFondeo1` FOREIGN KEY (`idProgramaFondeo`) REFERENCES `ProgramaFondeo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ModeloNegocio` (
@@ -538,7 +538,7 @@ CREATE TABLE `ProyectoDescriptor` (
   KEY `fk_proyectoDescriptor_Descriptor1_idx` (`idDescriptor`),
   CONSTRAINT `fk_proyectoDescriptor_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_proyectoDescriptor_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProyectoTRL` (
@@ -659,7 +659,7 @@ CREATE TABLE `TipoArchivo` (
 CREATE TABLE `TipoDescriptor` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(300) DEFAULT NULL,
-  `Activo` tinyint(1) DEFAULT NULL,
+  `Activo` tinyint(1) DEFAULT '1',
   `Aplicable` enum('Persona','Organizacion','Proyecto','Resultado','ProgramaFondeo','Todos') NOT NULL DEFAULT 'Persona',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL COMMENT '		',
@@ -842,7 +842,8 @@ UNLOCK TABLES;
 LOCK TABLES `Modalidad` WRITE;
 ALTER TABLE `Modalidad` DISABLE KEYS;
 INSERT INTO `Modalidad` (`id`, `idProgramaFondeo`, `Nombre`, `Montos`, `CriteriosEvaluacion`, `Entregables`, `FigurasApoyo`, `created_at`, `updated_at`) VALUES 
-	(1,3,'Otra Modalidad de P1',300000,'Criterios','Lista de Entregables','Abogado','2016-02-14 05:19:34','2016-02-14 05:19:34');
+	(1,3,'Modalidad Editada',300000,'Criterios','Lista de Entregables','Abogado','2016-02-14 05:19:34','2016-02-20 06:11:51'),
+	(3,3,'Otra Modalidad de P1',300000,'Criterios','Lista de Entregables','Abogado','2016-02-20 06:19:25','2016-02-20 06:19:25');
 ALTER TABLE `Modalidad` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -947,7 +948,7 @@ UNLOCK TABLES;
 LOCK TABLES `ProgramaFondeo` WRITE;
 ALTER TABLE `ProgramaFondeo` DISABLE KEYS;
 INSERT INTO `ProgramaFondeo` (`id`, `Titulo`, `PublicoObjetivo`, `FondoTotal`, `Descripcion`, `RubrosDeApoyo`, `CriteriosElegibilidad`, `Archivos`, `created_at`, `updated_at`) VALUES 
-	(3,'Programa de Fondeo 2','Publico de todas las edades',20000000,'La Descripcion','Algunos Rubros','Algunos Criterios','{"DescripcionFile": "fondeos/3/Descripcion_BD.png", "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-12 03:50:06','2016-02-20 03:05:17'),
+	(3,'Programa de Fondeo 2','Publico de todas las edades',20000000,'La Descripcion','Algunos Rubros','Algunos Criterios','{"DescripcionFile": "fondeos/3/Descripcion_BD.png", "RubrosDeApoyoFile": "fondeos/3/RubrosDeApoyo_BD.png", "CriteriosDeElegibilidadFile": null}','2016-02-12 03:50:06','2016-02-20 06:37:22'),
 	(4,'hhhhh','Emprendedores',100000,'<p>dsdddasdsas</p>','<p>ssdsddssdsddsds</p>','<p>ssdsdsdsddssd</p>','{"DescripcionFile": null, "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-17 23:13:37','2016-02-17 23:13:37'),
 	(5,'PROGRAMA	ESTATAL DE DESARROLLO DE EMPRESAS DE','En esta Convocatoria podrán participar los Parques del Sistema de Parques  e  Innovación,  NOVAERA, quienes prestarán servicios a los beneficiarios finales, que podrán ser personas físicas y/o morales establecidas en el Estado de Guanajuato. Para participar,  los  beneficiarios  finales  deberán  hacerlo  a través de alguno de los Parques del Sistema de Parques Tecnológicos e Innovación del Estado de Guanajuato, NOVAERA.',0,'<p><span style="text-align: justify;">El</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Gobierno</span><span style="text-align: justify;"> </span><span style="text-align: justify;">del</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Estado</span><span style="text-align: justify;"> </span><span style="text-align: justify;">de</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Guanajuato,</span><span style="text-align: justify;"> </span><span style="text-align: justify;">a</span><span style="text-align: justify;"> </span><span style="text-align: justify;">través</span><span style="text-align: justify;"></span><span style="text-align: justify;">de</span><span style="text-align: justify;"> </span><span style="text-align: justify;">la</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Secretaría</span><span style="text-align: justify;"> </span><span styl','<p class="TableParagraph"><b>MONTO MÁXIMO DE APOYO POR SOLICITUD</b><br/></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>TRANSFERENCIA<span> </span>DE<span> </span>TECNOLOGÍA</span></b><span></span></p><p class="TableParagraph"><span>Evaluación </span><span>$70,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><span>Comercialización </span><span>$80,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>CREACIÓN<span> </span>DE<span> </span>EMPRESAS<span> </span>DE<span> </span>BASE<span> </span>TECNOLÓGICA</span></b><span></span></p><p class="TableParagraph"><span>Formalización <span></span>de<span> </span>empresa<span> </span>de<span> </span>base<span> </span>tecnológica </span><span>$26,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>HOSPEDAJE<span> </span>EN<span> </span>PARQUE<span></span>DE<span> </span>NOVAERA</span></b><spa','<p class="MsoBodyText" style="text-align: justify;">Cada<span> </span>miembro<span> </span>del<span> </span>Comité<span> </span>de<span> </span>Revisión<span><span> </span></span>emitirá<span><span> </span></span>una<span><span> </span></span>recomendación<span><span> </span></span>por<span><span> </span></span>solicitud,<span><span> </span></span>basada<span><span> </span></span>en<span><span> </span></span>la<span> </span>pertinencia,<span> </span>el<span> </span>impacto<span> </span>potencial<span> </span>y<span> </span>la<span> </span>viabilidad<span> </span>en<span> </span>la<span> </span>implementación<span> </span>del<span> </span>producto<span> </span>y/o<span> </span>servicio<span> </span>presentado.<span> </span>Las<span> </span>solicitudes<span> </span>con<span> </span>al<span> </span>menos<span> </span>una<span> </span>recomendación<span> </span>positiva<span> </span>serán<span> </span>presentadas<span> </span>ante<span> </span>el<span> </span>Comité<span> </span>Evaluador.','{"DescripcionFile": null, "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-19 23:45:14','2016-02-19 23:45:19');
 ALTER TABLE `ProgramaFondeo` ENABLE KEYS;
@@ -985,7 +986,8 @@ UNLOCK TABLES;
 LOCK TABLES `ProyectoDescriptor` WRITE;
 ALTER TABLE `ProyectoDescriptor` DISABLE KEYS;
 INSERT INTO `ProyectoDescriptor` (`id`, `observaciones`, `idProyecto`, `idDescriptor`, `created_at`, `updated_at`) VALUES 
-	(1,NULL,11,7,NULL,NULL);
+	(1,NULL,11,7,NULL,NULL),
+	(4,'Las Observaciones',7,7,NULL,NULL);
 ALTER TABLE `ProyectoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1081,10 +1083,10 @@ LOCK TABLES `TipoDescriptor` WRITE;
 ALTER TABLE `TipoDescriptor` DISABLE KEYS;
 INSERT INTO `TipoDescriptor` (`id`, `Nombre`, `Activo`, `Aplicable`, `created_at`, `updated_at`) VALUES 
 	(2,'Sector Estratégico del  Estado de Guanajuato',1,'','2016-02-19 23:54:02','2016-02-20 00:03:01'),
-	(3,'Sector Primario',0,'','2016-02-19 23:54:30','2016-02-20 00:08:06'),
-	(4,'Industria de Aplicacion',NULL,'','2016-02-19 23:54:50','2016-02-19 23:54:50'),
-	(5,'Sector Secundario',NULL,'','2016-02-20 00:09:31','2016-02-20 00:09:31'),
-	(6,'Sector Terceario',NULL,'','2016-02-20 00:10:31','2016-02-20 00:10:31');
+	(3,'Sector Primario',1,'','2016-02-19 23:54:30','2016-02-20 00:08:06'),
+	(4,'Industria de Aplicacion',1,'','2016-02-19 23:54:50','2016-02-19 23:54:50'),
+	(5,'Sector Secundario',1,'','2016-02-20 00:09:31','2016-02-20 00:09:31'),
+	(6,'Sector Terceario',1,'','2016-02-20 00:10:31','2016-02-20 00:10:31');
 ALTER TABLE `TipoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 

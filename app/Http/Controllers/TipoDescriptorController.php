@@ -31,7 +31,7 @@ class TipoDescriptorController extends Controller
 
     public function showAssociatedDescriptor($id)
     {
-        $descriptores = Descriptor::where('Activo',1)->where('idTipoDescriptor',$id);
+        $descriptores = Descriptor::where('Activo',1)->where('idTipoDescriptor',$id)->get();
         return response()->json(['Descriptor'=>$descriptores]);
     }
 
