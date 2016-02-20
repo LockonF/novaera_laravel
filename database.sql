@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 20, 2016 at 12:42:21 AM CST
+# Created: February 20, 2016 at 1:00:10 AM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -948,7 +948,7 @@ UNLOCK TABLES;
 LOCK TABLES `ProgramaFondeo` WRITE;
 ALTER TABLE `ProgramaFondeo` DISABLE KEYS;
 INSERT INTO `ProgramaFondeo` (`id`, `Titulo`, `PublicoObjetivo`, `FondoTotal`, `Descripcion`, `RubrosDeApoyo`, `CriteriosElegibilidad`, `Archivos`, `created_at`, `updated_at`) VALUES 
-	(3,'Programa de Fondeo 2','Publico de todas las edades',20000000,'La Descripcion','Algunos Rubros','Algunos Criterios','{"DescripcionFile": "fondeos/3/Descripcion_BD.png", "RubrosDeApoyoFile": "fondeos/3/RubrosDeApoyo_BD.png", "CriteriosDeElegibilidadFile": null}','2016-02-12 03:50:06','2016-02-20 06:37:22'),
+	(3,'Programa de Fondeo 2','Publico de todas las edades',20000000,'La Descripcion','Algunos Rubros','Algunos Criterios','{"DescripcionFile": "fondeos/3/Descripcion_BD.png", "RubrosDeApoyoFile": "fondeos/3/RubrosDeApoyo_BD.png", "CriteriosDeElegibilidadFile": null}','2016-02-12 03:50:06','2016-02-20 06:51:32'),
 	(4,'hhhhh','Emprendedores',100000,'<p>dsdddasdsas</p>','<p>ssdsddssdsddsds</p>','<p>ssdsdsdsddssd</p>','{"DescripcionFile": null, "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-17 23:13:37','2016-02-17 23:13:37'),
 	(5,'PROGRAMA	ESTATAL DE DESARROLLO DE EMPRESAS DE','En esta Convocatoria podrán participar los Parques del Sistema de Parques  e  Innovación,  NOVAERA, quienes prestarán servicios a los beneficiarios finales, que podrán ser personas físicas y/o morales establecidas en el Estado de Guanajuato. Para participar,  los  beneficiarios  finales  deberán  hacerlo  a través de alguno de los Parques del Sistema de Parques Tecnológicos e Innovación del Estado de Guanajuato, NOVAERA.',0,'<p><span style="text-align: justify;">El</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Gobierno</span><span style="text-align: justify;"> </span><span style="text-align: justify;">del</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Estado</span><span style="text-align: justify;"> </span><span style="text-align: justify;">de</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Guanajuato,</span><span style="text-align: justify;"> </span><span style="text-align: justify;">a</span><span style="text-align: justify;"> </span><span style="text-align: justify;">través</span><span style="text-align: justify;"></span><span style="text-align: justify;">de</span><span style="text-align: justify;"> </span><span style="text-align: justify;">la</span><span style="text-align: justify;"> </span><span style="text-align: justify;">Secretaría</span><span style="text-align: justify;"> </span><span styl','<p class="TableParagraph"><b>MONTO MÁXIMO DE APOYO POR SOLICITUD</b><br/></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>TRANSFERENCIA<span> </span>DE<span> </span>TECNOLOGÍA</span></b><span></span></p><p class="TableParagraph"><span>Evaluación </span><span>$70,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><span>Comercialización </span><span>$80,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>CREACIÓN<span> </span>DE<span> </span>EMPRESAS<span> </span>DE<span> </span>BASE<span> </span>TECNOLÓGICA</span></b><span></span></p><p class="TableParagraph"><span>Formalización <span></span>de<span> </span>empresa<span> </span>de<span> </span>base<span> </span>tecnológica </span><span>$26,000.00</span></p><p class="TableParagraph"><span></span></p><p class="TableParagraph"><b><span>HOSPEDAJE<span> </span>EN<span> </span>PARQUE<span></span>DE<span> </span>NOVAERA</span></b><spa','<p class="MsoBodyText" style="text-align: justify;">Cada<span> </span>miembro<span> </span>del<span> </span>Comité<span> </span>de<span> </span>Revisión<span><span> </span></span>emitirá<span><span> </span></span>una<span><span> </span></span>recomendación<span><span> </span></span>por<span><span> </span></span>solicitud,<span><span> </span></span>basada<span><span> </span></span>en<span><span> </span></span>la<span> </span>pertinencia,<span> </span>el<span> </span>impacto<span> </span>potencial<span> </span>y<span> </span>la<span> </span>viabilidad<span> </span>en<span> </span>la<span> </span>implementación<span> </span>del<span> </span>producto<span> </span>y/o<span> </span>servicio<span> </span>presentado.<span> </span>Las<span> </span>solicitudes<span> </span>con<span> </span>al<span> </span>menos<span> </span>una<span> </span>recomendación<span> </span>positiva<span> </span>serán<span> </span>presentadas<span> </span>ante<span> </span>el<span> </span>Comité<span> </span>Evaluador.','{"DescripcionFile": null, "RubrosDeApoyoFile": null, "CriteriosDeElegibilidadFile": null}','2016-02-19 23:45:14','2016-02-19 23:45:19');
 ALTER TABLE `ProgramaFondeo` ENABLE KEYS;
@@ -1082,11 +1082,11 @@ UNLOCK TABLES;
 LOCK TABLES `TipoDescriptor` WRITE;
 ALTER TABLE `TipoDescriptor` DISABLE KEYS;
 INSERT INTO `TipoDescriptor` (`id`, `Nombre`, `Activo`, `Aplicable`, `created_at`, `updated_at`) VALUES 
-	(2,'Sector Estratégico del  Estado de Guanajuato',1,'','2016-02-19 23:54:02','2016-02-20 00:03:01'),
-	(3,'Sector Primario',1,'','2016-02-19 23:54:30','2016-02-20 00:08:06'),
-	(4,'Industria de Aplicacion',1,'','2016-02-19 23:54:50','2016-02-19 23:54:50'),
-	(5,'Sector Secundario',1,'','2016-02-20 00:09:31','2016-02-20 00:09:31'),
-	(6,'Sector Terceario',1,'','2016-02-20 00:10:31','2016-02-20 00:10:31');
+	(2,'Sector Estratégico del  Estado de Guanajuato',1,'Todos','2016-02-19 23:54:02','2016-02-20 00:03:01'),
+	(3,'Sector Primario',1,'Todos','2016-02-19 23:54:30','2016-02-20 00:08:06'),
+	(4,'Industria de Aplicacion',1,'Todos','2016-02-19 23:54:50','2016-02-19 23:54:50'),
+	(5,'Sector Secundario',1,'Todos','2016-02-20 00:09:31','2016-02-20 00:09:31'),
+	(6,'Sector Terceario',1,'Todos','2016-02-20 00:10:31','2016-02-20 00:10:31');
 ALTER TABLE `TipoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
