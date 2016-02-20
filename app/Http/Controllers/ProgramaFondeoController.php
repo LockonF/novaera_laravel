@@ -92,6 +92,10 @@ class ProgramaFondeoController extends Controller
     {
         try{
             $programaFondeo = ProgramaFondeo::get();
+            foreach($programaFondeo as $programa)
+            {
+                $programa->Archivos = json_decode($programa->Archivos);
+            }
             return response()->json(['ProgramaFondeo'=>$programaFondeo]);
         }catch (QueryException $e)
         {
