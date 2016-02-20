@@ -280,8 +280,7 @@ class ProgramaFondeoController extends Controller
                                 try{
                                     Storage::delete($programaFondeo->Archivos->DescripcionFile);
                                 }catch(FileNotFoundException $e){
-                                    DB::rollBack();
-                                    return response()->json(['file_not_found'],500);
+                                    $programaFondeo->Archivos->DescripcionFile=null;
                                 }
                             }
 
@@ -294,8 +293,7 @@ class ProgramaFondeoController extends Controller
                                 try{
                                     Storage::delete($programaFondeo->Archivos->RubrosDeApoyoFile);
                                 }catch(FileNotFoundException $e){
-                                    DB::rollBack();
-                                    return response()->json(['file_not_found'],500);
+                                    $programaFondeo->Archivos->RubrosDeApoyoFile=null;
                                 }
                             }
                             $programaFondeo->Archivos->RubrosDeApoyoFile = 'fondeos/' . $programaFondeo->id . '/' . 'RubrosDeApoyo_' . $request->RubrosDeApoyoFile->getClientOriginalName();
@@ -308,8 +306,7 @@ class ProgramaFondeoController extends Controller
                                 try {
                                     Storage::delete($programaFondeo->Archivos->CriteriosDeElegibilidadFile);
                                 } catch (FileNotFoundException $e) {
-                                    DB::rollBack();
-                                    return response()->json(['file_not_found'], 500);
+                                    $request->CriteriosDeElegibilidadFile = null;
                                 }
                             }
                             $programaFondeo->Archivos->CriteriosDeElegibilidadFile = 'fondeos/' . $programaFondeo->id . '/' . 'CriteriosDeElegibilidadFile_' . $request->CriteriosDeElegibilidadFile->getClientOriginalName();
@@ -318,6 +315,7 @@ class ProgramaFondeoController extends Controller
                         $programaFondeo->fill($request->all());
                         $programaFondeo->Archivos = json_encode($programaFondeo->Archivos);
                         $programaFondeo->save();
+                        $programaFondeo->Archivos = json_decode($programaFondeo->Archivos);
                         return response()->json($programaFondeo);
                     }
                     return response()->json(['message'=>'programa_fondeo_not_found'],404);
