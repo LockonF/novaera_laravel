@@ -31,7 +31,7 @@ class OrganizacionController extends Controller
      */
 
 
-    public function getNotValidatedOrganizaciones(Request $request)
+    public function getNotValidatedOrganizaciones()
     {
         AuthenticateController::checkUser('Supervisor');
         try{
