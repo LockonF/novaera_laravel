@@ -22,6 +22,92 @@ use Tymon\JWTAuth\Exceptions;
 class OrganizacionController extends Controller
 {
 
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws Exceptions\JWTException
+     * @throws Exceptions\TokenExpiredException
+     * @throws Exceptions\TokenInvalidException
+     */
+    public function validateDocuments(Request $request,$id)
+    {
+        AuthenticateController::checkUser('Supervisor');
+        try{
+            $organizacion = Organizacion::find($id);
+            if($organizacion!=null)
+            {
+                if($request->ActaValidated!=null)
+                    $organizacion->ActaValidated = $request->ActaValidated;
+                if($request->RENIECyTValidated!=null)
+                    $organizacion->RENIECyTValidated = $request->RENIECyTValidated;
+                if($request->RFCValidated!=null)
+                    $organizacion->RFCValidated = $request->RFCValidated;
+                $organizacion->save();
+
+                $organizacion->Archivos = json_decode($organizacion->Archivos);
+                return response()->json($organizacion);
+            }
+            return response()->json(['message'=>'organizacion_not_found'],500);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     * @throws Exceptions\JWTException
+     * @throws Exceptions\TokenExpiredException
+     * @throws Exceptions\TokenInvalidException
+     */
+
+
+    public function getNotValidatedDocumentsOrganizaciones()
+    {
+        AuthenticateController::checkUser('Supervisor');
+        try{
+            AuthenticateController::checkUser(null);
+            $organizaciones = Organizacion::
+                where('ActaValidated',0)
+                ->orWhere('RENIECyTValidated',0)
+                ->orWhere('RFCValidated',0)
+                ->get();
+            foreach($organizaciones as $organizacion)
+            {$organizacion->Archivos = json_decode($organizacion->Archivos);}
+            return response()->json(['Organizacion'=>$organizaciones]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+
     /**
      * @return \Illuminate\Http\JsonResponse
      * @throws Exceptions\JWTException
@@ -35,7 +121,8 @@ class OrganizacionController extends Controller
         AuthenticateController::checkUser('Supervisor');
         try{
             AuthenticateController::checkUser(null);
-            $organizaciones = Organizacion::where('isValidated',0)->get();
+            $organizaciones = Organizacion::where('isValidated',0)
+                ->get();
             foreach($organizaciones as $organizacion)
             {$organizacion->Archivos = json_decode($organizacion->Archivos);}
             return response()->json(['Organizacion'=>$organizaciones]);
@@ -254,11 +341,19 @@ class OrganizacionController extends Controller
             if($user->Persona!=null)
             {
                 $organizacion = new Organizacion($request->Organizacion);
+                $organizacion->Archivos = new \stdClass;
+                $organizacion->Archivos->ActaFile =null;
+                $organizacion->Archivos->RFCFile =null;
+                $organizacion->Archivos->RENIECyTFile =null;
+
                 $personaData = $request->Datos;
                 $personaData['Owner'] = 1;
                 $personaData['WritePermissions']=1;
+                $organizacion->Archivos = json_encode($organizacion->Archivos);
 
                 $user->Persona->Organizacion()->save($organizacion,$personaData);
+                $organizacion->Archivos = json_decode($organizacion->Archivos);
+
                 return response()->json($organizacion);
             }
             return response()->json(['message'=>'persona_not_found'],404);
