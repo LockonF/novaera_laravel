@@ -742,10 +742,20 @@ class ProyectoController extends Controller
                 ->select('ProyectoResultado.*')
                 ->where('ProyectoTRL.idProyecto',$id);
 
-            if ($type != null && $type!='Todos')
+            if ($type != null)
             {
-                $results->where('ProyectoResultado.Tipo', $type);
+                if($type!='Todos')
+                {
+                    $results->where('ProyectoResultado.Tipo', $type);
+                }
+                else
+                {
+                    $results->where('ProyectoResultado.Tipo','!=','Patente');
+                }
+
             }
+
+
             $results = $results->get();
             return response()->json(['Resultado' => $results]);
 
