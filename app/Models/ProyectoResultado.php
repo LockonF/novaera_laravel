@@ -44,6 +44,7 @@ class ProyectoResultado extends Model
      */
     public static function validateResultadoProyecto($idProyectoResultado,$user,$type = 'Persona',$idOrganizacion = null,$strict=1)
     {
+        $user->load('Persona');
         $proyectoResultado = ProyectoResultado::find($idProyectoResultado);
         if($proyectoResultado==null)
         {
@@ -73,7 +74,7 @@ class ProyectoResultado extends Model
                 ->join('Organizacion_Proyecto','Organizacion_Proyecto.idProyecto','=','Proyecto.id')
                 ->join('Organizacion','Organizacion_Proyecto.idOrganizacion','=','Organizacion.id')
                 ->join('Persona_Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
-                ->where('Persona_Organizacion.idPersona',$user->load('Persona'))
+                ->where('Persona_Organizacion.idPersona',$user->Persona->id)
                 ->where('Organizacion.id',$idOrganizacion);
             if($strict==1)
             {

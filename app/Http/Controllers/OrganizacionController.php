@@ -23,7 +23,6 @@ class OrganizacionController extends Controller
 {
 
     /**
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      * @throws Exceptions\JWTException
      * @throws Exceptions\TokenExpiredException

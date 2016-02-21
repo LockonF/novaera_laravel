@@ -57,7 +57,7 @@ class ProyectoResultadoController extends Controller
         try{
 
             $user = AuthenticateController::checkUser();
-            $resultado = ProyectoResultado::validateResultadoProyecto($request->idResultado,$user,$whoIs,$idOrganizacion);
+            $resultado = ProyectoResultado::validateResultadoProyecto($request->idResultado,$user,$whoIs,$idOrganizacion,0);
             if($resultado==null)
                 return response()->json(['proyecto_resultado_not_found'],500);
             $resultadoDescriptor = new ResultadoDescriptor($request->all());
