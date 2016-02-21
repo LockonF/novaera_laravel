@@ -739,19 +739,12 @@ class ProyectoController extends Controller
             $proyecto = Proyecto::validateProyecto($id, $user, $whoIs, $idOrganizacion);
             $results = DB::table('ProyectoResultado')
                 ->join('ProyectoTRL', 'ProyectoResultado.idProyectoTRL', '=', 'ProyectoTRL.id')
-                ->join('Proyecto', 'ProyectoTRL.idProyecto', '=', 'Proyecto.id')
                 ->select('ProyectoResultado.*')
-                ->where('Proyecto.id', $proyecto->id);
+                ->where('ProyectoTRL.idProyecto',$id);
 
-            if ($type != null) {
-                if ($type == 'Todos') {
-                    $results
-                        ->where('ProyectoResultado.Tipo', 'Producto')
-                        ->orWhere('ProyectoResultado.Tipo', 'Proceso')
-                        ->orWhere('ProyectoResultado.Tipo', 'Servicio');
-                } else {
-                    $results->where('ProyectoResultado.Tipo', $type);
-                }
+            if ($type != null && $type!='Todos')
+            {
+                $results->where('ProyectoResultado.Tipo', $type);
             }
             $results = $results->get();
             return response()->json(['Resultado' => $results]);
