@@ -57,6 +57,11 @@ class ProyectoResultado extends Model
             ->join('Proyecto','ProyectoTRL.idProyecto','=','Proyecto.id')
             ->where('ProyectoResultado.id',$idProyectoResultado)
             ->select('ProyectoResultado.id');
+        if($query->first()==null)
+        {
+            throw new NotFoundException;
+        }
+
         if($type=='Persona')
         {
             $query
