@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidAccessException;
 use App\Exceptions\NotFoundException;
+use App\Models\Descriptor;
 use App\Models\Proyecto;
 use App\Models\ProyectoResultado;
 use App\Models\ResultadoDescriptor;
@@ -28,6 +29,12 @@ class ProyectoResultadoController extends Controller
 
             $user = AuthenticateController::checkUser();
             $resultado = ProyectoResultado::validateResultadoProyecto($idResultado,$user,$whoIs,$idOrganizacion,0);
+            foreach($resultado->ResultadoDescriptor as $resultadoDescriptor)
+            {
+                $descriptor = Descriptor::find($resultadoDescriptor->idDescriptor);
+                $resultadoDescriptor->idTipoDescriptor = $descriptor->idTipoDescriptor;
+
+            }
             return response()->json(['ResultadoRescriptor'=>$resultado->ResultadoDescriptor]);
         }catch (QueryException $e)
         {
