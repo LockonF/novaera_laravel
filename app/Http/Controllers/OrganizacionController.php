@@ -388,6 +388,7 @@ class OrganizacionController extends Controller
                 $record= $user->Persona->Organizacion()->where('Organizacion.id',$id)->where('idPersona',$user->Persona->id)->where('Owner',1)->first();
                 if($record!=null)
                 {
+                    Storage::deleteDirectory('Organizaciones/'.$id);
                     $record->delete();
                     return response()->json(['message'=>'success']);
                 }
@@ -498,6 +499,7 @@ class OrganizacionController extends Controller
                     }
                     $record->Archivos = json_encode($record->Archivos);
                     $record->save();
+                    $record->Archivos = json_decode($record->Archivos);
 
                     return response()->json($record);
                 });
