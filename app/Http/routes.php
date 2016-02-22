@@ -48,11 +48,13 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     /*Validacion de persona*/
     Route::get('Supervisor/Persona','PersonaController@showNotValidated');
     Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
+    Route::get('Supervisor/RegistroProyecto/Convocatoria/{id}','RegistroProyectoController@showByConvocatoria')->where(['id'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion','OrganizacionController@getNotValidatedOrganizaciones');
-    Route::put('Supervisor/Organizacion/{id}','OrganizacionController@validateDocuments')->where(['id'=>'[0-9]+']);;
+    Route::put('Supervisor/Organizacion/{id}','OrganizacionController@validateDocuments')->where(['id'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion/Documentos','OrganizacionController@getNotValidatedDocumentsOrganizaciones');
     Route::post('Supervisor/Persona','PersonaController@validatePerson');
     Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
+
 
 
     /*Tipo Descriptor*/
