@@ -32,7 +32,7 @@ class TransferenciaTecnologica extends Model
             throw new NotFoundException;
         }
         $query =DB::table('TransferenciaTecnologica')
-            ->join('Proyecto','TransferenciaTecnoligca.idProyecto','=','Proyecto.id')
+            ->join('Proyecto','TransferenciaTecnologica.idProyecto','=','Proyecto.id')
             ->select('TransferenciaTecnologica.id');
         if($whoIs=='Persona')
         {
