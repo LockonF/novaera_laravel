@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidAccessException;
+use App\Exceptions\NotFoundException;
 use Illuminate\Http\Request;
 
 use App\Exceptions\UnauthorizedException;
@@ -199,6 +201,10 @@ class TransferenciaTecnologicaController extends Controller
             return response()->json(['unauthorized'], $e->getStatusCode());
         }
         catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        } catch (NotFoundException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
