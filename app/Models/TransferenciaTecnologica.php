@@ -39,7 +39,7 @@ class TransferenciaTecnologica extends Model
             $query->join('Persona_Proyecto','Persona_Proyecto.idProyecto','=','Proyecto.id')
                 ->where('Persona_Proyecto.idPersona',$user->Persona->id);
             if($strict==1)
-                $query->where('Persona_Proyecto.WritePermisions',1);
+                $query->where('Persona_Proyecto.WritePermissions',1);
 
         }if($whoIs=='Organizacion')
         {
@@ -47,7 +47,7 @@ class TransferenciaTecnologica extends Model
                 ->join('Persona_Organizacion','Organizacion_Proyecto.idOrganizacion','=','Persona_Organizacion.idOrganizacion')
                 ->where('Persona_Organizacion.idPersona',$user->Persona->id);
             if($strict==1)
-                $query->where('Persona_Organizacion.WritePermisions',1);
+                $query->where('Persona_Organizacion.WritePermissions',1);
         }
 
         $result = $query->first();
