@@ -257,6 +257,7 @@ class RegistroProyectoController extends Controller
     {
         try
         {
+            $user = AuthenticateController::checkUser('Supervisor');
             $registros = RegistroProyecto::getByConvocatoria($id);
             return response()->json(['RegistroProyectos'=>$registros]);
         }catch (QueryException $e)

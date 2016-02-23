@@ -37,7 +37,12 @@ class RegistroProyecto extends Model
             ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
             ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
             ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
-            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.Titulo as ProgramaFondeo')
+            ->select(
+                'RegistroProyecto.*',
+                'Proyecto.Titulo','Proyecto.Descripcion','Proyecto.Antecedentes','Proyecto.Justificacion',
+                'Proyecto.Objetivos','Proyecto.Alcances',
+                'Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria',
+                'ParqueTecnologico.Nombre as Parque','ProgramaFondeo.Titulo as ProgramaFondeo')
             ->where('Convocatoria.id',$id)
             ->get();
 

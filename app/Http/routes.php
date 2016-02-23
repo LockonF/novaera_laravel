@@ -51,6 +51,9 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         ->where(['type'=>'(Ejecucion|Impacto|TransferenciaTecnologica|ModeloNegocio)','id'=>'[0-9]+']);
     Route::get('Supervisor/{type}/Archivos/{id}','SupervisorController@showFileRoutes')
         ->where(['type'=>'(Ejecucion|Impacto|TransferenciaTecnologica|ModeloNegocio)','id'=>'[0-9]+']);
+
+    Route::get('Supervisor/Resultados/{type}/{id}','SupervisorController@showResults')
+        ->where(['type'=>'(Patente|Producto|Servicio|Proceso|Todos)','id'=>'[0-9]+']);
     Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
     Route::get('Supervisor/RegistroProyecto/Convocatoria/{id}','RegistroProyectoController@showByConvocatoria')->where(['id'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion','OrganizacionController@getNotValidatedOrganizaciones');
