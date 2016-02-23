@@ -8,6 +8,7 @@ use App\Models\Descriptor;
 use App\Models\Proyecto;
 use App\Models\ProyectoResultado;
 use App\Models\ResultadoDescriptor;
+use App\Models\TipoDescriptor;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -32,7 +33,13 @@ class ProyectoResultadoController extends Controller
             foreach($resultado->ResultadoDescriptor as $resultadoDescriptor)
             {
                 $descriptor = Descriptor::find($resultadoDescriptor->idDescriptor);
+                $tipoDescriptor = TipoDescriptor::find($descriptor->idTipoDescriptor);
                 $resultadoDescriptor->idTipoDescriptor = $descriptor->idTipoDescriptor;
+                $resultadoDescriptor->NombreResultado = $resultado->Nombre;
+                $resultadoDescriptor->TipoResultado = $resultado->Tipo;
+                $resultadoDescriptor->TipoDescriptor = $tipoDescriptor->Nombre;
+                $resultadoDescriptor->DescriptorTitulo = $descriptor->Titulo;
+                $resultadoDescriptor->DescriptorDescripcion = $descriptor->Descripcion;
 
             }
             return response()->json(['ResultadoRescriptor'=>$resultado->ResultadoDescriptor]);
