@@ -23,9 +23,9 @@ class TransferenciaTecnologica extends Model
         return $this->hasMany('App\Models\Archivos','idTransferenciaTecnologica');
     }
 
-    public static function ValidateTransferencia($id,$user,$whoIs=null,$idOrganizacion=null,$strict=1)
+    public static function ValidateTransferencia($id,$user,$whoIs='Persona',$idOrganizacion=null,$strict=1)
     {
-        if($id==null || $whoIs==null || $idOrganizacion==null)
+        if($id==null || $whoIs==null || $user==null)
             throw new NotFoundException;
         if(TransferenciaTecnologica::find($id)==null)
         {
