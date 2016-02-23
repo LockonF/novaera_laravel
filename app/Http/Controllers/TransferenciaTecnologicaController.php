@@ -183,17 +183,10 @@ class TransferenciaTecnologicaController extends Controller
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto = Proyecto::validateProyecto($id, $user, $whoIs, $idOrganizacion);
-            $transferencia = TransferenciaTecnologica::find($id);
-            if($transferencia==null)
-            {
-                return response()->json(['message'=>'transferenciaTecnologica_not_found'],404);
-            }
-            else
-            {
-                $transferencia->delete();
-                return response()->json(['message'=>'success']);
-            }
+            $transferencia= TransferenciaTecnologica::ValidateTransferencia($id, $user, $whoIs, $idOrganizacion);
+            $transferencia->delete();
+            return response()->json(['message'=>'success']);
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

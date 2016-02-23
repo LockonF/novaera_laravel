@@ -41,6 +41,12 @@ class RegistroProyecto extends Model
             ->where('Convocatoria.id',$id)
             ->get();
 
+        foreach($query as $item)
+        {
+            $item->TRLInicial = TRL::find($item->idTRLInicial)->Descripcion;
+            $item->TRLFinal = TRL::find($item->idTRLFinal)->Descripcion;
+        }
+
         return $query;
     }
 

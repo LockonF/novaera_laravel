@@ -30,6 +30,8 @@ class Proyecto extends Model
     public static function validateProyecto($idProyecto,$user,$type = 'Persona',$idOrganizacion = null,$strict=1)
     {
         $proyecto = null;
+        if(Proyecto::find($idProyecto)==null)
+            throw new NotFoundException;
         if($type=='Persona')
         {
             $user->load('Persona');
