@@ -678,7 +678,9 @@ class ProyectoController extends Controller
             $user->load('Persona');
             $proyectoResultado = ProyectoResultado::validateResultadoProyecto($id,$user,$type,$whoIs,$idOrganizacion);
             $proyectoResultado->fill($request->all());
+            $proyectoResultado->PaisesProteccion = json_encode($proyectoResultado->PaisesProteccion);
             $proyectoResultado->save();
+            $proyectoResultado->PaisesProteccion = json_decode($proyectoResultado->PaisesProteccion);
             return response()->json($proyectoResultado);
 
         }catch (QueryException $e)
