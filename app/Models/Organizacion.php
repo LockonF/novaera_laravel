@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Organizacion extends Model
@@ -30,4 +31,22 @@ class Organizacion extends Model
     public function Proyecto(){
         return $this->belongsToMany('App\Models\Proyecto', 'Organizacion_Proyecto', 'idOrganizacion', 'idProyecto')->withPivot('Owner');
     }
+
+
+    /**
+     * @param User $user
+     * @param string $id
+     * @return bool
+     */
+
+    public static function doesPersonaBelongTo($user,$id)
+    {
+        if($user->Persona->Organizacion()->find($id)!=null)
+        {
+            return true;
+        }
+        return false;
+
+    }
+
 }

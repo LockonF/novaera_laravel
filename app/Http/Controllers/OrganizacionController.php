@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidAccessException;
+use App\Exceptions\NotFoundException;
 use App\Exceptions\UnauthorizedException;
 use App\Models\DescriptorOrganizacion;
 use App\Models\Organizacion;
@@ -75,6 +77,8 @@ class OrganizacionController extends Controller
      * @throws Exceptions\TokenExpiredException
      * @throws Exceptions\TokenInvalidException
      */
+
+
 
 
     public function getNotValidatedDocumentsOrganizaciones()
@@ -624,6 +628,11 @@ class OrganizacionController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
     public function addDescriptor(Request $request)
     {
         try{
@@ -683,6 +692,12 @@ class OrganizacionController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function updateDescriptor(Request $request, $id)
     {
@@ -754,4 +769,102 @@ class OrganizacionController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
+
+    /**
+     * @param $idOrganizacion
+     * @param $idDescriptor
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showPersonsByDescriptor($idOrganizacion,$idDescriptor)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            if(!Organizacion::doesPersonaBelongTo($user,$idOrganizacion))
+                throw new InvalidAccessException;
+            $personas = DB::table('Persona_Organizacion')
+                ->join('Persona','Persona_Organizacion.idPersona','=','Persona.id')
+                ->join('Descriptor_Persona','Persona.id','=','Descriptor_Persona.idPersona')
+                ->join('Descriptor','Descriptor_Persona.idPersona','=','Descriptor.id')
+                ->select('Persona.*')
+                ->where('Persona_Organizacion.id',$idOrganizacion)
+                ->where('Descriptor.id',$idDescriptor)
+                ->get();
+            return response()->json(['Persona'=>$personas]);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['does_not_belong_to_organizacion'], $e->getStatusCode());
+        }
+
+    }
+
+
+    /**
+     * @param $idOrganizacion
+     * @param $idTipoDescriptor
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function countPersonsByTipoDescriptor($idOrganizacion,$idTipoDescriptor){
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            if(!Organizacion::doesPersonaBelongTo($user,$idOrganizacion))
+                throw new InvalidAccessException;
+            $formattedResults = [];
+            $organizacion = Organizacion::find($idOrganizacion);
+
+            $personas = $organizacion->Persona()
+                ->select('Persona.id')->lists('id')->toArray();
+
+            $results = DB::table('Persona')
+                ->join('Descriptor_Persona','Persona.id','=','Descriptor_Persona.idPersona')
+                ->join('Descriptor','Descriptor.id','=','Descriptor_Persona.idDescriptor')
+                ->join('TipoDescriptor','TipoDescriptor.id','=','Descriptor.idTipoDescriptor')
+                ->where('TipoDescriptor.id',$idTipoDescriptor)
+                ->groupBy('Descriptor.id')
+                ->havingRaw('Data in'.'('.implode(",",$personas).')')
+                ->select(DB::raw('count(Persona.id) as Data'),'Descriptor.Titulo as Labels');
+
+            $results=$results    ->get();
+            if($results !=null)
+            {
+                foreach($results as $result)
+                {
+                    $formattedResults['Data'][]=$result->Data;
+                    $formattedResults['Labels'][]=$result->Labels;
+                }
+            }
+
+            return response()->json($formattedResults);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['does_not_belong_to_organizacion'], $e->getStatusCode());
+        }
+    }
+
+
 }

@@ -18,6 +18,7 @@ use App\Http\Controllers\Controller;
 class SupervisorController extends Controller
 {
 
+
     /**
      * @param $idDescriptor
      * @return \Illuminate\Http\JsonResponse
@@ -114,17 +115,21 @@ class SupervisorController extends Controller
         try{
             $user = AuthenticateController::checkUser('Supervisor');
             $formattedResults = [];
-            $results = DB::table('Persona_Organizacion')
-                ->join('Persona','Persona.id','=','Persona_Organizacion.idPersona')
-                ->join('Descriptor_Persona','Persona_Organizacion.idPersona','=','Descriptor_Persona.idPersona')
+            $organizacion = Organizacion::find($idOrganizacion);
+
+            $personas = $organizacion->Persona()
+                ->select('Persona.id')->lists('id')->toArray();
+
+            $results = DB::table('Persona')
+                ->join('Descriptor_Persona','Persona.id','=','Descriptor_Persona.idPersona')
                 ->join('Descriptor','Descriptor.id','=','Descriptor_Persona.idDescriptor')
                 ->join('TipoDescriptor','TipoDescriptor.id','=','Descriptor.idTipoDescriptor')
                 ->where('TipoDescriptor.id',$idTipoDescriptor)
                 ->groupBy('Descriptor.id')
-                ->having('Persona_Organizacion.idOrganizacion','=',$idOrganizacion)
-                ->select(DB::raw('count(Descriptor.id) as Data'),'Descriptor.Titulo as Labels'
-                    ,'Persona_Organizacion.idOrganizacion')
-                ->get();
+                ->havingRaw('Data in'.'('.implode(",",$personas).')')
+                ->select(DB::raw('count(Persona.id) as Data'),'Descriptor.Titulo as Labels');
+
+            $results=$results    ->get();
             if($results !=null)
             {
                 foreach($results as $result)
@@ -135,7 +140,6 @@ class SupervisorController extends Controller
             }
 
             return response()->json($formattedResults);
-
 
         }catch (QueryException $e)
         {

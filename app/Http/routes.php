@@ -105,6 +105,10 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::delete('Organizacion/{id}','OrganizacionController@destroy')->where(['id'=>'[0-9]+']);
     Route::post('Organizacion/Persona','OrganizacionController@addPersona');
     Route::get('Organizacion/Persona/{id}','OrganizacionController@showPersonasOrganizacion')->where(['id'=>'[0-9]+']);
+    Route::get('Organizacion/{idOrganizacion}/Persona/Descriptor/{idDescriptor}','OrganizacionController@showPersonsByDescriptor')
+        ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
+    Route::get('Organizacion/{idOrganizacion}/Persona/TipoDescriptor/Count/{idDescriptor}','OrganizacionController@countPersonsByTipoDescriptor')
+        ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
     Route::delete('Organizacion/Persona/{idOrganizacion}/{idPersona}','OrganizacionController@removePersonaOrganizacion')
         ->where(['idOrganizacion'=>'[0-9]+','idPersona'=>'[0-9]+']);
         /*Consultables por todos*/
