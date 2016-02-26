@@ -183,6 +183,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
 
     /*Metodos para registrar el TRL de un proyecto */
+        Route::get('Proyecto/TRL/Count/{whoIs?}/{idOrganizacion?}','ProyectoController@countByTRL');
         Route::post('Proyecto/TRL/{whoIs?}/{idOrganizacion?}','ProyectoController@addTRL')
             ->where(['whoIs'=>'(Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::post('Proyecto/TRL/Delete/{whoIs?}/{idOrganizacion?}','ProyectoController@deleteTRLs')

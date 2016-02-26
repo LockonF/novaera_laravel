@@ -955,6 +955,13 @@ class ProyectoController extends Controller
     }
 
 
+    public function countByTRL($whoIs='Persona',$idOrganizacion=null)
+    {
+        $user = AuthenticateController::checkUser();
+        $trls = ProyectoTRL::countByTRL($user,$whoIs,$idOrganizacion);
+        return response()->json($trls);
+
+    }
 
 
 
