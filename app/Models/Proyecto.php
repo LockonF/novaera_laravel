@@ -18,6 +18,112 @@ class Proyecto extends Model
 
 
     /**
+     * @param $idDescriptor
+     * @param $user
+     * @param string $type
+     * @param null $idOrganizacion
+     * @param int $strict
+     * @return null
+     */
+
+    public static function allByDescriptor($idDescriptor,$user,$type = 'Persona',$idOrganizacion = null,$strict=1)
+    {
+        $results = DB::table('Proyecto')
+            ->join('ProyectoDescriptor','ProyectoDescriptor.idProyecto','=','Proyecto.id')
+            ->join('Descriptor','ProyectoDescriptor.idDescriptor','=','Descriptor.id')
+            ->where('Descriptor.id',$idDescriptor)
+            ->select('Proyecto.id');
+
+        if($type=='Persona')
+        {
+            $results =
+                $results
+                ->join('Persona_Proyecto','Proyecto.id','=','Persona_Proyecto.idProyecto')
+                ->where('Persona_Proyecto.WritePermissions',$strict)
+                ->where('Persona_Proyecto.idPersona',$user->Persona->id)
+                ->get();
+        }
+        if($type=='Organizacion')
+        {
+            $results=
+                $results
+                    ->join('Organizacion_Proyecto','Organizacion.id','=','Organizacion_Proyecto.idOrganizacion')
+                    ->join('Organizacion','Organizacion.id','=','Persona_Organizacion.idOrganizacion')
+                    ->join('Persona_Organizacion','Persona.id','=','Persona_Organizacion.idPersona')
+                    ->where('Persona.id',$user->Persona->id)
+                    ->where('Organizacion.id',$idOrganizacion)
+                    ->where('Persona_Organizacion.WritePermissions',$strict)
+                    ->get();
+
+        }
+        if(count($results)==0)
+            return null;
+
+        foreach($results as $result)
+        {
+            $ids[]=$result->id;
+        }
+        return Proyecto::whereIn('id',$ids)->get();
+
+    }
+
+    /**
+     * @param $idTipoDescriptor
+     * @param $user
+     * @param string $type
+     * @param null $idOrganizacion
+     * @param int $strict
+     * @return null
+     */
+
+    public static function allByTipoDescriptor($idTipoDescriptor,$user,$type = 'Persona',$idOrganizacion = null,$strict=1)
+    {
+        $formattedResults = [];
+        $results = DB::table('Proyecto')
+            ->join('ProyectoDescriptor','ProyectoDescriptor.idProyecto','=','Proyecto.id')
+            ->join('Descriptor','ProyectoDescriptor.idDescriptor','=','Descriptor.id')
+            ->join('TipoDescriptor','Descriptor.idTipoDescriptor','=','TipoDescriptor.id')
+            ->groupBy('Descriptor.id');
+
+
+        if($type=='Persona')
+        {
+            $results
+                ->join('Persona_Proyecto','Proyecto.id','=','Persona_Proyecto.idProyecto')
+                ->having('Persona_Proyecto.WritePermissions','=',$strict)
+                ->having('Persona_Proyecto.idPersona','=',$user->Persona->id)
+                ->select(DB::raw('count(Descriptor.id) as Data, Descriptor.Titulo as Labels, Persona_Proyecto.WritePermissions, Persona_Proyecto.idPersona'));
+        }
+        if($type=='Organizacion')
+        {
+            $results
+                    ->join('Organizacion_Proyecto','Organizacion.id','=','Organizacion_Proyecto.idOrganizacion')
+                    ->join('Organizacion','Organizacion.id','=','Persona_Organizacion.idOrganizacion')
+                    ->join('Persona_Organizacion','Persona.id','=','Persona_Organizacion.idPersona')
+                    ->having('Persona.id','=',$user->Persona->id)
+                    ->having('Organizacion.id','=',$idOrganizacion)
+                    ->having('Persona_Organizacion.WritePermissions','=',$strict)
+                    ->select(DB::raw('count(Descriptor.id) as Data, Descriptor.Titulo as Labels, Persona.id, Organizacion.id, Persona_Organizacion.WritePermissions'));
+        }
+        $results = $results->get();
+
+
+        if($results !=null)
+        {
+            foreach($results as $result)
+            {
+                $formattedResults['Data'][]=$result->Data;
+                $formattedResults['Labels'][]=$result->Labels;
+            }
+        }
+
+        return $formattedResults;
+
+
+    }
+
+
+    /**
      * @param int $idProyecto
      * @param User $user
      * @param string $type

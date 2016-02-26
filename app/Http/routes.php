@@ -47,11 +47,16 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
     /*Validacion de persona*/
     Route::get('Supervisor/Persona','PersonaController@showNotValidated');
+
+
+    Route::get('Supervisor/Proyectos/Descriptor/{idDescriptor}','SupervisorController@proyectosByDescriptor');
+    Route::get('Supervisor/Proyectos/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countProyectosByTipoDescriptor')
+        ->where(['idDescriptor'=>'[0-9]+']);
+
     Route::get('Supervisor/{type}/{id}','SupervisorController@getEjecucion')
         ->where(['type'=>'(Ejecucion|Impacto|TransferenciaTecnologica|ModeloNegocio)','id'=>'[0-9]+']);
     Route::get('Supervisor/{type}/Archivos/{id}','SupervisorController@showFileRoutes')
         ->where(['type'=>'(Ejecucion|Impacto|TransferenciaTecnologica|ModeloNegocio)','id'=>'[0-9]+']);
-
     Route::get('Supervisor/Resultados/{type}/{id}','SupervisorController@showResults')
         ->where(['type'=>'(Patente|Producto|Servicio|Proceso|Todos)','id'=>'[0-9]+']);
     Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
@@ -59,6 +64,12 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('Supervisor/Organizacion','OrganizacionController@getNotValidatedOrganizaciones');
     Route::put('Supervisor/Organizacion/{id}','OrganizacionController@validateDocuments')->where(['id'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion/Documentos','OrganizacionController@getNotValidatedDocumentsOrganizaciones');
+    Route::get('Supervisor/Organizacion/Persona/{idOrganizacion}','SupervisorController@getOrganizacionPersonas')
+        ->where(['idOrganizacion'=>'[0-9]+']);
+    Route::get('Supervisor/Organizacion/{idOrganizacion}/Persona/TipoDescriptor/Count/{idDescriptor}','SupervisorController@countPersonasOrgByTipoDescriptor')
+        ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
+    Route::get('Supervisor/Organizacion/{idOrganizacion}/Persona/Descriptor/{idDescriptor}','SupervisorController@getOrganizacionPersonasDescriptor')
+        ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
     Route::post('Supervisor/Persona','PersonaController@validatePerson');
     Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
 
@@ -161,7 +172,14 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::get('Impacto/{idProyecto}/{whoIs?}/{idOrganizacion?}','ImpactoController@show')
             ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::get('Impacto/Archivos/{idProyecto}/{whoIs?}/{idOrganizacion?}','ImpactoController@showFileRoutes')
-            ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);;
+            ->where(['idProyecto'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
+
+        /* Métodos para ver proyecto de acuerdo al descriptor */
+        Route::get('Proyecto/ByDescriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@showByDescriptor')
+            ->where(['id'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);;
+        Route::get('Proyecto/TipoDescriptor/Count/{idTipoDescriptor}/{whoIs?}/{idOrganizacion?}',
+            'ProyectoController@countByTipoDescriptor')
+            ->where(['id'=>'[0-9]+','whoIs'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);;
 
 
     /*Metodos para registrar el TRL de un proyecto */

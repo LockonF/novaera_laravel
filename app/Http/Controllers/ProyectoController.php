@@ -907,6 +907,51 @@ class ProyectoController extends Controller
         } catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
+
+    }
+
+
+    /**
+     * @param $idDescriptor
+     * @param string $whoIs
+     * @param null $idOrganizacion
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showByDescriptor($idDescriptor,$whoIs='Persona',$idOrganizacion=null)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $proyectos = Proyecto::allByDescriptor($idDescriptor,$user,$whoIs,$idOrganizacion);
+            return response()->json(['Proyecto'=>$proyectos]);
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+
+    public function countByTipoDescriptor($idTipoDescriptor,$whoIs='Persona',$idOrganizacion=null)
+    {
+        try{
+            $user = AuthenticateController::checkUser();
+            $results = Proyecto::allByTipoDescriptor($idTipoDescriptor,$user,$whoIs,$idOrganizacion);
+            return response()->json($results);
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
     }
 
 
