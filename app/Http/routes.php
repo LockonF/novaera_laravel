@@ -50,6 +50,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
 
     Route::get('Supervisor/Proyectos/Descriptor/{idDescriptor}','SupervisorController@proyectosByDescriptor');
+    Route::get('Supervisor/Proyectos/TRL/Count','SupervisorController@countByTRL');
     Route::get('Supervisor/Proyectos/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countProyectosByTipoDescriptor')
         ->where(['idDescriptor'=>'[0-9]+']);
 
@@ -63,6 +64,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('Supervisor/RegistroProyecto/Convocatoria/{id}','RegistroProyectoController@showByConvocatoria')->where(['id'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion','OrganizacionController@getNotValidatedOrganizaciones');
     Route::put('Supervisor/Organizacion/{id}','OrganizacionController@validateDocuments')->where(['id'=>'[0-9]+']);
+    Route::get('Supervisor/Organizacion/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@CountOrganizacionByTipoDescriptor');
     Route::get('Supervisor/Organizacion/Documentos','OrganizacionController@getNotValidatedDocumentsOrganizaciones');
     Route::get('Supervisor/Organizacion/Persona/{idOrganizacion}','SupervisorController@getOrganizacionPersonas')
         ->where(['idOrganizacion'=>'[0-9]+']);
@@ -237,9 +239,12 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         /*Métodos para registrar resultados de un proyecto*/
         Route::post('Proyecto/Resultados/{whoIs?}/{idOrganizacion?}','ProyectoController@addResult')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
-        Route::put('Proyecto/Resultados','ProyectoController@editResult');
+        Route::put('Proyecto/Resultados/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@editResult')
+            ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::get('Proyecto/Resultados/{id}/{type?}/{whoIs?}/{idOrganizacion?}','ProyectoController@showResults')
             ->where(['id'=>'[0-9]+','type'=>'(Patente|Producto|Servicio|Proceso|Todos)','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+        Route::delete('Proyecto/Resultados/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@destroyResult')
+            ->where(['id'=>'[0-9]+','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
             /* Descriptor de Resultado */
         Route::get('Proyecto/Resultados/Descriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@showDescriptor')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);

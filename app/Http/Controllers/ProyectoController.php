@@ -675,33 +675,16 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function editResult(Request $request)
+    public function editResult(Request $request,$id,$type=null,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'proyecto_not_found'],500);
-            }
-            if($proyecto->pivot->Owner!=1)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $resultado  = ProyectoResultado::find($request->id);
+            $proyectoResultado = ProyectoResultado::validateResultadoProyecto($id,$user,$type,$whoIs,$idOrganizacion);
+            $proyectoResultado->fill($request->all());
+            $proyectoResultado->save();
+            return response()->json($proyectoResultado);
 
-                if($resultado==null)
-                {
-                    return response()->json(['message'=>'resultado_not_found'],404);
-                }
-                $resultado->fill($request->all());
-                $resultado->save();
-                return response()->json($resultado);
-
-            }
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -717,9 +700,6 @@ class ProyectoController extends Controller
             return response()->json(['invalid_write_permissions'], $e->getStatusCode());
         }
     }
-
-
-
 
 
 
@@ -758,6 +738,36 @@ class ProyectoController extends Controller
 
             $results = $results->get();
             return response()->json(['Resultado' => $results]);
+
+        }
+        catch (QueryException $e)
+        {
+        return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['invalid_write_permissions'], $e->getStatusCode());
+        }
+    }
+
+
+
+    public function destroyResult($id,$whoIs='Persona',$idOrganizacion=null)
+    {
+        try
+        {
+
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyectoResultado = ProyectoResultado::validateResultadoProyecto($id,$user,$whoIs,$idOrganizacion);
+            $proyectoResultado->delete();
+            return response()->json(['message' => 'success']);
 
         }
         catch (QueryException $e)

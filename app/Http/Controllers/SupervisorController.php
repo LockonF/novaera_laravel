@@ -6,6 +6,7 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\UnauthorizedException;
 use App\Models\Organizacion;
 use App\Models\Proyecto;
+use App\Models\TRL;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -421,6 +422,94 @@ class SupervisorController extends Controller
         }
     }
 
+    public function countByTRL()
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+
+            $totalTRLRegisters = TRL::count();
+            $trls =TRL::lists('Nivel')->toArray();
+            $countArray = array_fill(0,$totalTRLRegisters,0);
+            $maximum = DB::table('ProyectoTRL')
+                ->select(DB::raw('MAX(ProyectoTRL.idTRL) as Max'))
+                ->groupBy('ProyectoTRL.idProyecto')
+                ->get();
+
+            foreach($maximum as $counter)
+            {
+                $countArray[$counter->Max-1] = $countArray[$counter->Max-1]+1;
+            }
+
+            $results['Labels']=$trls;
+            $results['Data']=$countArray;
+            array_walk($results['Labels'],function(&$item){
+                $item = 'TRL '.$item;
+            });
+
+            return response()->json($results);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    public function CountOrganizacionByTipoDescriptor($idTipoDescriptor)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $formattedResults = [];
+            $results = DB::table('Organizacion')
+                ->join('Descriptor_Organizacion','Organizacion.id','=','Descriptor_Organizacion.idOrganizacion')
+                ->join('Descriptor','Descriptor.id','=','Descriptor_Organizacion.idDescriptor')
+                ->join('TipoDescriptor','TipoDescriptor.id','=','Descriptor.idTipoDescriptor')
+                ->where('TipoDescriptor.id',$idTipoDescriptor)
+                ->groupBy('Descriptor.id')
+                ->select(DB::raw('count(Descriptor.id) as Data, Descriptor.Titulo as Labels'))
+                ->get();
+            if($results !=null)
+            {
+                foreach($results as $result)
+                {
+                    $formattedResults['Data'][]=$result->Data;
+                    $formattedResults['Labels'][]=$result->Labels;
+                }
+            }
+
+            return response()->json($formattedResults);
+
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
 
 
 }
