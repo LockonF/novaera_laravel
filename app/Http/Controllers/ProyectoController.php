@@ -647,12 +647,8 @@ class ProyectoController extends Controller
             $resultado  = new ProyectoResultado($request->Resultado);
             $resultado->PaisesProteccion = json_encode($resultado->PaisesProteccion);
             $resultado->save();
-
-            $proyecto->load('ProyectoTRL');
-            foreach ($proyecto->ProyectoTRL as $TRL) {
-                $TRL->load('ProyectoResultado');
-            }
-            return response()->json($proyecto->ProyectoTRL);
+            $resultado->PaisesProteccion = json_decode($resultado->PaisesProteccion);
+            return response()->json($resultado);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -734,9 +730,12 @@ class ProyectoController extends Controller
                 }
 
             }
-
-
             $results = $results->get();
+            foreach($results as $result)
+            {
+                $result->PaisesProteccion = json_decode($result->PaisesProteccion);
+            }
+
             return response()->json(['Resultado' => $results]);
 
         }
