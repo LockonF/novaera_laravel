@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\DB;
 class ProyectoResultado extends Model
 {
     protected $table = 'ProyectoResultado';
-    protected $fillable = ['idProyectoTRL'
+    protected $fillable = [
+        'idProyectoTRL'
         ,'Tipo',
         'Nombre',
         'Resumen',
         'Status',
         'Fecha',
+        'FechaAprobacion',
         'NumeroRegistro',
         'PaisesProteccion',
         'PlanDeExplotacion',
