@@ -90,9 +90,9 @@ class Proyecto extends Model
         {
             $results
                 ->join('Persona_Proyecto','Proyecto.id','=','Persona_Proyecto.idProyecto')
-                ->having('Persona_Proyecto.WritePermissions','=',$strict)
-                ->having('Persona_Proyecto.idPersona','=',$user->Persona->id)
-                ->select(DB::raw('count(Descriptor.id) as Data, Descriptor.Titulo as Labels, Persona_Proyecto.WritePermissions, Persona_Proyecto.idPersona'));
+                ->where('Persona_Proyecto.WritePermissions','=',$strict)
+                ->where('Persona_Proyecto.idPersona','=',$user->Persona->id)
+                ->select(DB::raw('count(Descriptor.id) as Data, Descriptor.Titulo as Labels'));
         }
         if($type=='Organizacion')
         {
@@ -100,9 +100,9 @@ class Proyecto extends Model
                     ->join('Organizacion_Proyecto','Organizacion.id','=','Organizacion_Proyecto.idOrganizacion')
                     ->join('Organizacion','Organizacion.id','=','Persona_Organizacion.idOrganizacion')
                     ->join('Persona_Organizacion','Persona.id','=','Persona_Organizacion.idPersona')
-                    ->having('Persona.id','=',$user->Persona->id)
-                    ->having('Organizacion.id','=',$idOrganizacion)
-                    ->having('Persona_Organizacion.WritePermissions','=',$strict)
+                    ->where('Persona.id','=',$user->Persona->id)
+                    ->where('Organizacion.id','=',$idOrganizacion)
+                    ->where('Persona_Organizacion.WritePermissions','=',$strict)
                     ->select(DB::raw('count(Descriptor.id) as Data, Descriptor.Titulo as Labels, Persona.id, Organizacion.id, Persona_Organizacion.WritePermissions'));
         }
         $results = $results->get();

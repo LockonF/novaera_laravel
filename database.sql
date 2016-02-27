@@ -1,7 +1,7 @@
 #
 # SQL Export
 # Created by Querious (1010)
-# Created: February 20, 2016 at 1:00:10 AM CST
+# Created: February 27, 2016 at 10:47:05 AM CST
 # Encoding: Unicode (UTF-8)
 #
 
@@ -124,7 +124,7 @@ CREATE TABLE `Contacto` (
   PRIMARY KEY (`id`),
   KEY `fk_Contacto_Persona1_idx` (`idPersona`),
   CONSTRAINT `fk_Contacto_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Convocatoria` (
@@ -134,7 +134,7 @@ CREATE TABLE `Convocatoria` (
   `FechaTermino` date DEFAULT NULL,
   `Requisitos` json DEFAULT NULL,
   `MontosMaximosTotales` float DEFAULT NULL,
-  `Activo` tinyint(1) DEFAULT NULL,
+  `Activo` tinyint(1) NOT NULL DEFAULT '1',
   `ProgramaAsociado` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -291,7 +291,7 @@ CREATE TABLE `ImpactoYComercializacion` (
   PRIMARY KEY (`id`),
   KEY `fk_ImpactoyComercializacion_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_ImpactoyComercializacion_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Modalidad` (
@@ -312,15 +312,15 @@ CREATE TABLE `Modalidad` (
 
 CREATE TABLE `ModeloNegocio` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `Canales` varchar(250) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
-  `VentajaCompetitiva` varchar(250) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
-  `Problematica` varchar(250) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
-  `Costos` varchar(250) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
-  `Ingresos` varchar(250) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
-  `ActividadesClave` varchar(250) DEFAULT NULL,
-  `RelacionesCliente` varchar(250) DEFAULT NULL,
-  `RecursosClave` varchar(250) DEFAULT NULL,
-  `AliadosClave` varchar(250) DEFAULT NULL,
+  `Canales` varchar(2000) DEFAULT NULL COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
+  `VentajaCompetitiva` varchar(2000) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
+  `Problematica` varchar(2000) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
+  `Costos` varchar(2000) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
+  `Ingresos` varchar(2000) DEFAULT 'N' COMMENT 'EL char sera equivalente a un ENUM N=null U= subido\nV=validado',
+  `ActividadesClave` varchar(2000) DEFAULT NULL,
+  `RelacionesCliente` varchar(2000) DEFAULT NULL,
+  `RecursosClave` varchar(2000) DEFAULT NULL,
+  `AliadosClave` varchar(2000) DEFAULT NULL,
   `idProyecto` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -353,12 +353,12 @@ CREATE TABLE `Organizacion` (
   `RepresentanteLegal` varchar(200) DEFAULT NULL,
   `RazonSocial` varchar(45) DEFAULT NULL,
   `Archivos` json DEFAULT NULL,
-  `isValidated` tinyint(1) DEFAULT '0',
-  `RENIECyTValidated` tinyint(1) DEFAULT '0',
-  `RFCValidated` tinyint(1) DEFAULT '0',
+  `isValidated` tinyint(1) NOT NULL DEFAULT '0',
+  `RENIECyTValidated` tinyint(1) NOT NULL DEFAULT '0',
+  `RFCValidated` tinyint(1) NOT NULL DEFAULT '0',
   `Giro` varchar(100) DEFAULT NULL,
   `DireccionFiscal` varchar(500) DEFAULT NULL,
-  `ActaValidated` tinyint(1) DEFAULT '0',
+  `ActaValidated` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -428,7 +428,7 @@ CREATE TABLE `Persona` (
   PRIMARY KEY (`id`),
   KEY `fk_Persona_User1_idx` (`idUser`),
   CONSTRAINT `fk_Persona_User1` FOREIGN KEY (`idUser`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Persona_Organizacion` (
@@ -465,7 +465,7 @@ CREATE TABLE `Persona_Proyecto` (
   KEY `fk_Proyecto_has_Persona_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_has_Persona_Persona1` FOREIGN KEY (`idPersona`) REFERENCES `Persona` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_has_Persona_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProgramaFondeo` (
@@ -515,15 +515,15 @@ CREATE TABLE `ProgramaFondeoDescriptor` (
 CREATE TABLE `Proyecto` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `Titulo` varchar(45) DEFAULT NULL,
-  `Descripcion` varchar(450) DEFAULT NULL,
-  `Antecedentes` varchar(450) DEFAULT NULL,
-  `Justificacion` varchar(450) DEFAULT NULL,
-  `Objetivos` varchar(450) DEFAULT NULL,
-  `Alcances` varchar(450) DEFAULT NULL,
+  `Descripcion` varchar(1000) DEFAULT NULL,
+  `Antecedentes` varchar(1000) DEFAULT NULL,
+  `Justificacion` varchar(1000) DEFAULT NULL,
+  `Objetivos` varchar(1000) DEFAULT NULL,
+  `Alcances` varchar(1000) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProyectoDescriptor` (
@@ -534,11 +534,12 @@ CREATE TABLE `ProyectoDescriptor` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_proyecto_descriptor` (`idProyecto`,`idDescriptor`) USING BTREE,
   KEY `fk_proyectoDescriptor_Proyecto1_idx` (`idProyecto`),
   KEY `fk_proyectoDescriptor_Descriptor1_idx` (`idDescriptor`),
   CONSTRAINT `fk_proyectoDescriptor_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_proyectoDescriptor_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ProyectoTRL` (
@@ -576,7 +577,7 @@ CREATE TABLE `ProyectoResultado` (
   PRIMARY KEY (`id`),
   KEY `fk_Resultado_ProyectoTRL1_idx` (`idProyectoTRL`),
   CONSTRAINT `fk_Resultado_ProyectoTRL1` FOREIGN KEY (`idProyectoTRL`) REFERENCES `ProyectoTRL` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `RegistroProyecto` (
@@ -603,7 +604,7 @@ CREATE TABLE `RegistroProyecto` (
   CONSTRAINT `fk_Proyecto_Modalidad_ParqueTecnologico1` FOREIGN KEY (`idParque`) REFERENCES `ParqueTecnologico` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Proyecto_Modalidad_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_RegistroProyecto_Convocatoria_Modalidad1` FOREIGN KEY (`idConvocatoriaModalidad`) REFERENCES `Convocatoria_Modalidad` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `ResultadoDescriptor` (
@@ -620,7 +621,7 @@ CREATE TABLE `ResultadoDescriptor` (
   KEY `fk_ResultadoDescriptor_ProyectoResultado1_idx` (`idResultado`),
   CONSTRAINT `fk_ResultadoDescriptor_Descriptor1` FOREIGN KEY (`idDescriptor`) REFERENCES `Descriptor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_ResultadoDescriptor_ProyectoResultado1` FOREIGN KEY (`idResultado`) REFERENCES `ProyectoResultado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `RubrosApoyo` (
@@ -678,7 +679,7 @@ CREATE TABLE `TransferenciaTecnologica` (
   PRIMARY KEY (`id`),
   KEY `fk_Proyecto_TT_Proyecto1_idx` (`idProyecto`),
   CONSTRAINT `fk_Proyecto_TT_Proyecto1` FOREIGN KEY (`idProyecto`) REFERENCES `Proyecto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `TRL` (
@@ -700,7 +701,7 @@ CREATE TABLE `User` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `Validacion_Criterio` (
@@ -739,7 +740,8 @@ ALTER TABLE `Contacto` DISABLE KEYS;
 INSERT INTO `Contacto` (`id`, `CorreoElectronico`, `TelefonoLocal`, `TelefonoCelular`, `TelefonoOficina`, `Fax`, `PaginaWeb`, `idPersona`, `created_at`, `updated_at`) VALUES 
 	(1,'correo@correo.com','123456','134556','123456','fax134','www.pagina.com.mx',1,'2016-02-07 03:20:26','2016-02-07 03:20:26'),
 	(2,'elariosj@gmail.com','5521992387',NULL,'5521992387',NULL,NULL,8,'2016-02-20 00:16:05','2016-02-20 00:16:05'),
-	(3,'elariosj@gmail.com','5521992387',NULL,'5521992387',NULL,NULL,9,'2016-02-20 00:21:32','2016-02-20 00:21:32');
+	(3,'elariosj@gmail.com','5521992387',NULL,'5521992387',NULL,NULL,9,'2016-02-20 00:21:32','2016-02-20 00:21:32'),
+	(4,'elariosj@gmail.com','5521992387',NULL,'55219932387',NULL,NULL,11,'2016-02-27 16:13:46','2016-02-27 16:13:46');
 ALTER TABLE `Contacto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -747,9 +749,9 @@ UNLOCK TABLES;
 LOCK TABLES `Convocatoria` WRITE;
 ALTER TABLE `Convocatoria` DISABLE KEYS;
 INSERT INTO `Convocatoria` (`id`, `Nombre`, `FechaInicio`, `FechaTermino`, `Requisitos`, `MontosMaximosTotales`, `Activo`, `ProgramaAsociado`, `created_at`, `updated_at`) VALUES 
-	(3,'Convocatoria','2015-01-01','2015-12-31','[{"Nombre": "Tener El Sistema Listo", "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "Descripcion": "Nada mas por llenar"}]',30000000,NULL,1,'2016-02-06 01:39:49','2016-02-06 01:39:49'),
-	(4,'Convocatoria 2','2015-01-01','2015-12-31','[{"Nombre": "Tener El Sistema Listo", "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "Descripcion": "Nada mas por llenar"}]',30000000,NULL,1,NULL,NULL),
-	(5,'Convocatoria','2015-01-01','2015-12-31','[{"Nombre": "Tener El Sistema Listo", "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "Descripcion": "Nada mas por llenar"}]',30000000,NULL,3,'2016-02-14 05:20:29','2016-02-14 05:21:17');
+	(3,'Convocatoria','2015-01-01','2015-12-31','[{"Nombre": "Tener El Sistema Listo", "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "Descripcion": "Nada mas por llenar"}]',30000000,1,1,'2016-02-06 01:39:49','2016-02-06 01:39:49'),
+	(4,'Convocatoria 2','2015-01-01','2015-12-31','[{"Nombre": "Tener El Sistema Listo", "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "Descripcion": "Nada mas por llenar"}]',30000000,1,1,NULL,NULL),
+	(5,'Convocatoria','2015-01-01','2015-12-31','[{"Nombre": "Tener El Sistema Listo", "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "Descripcion": "Nada mas por llenar"}]',30000000,1,3,'2016-02-14 05:20:29','2016-02-14 05:21:17');
 ALTER TABLE `Convocatoria` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -834,7 +836,11 @@ LOCK TABLES `ImpactoYComercializacion` WRITE;
 ALTER TABLE `ImpactoYComercializacion` DISABLE KEYS;
 INSERT INTO `ImpactoYComercializacion` (`id`, `ImpactoAmbiental`, `ImpactoCientifico`, `ImpactoTecnologico`, `ImpactoSocial`, `ImpactoEconomico`, `PropuestaDeValor`, `SegmentosDeClientes`, `SolucionPropuesta`, `Metricas`, `SolucionActual`, `idProyecto`, `created_at`, `updated_at`) VALUES 
 	(1,'<p>Impacto Ambiental</p>','<p>Impacto Científico</p>','<p>Impacto Tecnológico</p>',NULL,NULL,'<p>Texto</p>','<p>Más Texto</p>','<p>Aún Más Texto</p>','<p>Otro texto más</p>','<p>Finalizar</p>',8,'2016-02-17 22:35:28','2016-02-17 22:37:02'),
-	(2,'<p><span lang="ES">Este proyecto prevé un impacto ambiental positivo, ya que la el producto propuesto favorece al suelo tratando el biocontrol de un hongo causante de enfermedad en un cultivo de importancia y también favoreciendo el proceso de biorre','<p><span lang="ES"> El desarrollo de este producto depende de la investigación para solucionar un problema real usando el biocontrol y los mecanismos de antagonismo y competición microbiano, así mismo la evaluación de los resultados y posibles mejora','<p><span lang="ES"> Con este proyecto se busca desarrollar no solo un producto, sino una opción además de los químicos para tratar enfermedades en los suelos, la aplicación de la biotecnología en el desarrollo de este producto asegura que es viable, ','<p><span lang="ES"> El beneficio directo es hacia los agricultores ya que se tendrá un mayor volumen productivo, cultivos de mejor calidad y sin padecer esta enfermedad, ayudando de distintas comunidades productoras y se establecen alternativas para ','<p><span lang="ES">La actividad económica y comercial de la agricultura en especial del cultivo de cebolla se ve beneficiada al tener un mejor producto, mejores rendimientos de cosecha lo que permite vender el producto en este y mercados extranjeros,','<p><span lang="ES">La pudrición blanca en cebolla es una enfermedad que afecta a los agricultores y a este producto ya que genera pérdidas en el volumen de cosecha e impide el uso de este suelo para cultivar la cebolla ya que es una enfermedad altame','<p><span lang="ES"></span></p><p>Este proyecto pretende formular un producto liquido capaz combatir esta enfermedad mediante el uso de un microorganismo antagónico a una alta concentración el cual coloniza los esclerocios enrollan las hifas, deforman','<p><span lang="ES">Elcontrol biológico de la enfermedad de la pudrición blanca en el suelo es unaalternativa al uso de químicos ya que no solo se encarga de combatirla, tambiénbrinda mecanismos por los cuales el suelo es enriquecida y los cultivosveg','<p>asas  dsfsd</p>','<p><span lang="ES"> Existen diversas formas en cómo se ha tratado esta enfermedad, el combate cultural que comprende la rotación de cultivos, inundación, combate físico por aumento de temperatura en suelo, combate químico que comprende su uso como tr',11,'2016-02-20 01:18:34','2016-02-20 01:19:52');
+	(2,'<p><span lang="ES">Este proyecto prevé un impacto ambiental positivo, ya que la el producto propuesto favorece al suelo tratando el biocontrol de un hongo causante de enfermedad en un cultivo de importancia y también favoreciendo el proceso de biorre','<p><span lang="ES"> El desarrollo de este producto depende de la investigación para solucionar un problema real usando el biocontrol y los mecanismos de antagonismo y competición microbiano, así mismo la evaluación de los resultados y posibles mejora','<p><span lang="ES"> Con este proyecto se busca desarrollar no solo un producto, sino una opción además de los químicos para tratar enfermedades en los suelos, la aplicación de la biotecnología en el desarrollo de este producto asegura que es viable, ','<p><span lang="ES"> El beneficio directo es hacia los agricultores ya que se tendrá un mayor volumen productivo, cultivos de mejor calidad y sin padecer esta enfermedad, ayudando de distintas comunidades productoras y se establecen alternativas para ','<p><span lang="ES">La actividad económica y comercial de la agricultura en especial del cultivo de cebolla se ve beneficiada al tener un mejor producto, mejores rendimientos de cosecha lo que permite vender el producto en este y mercados extranjeros,','<p><span lang="ES">La pudrición blanca en cebolla es una enfermedad que afecta a los agricultores y a este producto ya que genera pérdidas en el volumen de cosecha e impide el uso de este suelo para cultivar la cebolla ya que es una enfermedad altame','<p><span lang="ES"></span></p><p>Este proyecto pretende formular un producto liquido capaz combatir esta enfermedad mediante el uso de un microorganismo antagónico a una alta concentración el cual coloniza los esclerocios enrollan las hifas, deforman','<p><span lang="ES">Elcontrol biológico de la enfermedad de la pudrición blanca en el suelo es unaalternativa al uso de químicos ya que no solo se encarga de combatirla, tambiénbrinda mecanismos por los cuales el suelo es enriquecida y los cultivosveg','<p>asas  dsfsd</p>','<p><span lang="ES"> Existen diversas formas en cómo se ha tratado esta enfermedad, el combate cultural que comprende la rotación de cultivos, inundación, combate físico por aumento de temperatura en suelo, combate químico que comprende su uso como tr',11,'2016-02-20 01:18:34','2016-02-20 01:19:52'),
+	(3,'<p><span lang="ES">Aplicando el AIA encapsulado con ciclodextrinas se obtendrá un crecimiento sostenido de raíces de plantas, logrando una mejor y mas rápida adaptación de las plantas al momento de sembrarse o propagarse. Con esto se disminuye la apl','<p><span lang="ES">El proceso de nano encapsulamiento del AIA por ciclodextrinas es un proceso a nivel de nanómetros que amerita su caracterización a nivel molecular. El determinar como sucede puede ayudar a entender las interacciones químicas que su','<p><span lang="ES">Este desarrollo tecnológico con un nanomaterial representa una innovación para el sector agroindustrial, mejorando el aprovechamiento del AIA, mejorando su biodisponibilidad y funcionalidad de manera prolongada. Así mismo se genera','<p><span lang="ES">Al generar un desarrollo eficiente y de bajo costo para el crecimiento de las raíces de las plantas se lograran mejores plantas y productos que beneficiaran a la calidad de vida de la sociedad, impulsando una nueva generación de ap','<p><span lang="ES">Al encapsular el AIA se logra una aplicación sostenida de sus efectos sobre las raíces lo que hace que se utilice menos producto, generando un impacto benéfico en los costos de los agricultores y micro propagadores. Además en el fu','<p><span lang="ES"> Los agricultores y micro propagadores tienen un alto costo debido a que utilizan, por un lado; grandes cantidades de AIA de origen químico para estimular el crecimiento de las raíces de plantas. Además al ser compuesto lábil requi','<p>mm</p>','<p><span lang="ES">Actualmente se opta por usar un producto químico derivado del AIA, que es el ácido índolbutírico (AIB) que es mas estable que el AIA, la planta lo toma y lo transforma a AIA, que se cree que es la molécula que tiene la actividad bi','<p><span lang="ES">Utilizaremos dos materiales; las ciclodextrinas y el AIA, producidos de manera biológica(por bacterias) y usando residuos agroindustriales. Usaremos a la ciclodextrinacomo un nanomaterial para encapsular al AIA y de esta manera dar','<p><span lang="ES"> Primero,esta la ventaja de que se usan insumos de origen biológico lo que reduce el impacto ambiental de su producción. Luego, se reducen los costos de la compradel AIA, ya que se logra mayor tiempo de efectividad del producto. Fi',12,'2016-02-20 17:55:33','2016-02-20 18:13:11'),
+	(4,'<p><span lang="ES"> El impacto ambiental es positivo ya que se trata de un producto que participa en los mecanismos de biorremediación del suelo y del agua principalmente, además e que en su formulación no se usa algún tipo de químico</span><br/></p>','<p><span lang="ES">El uso de microorganismos como agentes biorremediadores de suelo y agua desde la formulación del producto hasta el análisis de resultados tiene como referencias distintas investigaciones sobre el tema, a su vez debido a la diversid','<p><span lang="ES"> Se busca desarrollar productos con herramientas de biotecnológica sin riesgos para los seres vivos, amigables al ambiente y factibles desde el punto de vista económico y productivo. Emplear microorganismos como instrumentos de bio','<p><span lang="ES">Se mejorara la calidad de productos de consumo humano,<span>  </span>obteniendo un mejor rendimiento en la cosechas ofreciendo productos de mejor presentación y características para el mercado de alimentos. De igual forma se busca ','<p><span lang="ES">Los agricultores podrán vender a nuevos mercados además de mejorar sus precios por las características resultantes de los tratamientos con productos Eco Tk.Reducir los costos de siembra al disminuir el uso de productos químicos que','<p>En el suelo se tratalos problemas de calidad, disponibilidad de nutrientes y microfauna que ha idodisminuyendo por diversas causas.</p>','<p>aa</p>','<p>En el suelo se trata los problemas de calidad, disponibilidad de nutrientes y microfauna que ha ido disminuyendo por diversas causas. <span lang="ES">En el agua da atiende los problemas de calidad de agua usada para riego, en especial la sobrecarg','<p>Existen diversos mecanismos por los cuales los consorcios microbianos contenidos en Eco Tk actúan para dar tratamiento a suelos y agua. En el suelo, la repoblación de cepas promotoras del crecimiento, fijadoras de nutrientes, biocontroladoras, deg','<p><span lang="ES">Los probióticos son un conjunto de microorganismos que tienen un efecto benéfico ya que son totalmente naturales, no son modificados genéticamente, son de fácil manejo, no contienen sustancias químicas industriales y son inofensivo',13,'2016-02-20 18:21:03','2016-02-20 18:33:46'),
+	(5,'<p> <span style="color: black;">Se estima que el 40% de las emisiones de CO2 y el 32% de las de CO a nivel mundial provienen de la quema de biomasa, entre ellas rastrojo. Fungicel incentiva al sector agr</span><span lang="EN-US" style="color: black;"','<p> <span style="color: black;">Una vez desarrollado el producto, se plantea generar un departamento de investigaci</span><span lang="EN-US" style="color: black;">ó</span><span style="color: black;">n y desarrollo (I+D) donde se utilizaran herramient','<p> <span style="color: black;">El proceso de producci</span><span lang="EN-US" style="color: black;">ó</span><span style="color: black;">n de Fungible consume una octava parte de la energia necesaria parap roducir EPS. El escalamiento de este proces','<p> <span style="color: black;">La producci</span><span lang="EN-US" style="color: black;">ó</span><span lang="EN-US" style="color: black;">n anual de EPS en M</span><span lang="EN-US" style="color: black;">é</span><span style="color: black;">xico es','<p><span style="color: black;">Un producto de estas caracter</span><span lang="EN-US" style="color: black;">í</span><span style="color: black;">sticas representa una alternativa de bajo costo para la industria manufacturera (automotriz, electrodom</s','<p><span style="color: black;">Los envases desechables de alimentos (platos, vasos, etc.) a base de EPS liberan elementos carcinog</span><span lang="EN-US" style="color: black;">é</span><span style="color: black;">nicos al estar en contacto con el al','<p>aaaaaa</p>','<p> <span style="color: black;">Los envases desechables de alimentos (platos, vasos, etc.) a base de EPS liberan elementos carcinog</span><span lang="EN-US" style="color: black;">é</span><span style="color: black;">nicos al estar en contacto con el a','<p> <span style="color: black;">Mediante a la generaci</span><span lang="EN-US" style="color: black;">ó</span><span style="color: black;">n de un sustituto de EPS que requiere un octavo del consumo energ</span><span lang="EN-US" style="color: black;"','<p> <span style="color: black;">En primer instancia, Fungicel no libera carcinogenicos al entrar en contacto con alimentos, por lo que protege la salud del consumidor. Al tener un costo de producci</span><span lang="EN-US" style="color: black;">ó</sp',14,'2016-02-20 19:20:10','2016-02-20 19:30:54'),
+	(6,'<p><span lang="ES"> La <i>Mucuna Pruriens</i> es una planta leguminosa que ayuda a la fijación de nitrógeno, carbono y disminuye la necesidad de fertilizantes. Es sembrada con otras especies comestibles a las que protege demalezas. El forraje es util','<p><span lang="ES"> Al ser esta planta una fuente natural y económica del precursor de la Melanina, se lograría fomentar la investigación sobre sus aplicaciones al reducir su costo, esto debido a que actualmente la melanina para uso científico tiene ','<p><span lang="ES"> La melanina además de usos farmacéuticos y cosméticos se puede utilizar como semiconductor tanto en dispositivos electrónicos como en marcapasos y sirve para construir bio-baterías.Con esta mejora pretendemos disminuir el costo de','<p><span lang="ES"> Debido al deterioro de la capa de ozono cada año hay mas exposición a la radiación ultravioleta, la melanina por ser una barrera natural contra la radiación solares usada para bloquear los rayos UV, además de que al ser el pigment','<p><span lang="ES"> SI logramos disminuir el costo de producción de la melanina usando un precursor natural podremos elaborar un producto final a un precio económico y competitivo en el mercado.Con lo que este desarrollo puede generar empleos y fomen','<p><span lang="ES"> Para los laboratorios cosméticos y farmacéuticos, así como centros de investigación tecnológica, les es muy inaccesible el precio actual de la melanina, debido a sus altos costos de insumos y producción química, es por esto que bu','<p><span lang="ES"> La melanina puede ser sintetizada a partir de L-DOPA o del aminoácido tirosina por síntesis química o enzimática. También es posible producirla con baja eficiencia usando bacterias u hongos, en algunas ocasiones se extrae a partir','<p>&lt;![endif]--&gt;<span lang="ES">Paralos laboratorios cosméticos y farmacéuticos, así como centros de investigacióntecnológica, les es muy inaccesible el precio actual de la melanina, debido asus altos costos de insumos y producción química, es p','<p><span lang="ES"> LaL-DOPA se encuentra hasta en un 10% en el frijol de <i>Mucuna pruriens</i> de donde puede obtenerse con simples lavados de agua para posteriormente ser convertida a melanina con gran eficiencia. El contar con una materia prima b','<p><span lang="ES"> Al obtener el precursor de la Melanina de una fuente natural con altos rendimientos se evita el uso de contaminantes químicos que afectan el medio ambiente, favoreciendo la producción y disminuyendo el uso de solventes corrosivos,',15,'2016-02-20 19:32:03','2016-02-20 19:35:43');
 ALTER TABLE `ImpactoYComercializacion` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -914,12 +920,14 @@ UNLOCK TABLES;
 LOCK TABLES `Persona` WRITE;
 ALTER TABLE `Persona` DISABLE KEYS;
 INSERT INTO `Persona` (`id`, `Nombre`, `ApellidoP`, `ApellidoM`, `Notas`, `Descripcion`, `isValidated`, `idUser`, `created_at`, `updated_at`) VALUES 
-	(1,'Daniel','Franco','Rodríguez',NULL,NULL,0,2,'2016-02-03 04:55:15','2016-02-19 07:00:49'),
-	(2,'Persona','De','Prueba',NULL,NULL,0,1,'2016-02-04 07:42:56','2016-02-20 05:14:57'),
-	(3,'Daniel','Franco','Rodríguez',NULL,NULL,0,3,'2016-02-17 22:28:00','2016-02-17 22:28:00'),
+	(1,'Daniel','Franco','Rodríguez',NULL,NULL,1,2,'2016-02-03 04:55:15','2016-02-19 07:00:49'),
+	(2,'Persona','De','Prueba',NULL,NULL,1,1,'2016-02-04 07:42:56','2016-02-20 05:14:57'),
+	(3,'Daniel','Franco','Rodríguez',NULL,NULL,1,3,'2016-02-17 22:28:00','2016-02-17 22:28:00'),
 	(7,'adan2','sdsd','sd',NULL,NULL,1,6,'2016-02-19 05:56:04','2016-02-20 05:16:22'),
 	(8,'Edgar','Larios','Tapia',NULL,NULL,1,9,'2016-02-20 00:15:50','2016-02-20 00:15:50'),
-	(9,'Edgar','Larios','Tapia',NULL,NULL,1,8,'2016-02-20 00:21:11','2016-02-20 00:21:11');
+	(9,'Edgar','Larios','Tapia',NULL,NULL,1,8,'2016-02-20 00:21:11','2016-02-20 00:21:11'),
+	(10,'Rox','Rodríguez','Rodríguez',NULL,NULL,1,10,NULL,NULL),
+	(11,'novaera','movaera','novaera',NULL,NULL,1,7,'2016-02-27 16:13:15','2016-02-27 16:13:15');
 ALTER TABLE `Persona` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -940,7 +948,13 @@ INSERT INTO `Persona_Proyecto` (`id`, `idProyecto`, `idPersona`, `WritePermissio
 	(4,7,1,1,1,NULL,NULL),
 	(5,8,3,1,1,NULL,NULL),
 	(6,10,7,1,1,NULL,NULL),
-	(7,11,9,1,1,NULL,NULL);
+	(7,11,9,1,1,NULL,NULL),
+	(8,12,9,1,1,NULL,NULL),
+	(9,13,9,1,1,NULL,NULL),
+	(10,14,9,1,1,NULL,NULL),
+	(11,15,9,1,1,NULL,NULL),
+	(12,16,9,1,1,NULL,NULL),
+	(13,9,1,1,1,NULL,NULL);
 ALTER TABLE `Persona_Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -976,9 +990,14 @@ INSERT INTO `Proyecto` (`id`, `Titulo`, `Descripcion`, `Antecedentes`, `Justific
 	(6,'Proyecto 3','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-09 18:34:12','2016-02-09 18:34:12'),
 	(7,'Proyecto de Prueba','Lalalala','Lalalala','Lalalala','xD','Alcances','2016-02-10 01:19:44','2016-02-10 01:19:44'),
 	(8,'Proyecto 1','Descripción','<p>Antecedentes</p>','<p>Justificación</p>','<p>Objetivo</p>','<p>Alcances</p>','2016-02-17 22:34:30','2016-02-17 22:34:30'),
-	(9,'prueba1','prueba1','<p>adada</p>','<p>adad</p>','<p>adada</p>','<p>adada</p>','2016-02-19 05:20:52','2016-02-19 05:20:52'),
+	(9,'prueba1','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.','<p>adada</p>','<p>adad</p>','<p>adada</p>','<p>adada</p>','2016-02-19 05:20:52','2016-02-19 05:20:52'),
 	(10,'asd','asd','asd','asd','asd','asd',NULL,NULL),
-	(11,'Elaboración de tratamiento para Sclerotium ce','Este proyecto plantea la formulación y validación de un producto capaz de tratar la enfermedad llamada pudrición blanca que ataca a la cebolla, causada por el hongo Sclerotium cepivorum el cual es difícil de combatir. \n\n','<p style="text-align: justify;">Esteproyecto plantea la formulación y validación de un producto capaz de tratar la enfermedadllamada pudrición blanca que ataca a la cebolla, causada por el hongo <i>Sclerotium cepivorum</i> el cual es difícil decombatir. </p><p style="text-align: justify;">Deacuerdo diversas investigaciones y estudios, el hongo <i>Trichoderma sp </i>es un antagónico y buen biocontrolador para estehongo patógeno, además que cuenta ','<p>La pudrición blanca en cebolla es una enfermedad que afecta a los agricultores y a este producto ya que genera pérdidas en el volumen de cosecha e impide el uso de este suelo para cultivar la cebolla ya que es una enfermedad altamente latente y fácil de propagar.<br/></p>','<p>Este proyectopretende formular un producto liquido capaz combatir esta enfermedad medianteel uso de un microorganismo antagónico a una alta concentración el cualcoloniza los esclerocios enrollan las hifas, deforman y lisan a este patógeno,además este producto contara con otras cepas microbianas que mejorando lascondiciones del suelo facilitando el desarrollo y viabilidad del hongoantagónico, asimismo de participar en el proceso de biorremediac','<p>Listo -------</p>','2016-02-20 00:26:56','2016-02-20 00:26:58');
+	(11,'Elaboración de tratamiento para Sclerotium ce','Este proyecto plantea la formulación y validación de un producto capaz de tratar la enfermedad llamada pudrición blanca que ataca a la cebolla, causada por el hongo Sclerotium cepivorum el cual es difícil de combatir. \n\n','<p style="text-align: justify;">Esteproyecto plantea la formulación y validación de un producto capaz de tratar la enfermedadllamada pudrición blanca que ataca a la cebolla, causada por el hongo <i>Sclerotium cepivorum</i> el cual es difícil decombatir. </p><p style="text-align: justify;">Deacuerdo diversas investigaciones y estudios, el hongo <i>Trichoderma sp </i>es un antagónico y buen biocontrolador para estehongo patógeno, además que cuenta ','<p>La pudrición blanca en cebolla es una enfermedad que afecta a los agricultores y a este producto ya que genera pérdidas en el volumen de cosecha e impide el uso de este suelo para cultivar la cebolla ya que es una enfermedad altamente latente y fácil de propagar.<br/></p>','<p>Este proyectopretende formular un producto liquido capaz combatir esta enfermedad medianteel uso de un microorganismo antagónico a una alta concentración el cualcoloniza los esclerocios enrollan las hifas, deforman y lisan a este patógeno,además este producto contara con otras cepas microbianas que mejorando lascondiciones del suelo facilitando el desarrollo y viabilidad del hongoantagónico, asimismo de participar en el proceso de biorremediac','<p>Listo -------</p>','2016-02-20 00:26:56','2016-02-20 00:26:58'),
+	(12,'Nanocapsulas de ciclodextrinas para protecció','La industria agrícola pasa por una transición para hacer eficiente el uso de recursos en la obtención de productos. Para este fin se requieren nuevas tecnologías que permitan un aprovechamiento integral de diversos insumos. ','<p><span lang="ES">La industria agrícola pasa por una transición para hacer eficiente el uso de recursos en la obtención de productos. Para este fin se requieren nuevastecnologías que permitan un aprovechamiento integral de diversos insumos. Entrelos insumos se encuentran a las hormonas vegetales que estimulan diversosaspectos fisiológicos de plantas logrando que estas se desarrollen mejor orindan frutos con mejor calidad y de manera mas uniforme','<p>aaaa</p>','<p>aaaa</p>','<p>aaa</p>','2016-02-20 17:54:39','2016-02-20 17:54:39'),
+	(13,'Evaluación de índices de calidad de suelo y a','Este proyecto planea en primera instancia dar conocer la empresa Eco Tk y su gama de productos como una opción viable, rentable y sustentable para tratamiento a cultivos agrícolas mejorando la calidad sus productos y las condiciones bioquímicas y fisicoquímicas del suelo donde se es sembrado','<p>Este proyecto planea en primera instancia dar conocer la empresa Eco Tk y su gama de productos como una opción viable,rentable y sustentable para tratamiento a cultivos agrícolas mejorando la calidad sus productos y las condiciones bioquímicas y fisico químicas del suelo donde se es sembrado, esto gracias a lo probióticos benéficos contenidos en el producto los cuales son amigables y tienen una sinergia positiva para el suelo y en general para','<p>aaa</p>','<p>aaaa</p>','<p>aaaa</p>','2016-02-20 18:20:27','2016-02-20 18:20:27'),
+	(14,'Fungicel','Fungicel tiene como objetivo generar un sustituto biodegradable al poli-estireno expandido (EPS), a base de micelio lignocelulítico sobre sustra-to desecho. Dicho producto desempeña funciones similares al EPS: ais-lante térmico, absorbente de impactos, envase desechable, etc. ','<p><span style="text-align: justify;">Fungicel tiene como objetivo generar un sustituto biodegradable al poliestireno expandido (EPS), a base de miceliolignocelul</span><span style="text-align: justify;">í</span><span style="text-align: justify;">tico sobre sustrato desecho. Dicho producto desempe</span><span style="text-align: justify;">ñ</span><span style="text-align: justify;">a funcionessimilares al EPS: aislante t</span><span style="text-ali','<p>aaa</p>','<p>aaa</p>','<p>aaa</p>','2016-02-20 18:41:31','2016-02-20 18:42:22'),
+	(15,'Producción de melanina a partir del frijol Mu','El producto consiste en Melanina producida a partir de la L-DOPA contenida en el frijol de Mucuna pruriens, mediante oxidación química, posteriormente se precipitará la Melanina para ser lavada de otros metabolitos y finalmente poder obtenerla en su estado más puro.','<p>aaaa</p>','<p>aaa</p>','<p>aaa</p>','<p>aaa</p>','2016-02-20 19:31:32','2016-02-20 19:31:32'),
+	(16,'Medio de cultivo multifuncional en base a sem','La presente innovación trata de un desarrollo tecnológico que hace uso de la semilla de aguacate, un residuo agroindustrial que de no utilizarse puede ser fuente de contaminación. ','<p><span lang="ES"> La presente innovación trata de un desarrollo tecnológico que hace uso de la semilla de aguacate, un residuo agroindustrial que de no utilizarse puede ser fuente de contaminación. Se usa este residuo para constituir la base principalde un medio de cultivo que sirva como fuente de crecimiento para una diversidadde microorganismos entre los que se incluyen bacterias, algas, hongos, plantas.Este medio de cultivo es una alternativ','<p>----</p>','<p>---</p>','<p>---</p>','2016-02-20 19:36:59','2016-02-20 19:42:44');
 ALTER TABLE `Proyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -986,8 +1005,12 @@ UNLOCK TABLES;
 LOCK TABLES `ProyectoDescriptor` WRITE;
 ALTER TABLE `ProyectoDescriptor` DISABLE KEYS;
 INSERT INTO `ProyectoDescriptor` (`id`, `observaciones`, `idProyecto`, `idDescriptor`, `created_at`, `updated_at`) VALUES 
-	(1,NULL,11,7,NULL,NULL),
-	(4,'Las Observaciones',7,7,NULL,NULL);
+	(4,'Las Observaciones',7,7,NULL,NULL),
+	(5,'Notas',7,4,NULL,NULL),
+	(6,'Producto Bioquímico de Prueba',9,5,NULL,NULL),
+	(7,NULL,11,7,NULL,NULL),
+	(8,NULL,13,7,NULL,NULL),
+	(9,NULL,14,7,NULL,NULL);
 ALTER TABLE `ProyectoDescriptor` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -996,7 +1019,8 @@ LOCK TABLES `ProyectoTRL` WRITE;
 ALTER TABLE `ProyectoTRL` DISABLE KEYS;
 INSERT INTO `ProyectoTRL` (`id`, `idProyecto`, `idTRL`, `Descripcion`, `Fecha`, `created_at`, `updated_at`) VALUES 
 	(2,9,1,'ssss','2016-02-18','2016-02-19 05:21:12','2016-02-19 05:21:12'),
-	(3,10,1,'asas','2016-02-19','2016-02-19 06:04:53','2016-02-19 06:04:53');
+	(3,10,1,'asas','2016-02-19','2016-02-19 06:04:53','2016-02-19 06:04:53'),
+	(4,2,1,'ssss','2016-02-18',NULL,NULL);
 ALTER TABLE `ProyectoTRL` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1006,13 +1030,16 @@ ALTER TABLE `ProyectoResultado` DISABLE KEYS;
 INSERT INTO `ProyectoResultado` (`id`, `idProyectoTRL`, `Tipo`, `Nombre`, `Resumen`, `NumeroRegistro`, `Status`, `PaisesProteccion`, `AreaDeAplicacion`, `PlanDeExplotacion`, `Avance`, `Fecha`, `FechaAprobacion`, `created_at`, `updated_at`) VALUES 
 	(3,2,'Proceso','Un Producto','El producto es Pro',NULL,'Sin iniciar',NULL,'Metalurgia','El Plan','Se ha completado una fase del proyecto','2015-12-01',NULL,'2016-02-19 05:33:17','2016-02-19 05:33:17'),
 	(5,2,'Proceso','adada','aad',NULL,'Sin iniciar','[]','adad','adad','adad','2016-02-03',NULL,'2016-02-19 05:46:17','2016-02-19 05:46:17'),
-	(6,2,'Patente','ada','adad','adadad',NULL,'"[{\\"id\\":1,\\"Nombre\\":\\"Mexico\\",\\"Abrev\\":\\"MEX\\"},{\\"id\\":2,\\"Nombre\\":\\"Alemania\\",\\"Abrev\\":\\"GER\\"}]"',NULL,'adadad',NULL,'2016-02-18',NULL,'2016-02-19 05:47:40','2016-02-19 05:47:40');
+	(6,2,'Patente','ada','adad','adadad',NULL,'"[{\\"id\\":1,\\"Nombre\\":\\"Mexico\\",\\"Abrev\\":\\"MEX\\"},{\\"id\\":2,\\"Nombre\\":\\"Alemania\\",\\"Abrev\\":\\"GER\\"}]"',NULL,'adadad',NULL,'2016-02-18',NULL,'2016-02-19 05:47:40','2016-02-19 05:47:40'),
+	(8,4,'Proceso','Un Producto','El producto es Pro',NULL,'Sin iniciar','[]','Metalurgia','El Plan','Se ha completado una fase del proyecto','2015-12-01',NULL,'2016-02-21 19:55:13','2016-02-21 19:55:13');
 ALTER TABLE `ProyectoResultado` ENABLE KEYS;
 UNLOCK TABLES;
 
 
 LOCK TABLES `RegistroProyecto` WRITE;
 ALTER TABLE `RegistroProyecto` DISABLE KEYS;
+INSERT INTO `RegistroProyecto` (`id`, `idProyecto`, `idConvocatoriaModalidad`, `idParque`, `Solicitud`, `MontoSolicitado`, `MontoApoyado`, `idTRLInicial`, `idTRLFinal`, `FechaRegistro`, `FechaCierre`, `Requisitos`, `Resultado`, `Validado`, `created_at`, `updated_at`) VALUES 
+	(1,7,1,1,NULL,20000,0,2,4,'2016-02-24',NULL,'[{"Nombre": "Tener El Sistema Listo", "validated": false, "Descripcion": "El requisito"}, {"Nombre": "Otro Requisito", "validated": false, "Descripcion": "Nada mas por llenar"}]',NULL,NULL,'2016-02-24 02:50:41','2016-02-24 02:50:41');
 ALTER TABLE `RegistroProyecto` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1095,7 +1122,8 @@ LOCK TABLES `TransferenciaTecnologica` WRITE;
 ALTER TABLE `TransferenciaTecnologica` DISABLE KEYS;
 INSERT INTO `TransferenciaTecnologica` (`id`, `ProductosDePropiedad`, `ProcesosDeTransferencia`, `ValuacionTecnologica`, `idProyecto`, `created_at`, `updated_at`) VALUES 
 	(1,'<p>Producto</p>','<p>Proceso</p>','<p>Evaluación</p>',8,'2016-02-17 22:49:06','2016-02-17 22:49:06'),
-	(2,'<p>Otro Registro</p>','<p>Nuevo Proceso</p>','<p>Nueva Evaluación</p>',8,'2016-02-17 22:49:42','2016-02-17 22:49:42');
+	(2,'<p>Otro Registro</p>','<p>Nuevo Proceso</p>','<p>Nueva Evaluación</p>',8,'2016-02-17 22:49:42','2016-02-17 22:49:42'),
+	(3,'<p>zsad<br/></p>','<p>asd<br/></p>','<p>asdasd<br/></p>',12,'2016-02-24 03:13:00','2016-02-24 03:13:00');
 ALTER TABLE `TransferenciaTecnologica` ENABLE KEYS;
 UNLOCK TABLES;
 
@@ -1126,7 +1154,8 @@ INSERT INTO `User` (`id`, `username`, `password`, `type`, `isValidated`, `create
 	(6,'adan2','$2y$10$jj/U0pJ.AvEvvZsEmhPHbeMMoMJRHQBe4MGYpsqL7B/bX3drd2Tiq','Supervisor',1,'2016-02-19 05:17:41','2016-02-19 05:17:41'),
 	(7,'novaera1','$2y$10$B1RLdkkZe8axazKht0hd.OeShpPDRToGBMRoVEcOrW0O1RvYH4ofm','User',0,'2016-02-19 06:58:23','2016-02-19 06:58:23'),
 	(8,'novaera2','$2y$10$mYGbaZuG7LTqDcOF38AdMugotiEfMvitor/mf4f7MUaPRNkOXjGuS','Supervisor',0,'2016-02-19 06:58:27','2016-02-19 06:58:27'),
-	(9,'elariosj@gmail.com','$2y$10$qyA1DdAM9aBc92y3M3i/suP0AqoBR/dMKmMIbR.cGJUMJl.pQBPfS','User',0,'2016-02-20 00:14:18','2016-02-20 00:14:18');
+	(9,'elariosj@gmail.com','$2y$10$qyA1DdAM9aBc92y3M3i/suP0AqoBR/dMKmMIbR.cGJUMJl.pQBPfS','User',0,'2016-02-20 00:14:18','2016-02-20 00:14:18'),
+	(10,'rox','$2y$10$jtyZEe8yswhOhpWyO4A58uANS0TtVCx4P10Ek4qUJIRkREGEz0kIS','Supervisor',0,'2016-02-27 02:49:41','2016-02-27 02:49:41');
 ALTER TABLE `User` ENABLE KEYS;
 UNLOCK TABLES;
 
