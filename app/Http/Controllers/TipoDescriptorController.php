@@ -20,7 +20,10 @@ class TipoDescriptorController extends Controller
      */
     public function showByClassification($classification)
     {
-        $tipoDescriptor = TipoDescriptor::where('Aplicable',$classification)->get();
+        $tipoDescriptor = TipoDescriptor::
+        where('Aplicable',$classification)
+            ->orWhere('Aplicable','Todos')
+            ->get();
         return response()->json(['TipoDescriptor'=>$tipoDescriptor]);
     }
 
