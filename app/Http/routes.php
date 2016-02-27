@@ -50,6 +50,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
 
     Route::get('Supervisor/Proyectos/Descriptor/{idDescriptor}','SupervisorController@proyectosByDescriptor');
+    Route::get('Supervisor/Proyectos/TRL/List/{idTRL}','SupervisorController@proyectosByTRL')->where(['idTRL'=>'[0-9]+']);
     Route::get('Supervisor/Proyectos/TRL/Count','SupervisorController@countByTRL');
     Route::get('Supervisor/Proyectos/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countProyectosByTipoDescriptor')
         ->where(['idDescriptor'=>'[0-9]+']);
@@ -64,7 +65,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('Supervisor/RegistroProyecto/Convocatoria/{id}','RegistroProyectoController@showByConvocatoria')->where(['id'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion','OrganizacionController@getNotValidatedOrganizaciones');
     Route::put('Supervisor/Organizacion/{id}','OrganizacionController@validateDocuments')->where(['id'=>'[0-9]+']);
-    Route::get('Supervisor/Organizacion/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@CountOrganizacionByTipoDescriptor');
+    Route::get('Supervisor/Organizacion/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@CountOrganizacionByTipoDescriptor')
+        ->where(['idTipoDescriptor'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion/Documentos','OrganizacionController@getNotValidatedDocumentsOrganizaciones');
     Route::get('Supervisor/Organizacion/Persona/{idOrganizacion}','SupervisorController@getOrganizacionPersonas')
         ->where(['idOrganizacion'=>'[0-9]+']);
@@ -73,6 +75,10 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('Supervisor/Organizacion/{idOrganizacion}/Persona/Descriptor/{idDescriptor}','SupervisorController@getOrganizacionPersonasDescriptor')
         ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
     Route::post('Supervisor/Persona','PersonaController@validatePerson');
+    Route::get('Supervisor/Persona/ByDescriptor/{idDescriptor}','SupervisorController@getPersonasDescriptor')
+        ->where(['idDescriptor'=>'[0-9]+']);
+    Route::get('Supervisor/Persona/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countPersonasByTipoDescriptor')
+        ->where(['idTipoDescriptor'=>'[0-9]+']);
     Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
 
 
