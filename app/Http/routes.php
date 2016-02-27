@@ -241,6 +241,11 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
 
         /*Métodos para registrar resultados de un proyecto*/
+
+        Route::get('Proyecto/Resultados/Count/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@countResultados')
+            ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
+
+
         Route::post('Proyecto/Resultados/{whoIs?}/{idOrganizacion?}','ProyectoController@addResult')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::put('Proyecto/Resultados/{id}/{whoIs?}/{idOrganizacion?}','ProyectoController@editResult')

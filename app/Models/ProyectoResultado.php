@@ -100,5 +100,61 @@ class ProyectoResultado extends Model
 
 
 
+    public static function countResultados($user,$type='Persona',$idOrganizacion=null,$strict)
+    {
+        $user->load('Persona');
+
+        $query =
+            DB::table('ProyectoResultado')
+                ->join('ProyectoTRL','ProyectoResultado.idProyectoTRL','=','ProyectoTRL.id')
+                ->join('Proyecto','ProyectoTRL.idProyecto','=','Proyecto.id')
+                ->select('ProyectoResultado.id');
+
+        if($type=='Persona')
+        {
+            $query
+                ->join('Persona_Proyecto','Persona_Proyecto.idProyecto','=','Proyecto.id')
+                ->where('Persona_Proyecto.idPersona',$user->Persona->id);
+
+            if($strict==1)
+            {
+                $query->where('Persona_Proyecto.WritePermissions',$strict);
+            }
+        }
+        if($type=='Organizacion')
+        {
+            $query
+                ->join('Organizacion_Proyecto','Organizacion_Proyecto.idProyecto','=','Proyecto.id')
+                ->join('Organizacion','Organizacion_Proyecto.idOrganizacion','=','Organizacion.id')
+                ->join('Persona_Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
+                ->where('Persona_Organizacion.idPersona',$user->Persona->id)
+                ->where('Organizacion.id',$idOrganizacion);
+            if($strict==1)
+            {
+                $query->where('Persona_Organizacion.WritePermissions',$strict);
+            }
+        }
+
+
+
+        $queryProducto  = clone $query;
+        $queryProceso   = clone $query;
+        $queryServicio  = clone $query;
+        $queryPatente   = clone $query;
+
+        $results['Data'][]=$queryProducto->where('ProyectoResultado.Tipo','Producto')->count();
+        $results['Data'][]=$queryProceso->where('ProyectoResultado.Tipo','Proceso')->count();
+        $results['Data'][]=$queryServicio->where('ProyectoResultado.Tipo','Servicio')->count();
+        $results['Data'][]=$queryPatente->where('ProyectoResultado.Tipo','Patente')->count();
+
+
+
+        $results['Labels']=['Producto','Proceso','Servicio','Patente'];
+
+        return $results;
+
+
+    }
+
 
 }

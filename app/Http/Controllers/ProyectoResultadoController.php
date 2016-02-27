@@ -158,4 +158,30 @@ class ProyectoResultadoController extends Controller
             return response()->json(['invalid_write_permissions'], $e->getStatusCode());
         }
     }
+
+
+
+    public function countResultados($whoIs='Persona',$idOrganizacion=null)
+    {
+
+        try{
+            $user = AuthenticateController::checkUser();
+            return response()->json(ProyectoResultado::countResultados($user,$whoIs,$idOrganizacion,0));
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['invalid_write_permissions'], $e->getStatusCode());
+        }
+
+    }
+
 }

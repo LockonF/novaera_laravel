@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Organizacion extends Model
 {
@@ -48,5 +49,16 @@ class Organizacion extends Model
         return false;
 
     }
+
+
+    public static function personasInOrganizacion($id)
+    {
+        $organizacion = Organizacion::find($id);
+        return $organizacion->Persona;
+
+    }
+
+
+
 
 }
