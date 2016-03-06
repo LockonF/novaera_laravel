@@ -19,6 +19,8 @@ class SupervisorController extends Controller
 {
 
 
+
+
     /**
      * @param $idDescriptor
      * @return \Illuminate\Http\JsonResponse
@@ -662,4 +664,37 @@ class SupervisorController extends Controller
     }
 
 
+
+    public function organizacionesByDescriptor($id)
+    {
+
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $results = DB::table('Organizacion')
+                ->join('Descriptor_Organizacion','Organizacion.id','=','Descriptor_Organizacion.idOrganizacion')
+                ->where('Descriptor_Organizacion.idDescriptor',$id)
+                ->select('Organizacion.*')
+                ->get();
+
+            return response()->json(['Organizacion'=>$results]);
+
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
 }

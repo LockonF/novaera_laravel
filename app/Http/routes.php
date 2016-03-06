@@ -20,6 +20,8 @@ Route::get('/', function () {
 
 Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 {
+
+
     /*Usuario*/
     Route::post('Authenticate', 'AuthenticateController@authenticate');
     Route::post('Register', 'AuthenticateController@register');
@@ -64,6 +66,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
     Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
     Route::get('Supervisor/RegistroProyecto/Convocatoria/{id}','RegistroProyectoController@showByConvocatoria')->where(['id'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion','OrganizacionController@getNotValidatedOrganizaciones');
+    Route::get('Supervisor/Organizacion/ByDescriptor/{id}','SupervisorController@organizacionesByDescriptor')->where(['id'=>'[0-9]+']);
     Route::put('Supervisor/Organizacion/{id}','OrganizacionController@validateDocuments')->where(['id'=>'[0-9]+']);
     Route::get('Supervisor/Organizacion/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@CountOrganizacionByTipoDescriptor')
         ->where(['idTipoDescriptor'=>'[0-9]+']);

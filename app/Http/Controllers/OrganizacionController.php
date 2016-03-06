@@ -238,7 +238,7 @@ class OrganizacionController extends Controller
     {
         try{
             AuthenticateController::checkUser(null);
-            $organizaciones = Organizacion::all();
+            $organizaciones = Organizacion::orderBy('created_at','desc')->get();
             foreach($organizaciones as $organizacion)
             {$organizacion->Archivos = json_decode($organizacion->Archivos);}
             return response()->json(['Organizacion'=>$organizaciones]);
