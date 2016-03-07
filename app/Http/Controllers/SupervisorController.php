@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\UnauthorizedException;
 use App\Models\Organizacion;
+use App\Models\Persona;
 use App\Models\Proyecto;
 use App\Models\TRL;
 use Illuminate\Database\QueryException;
@@ -127,8 +128,8 @@ class SupervisorController extends Controller
                 ->join('Descriptor','Descriptor.id','=','Descriptor_Persona.idDescriptor')
                 ->join('TipoDescriptor','TipoDescriptor.id','=','Descriptor.idTipoDescriptor')
                 ->where('TipoDescriptor.id',$idTipoDescriptor)
+                ->whereIn('Persona.id',$personas)
                 ->groupBy('Descriptor.id')
-                ->havingRaw('Data in'.'('.implode(",",$personas).')')
                 ->select(DB::raw('count(Persona.id) as Data'),'Descriptor.Titulo as Labels');
 
             $results=$results    ->get();
@@ -232,12 +233,14 @@ class SupervisorController extends Controller
                 ->join('Persona','Persona_Organizacion.idPersona','=','Persona.id')
                 ->join('Descriptor_Persona','Persona.id','=','Descriptor_Persona.idPersona')
                 ->join('Descriptor','Descriptor_Persona.idDescriptor','=','Descriptor.id')
-                ->select('Persona.*')
-                ->where('Persona_Organizacion.id',$idOrganizacion)
+                ->select('Persona.id')
+                ->where('Persona_Organizacion.idOrganizacion',$idOrganizacion)
                 ->where('Descriptor.id',$idDescriptor)
                 ->distinct()
-                ->get();
-            return response()->json(['Persona'=>$personas]);
+                ->lists('Persona.id');
+
+            $result = Organizacion::find($idOrganizacion)->Persona()->whereIn('Persona.id',$personas)->get();
+            return response()->json(['Persona'=>$result]);
 
 
         }catch (QueryException $e)
