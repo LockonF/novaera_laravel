@@ -84,6 +84,18 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         ->where(['idTipoDescriptor'=>'[0-9]+']);
     Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
 
+    Route::get('Supervisor/Modalidad/Convocatoria/{idModalidad}','SupervisorController@openConvocatoriaModalidad')->where(['idModalidad'=>'[0-9]+']);
+
+
+    Route::get('Supervisor/{type}/{id}/Proyectos/{status?}','SupervisorController@countProyectosByConvocatoriaModalidad')
+        ->where(['type'=>'(ProgramaFondeo|Modalidad)','id'=>'[0-9]+','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
+
+    Route::get('Supervisor/{type}/{id}/Montos/{how}/{status?}','SupervisorController@countFundsByConvocatoriaModalidad')
+        ->where(['type'=>'(ProgramaFondeo|Modalidad)','id'=>'[0-9]+','how'=>'(Apoyado|Solicitado)','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
+
+    Route::get('Supervisor/ProgramaFondeo/All/Montos/{how}/{status?}','SupervisorController@countFundsAllProgramas')
+        ->where(['how'=>'(Apoyado|Solicitado)','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
+
 
 
     /*Tipo Descriptor*/

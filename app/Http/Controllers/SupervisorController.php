@@ -700,4 +700,215 @@ class SupervisorController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
+
+
+
+
+    public function openConvocatoriaModalidad($idModalidad)
+    {
+
+        try{
+            AuthenticateController::checkUser('Supervisor');
+            $results = DB::table('Convocatoria_Modalidad')
+                ->join('Convocatoria','Convocatoria.id','=','Convocatoria_Modalidad.idConvocatoria')
+                ->join('Modalidad','Modalidad.id','=','Convocatoria_Modalidad.idModalidad')
+                ->where('Modalidad.id',$idModalidad)
+                ->whereDate('Convocatoria.FechaTermino','>=', date('Y-m-d'))
+                ->select('Convocatoria.*')
+                ->get();
+            return response()->json(['Convocatoria'=>$results]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    public function countProyectosByConvocatoriaModalidad($type,$id,$status=null)
+    {
+        try{
+            AuthenticateController::checkUser('Supervisor');
+            $selectString = null;
+            $formattedResults = [];
+            $results = DB::table('Convocatoria_Modalidad')
+                ->join('Convocatoria','Convocatoria.id','=','Convocatoria_Modalidad.idConvocatoria')
+                ->join('Modalidad','Modalidad.id','=','Convocatoria_Modalidad.idModalidad')
+                ->join('RegistroProyecto','RegistroProyecto.idConvocatoriaModalidad','=','Convocatoria_Modalidad.id')
+                ->groupBy('Convocatoria.id');
+            if($type=='Modalidad')
+            {
+                $results->where('Modalidad.id',$id);
+                $selectString = 'Convocatoria.Nombre as Labels';
+            }
+            else
+            {
+                $results->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+                    ->where('ProgramaFondeo.id',$id);
+                $selectString = 'Modalidad.Nombre as Labels';
+            }
+            $results->select(DB::raw('count(Convocatoria.id) as Data'),$selectString);
+
+
+            if($status!=null && $status!='Todos')
+            {
+                $results->where('RegistroProyecto.Validado',$status);
+            }
+            $results = $results->get();
+            foreach($results as $result)
+            {
+                $formattedResults['Data'][]=$result->Data;
+                $formattedResults['Labels'][]=$result->Labels;
+            }
+
+
+            return response()->json($formattedResults);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    public function countFundsByConvocatoriaModalidad($type,$id,$how='Apoyado',$status=null)
+    {
+        try{
+            $selectString = '';
+            $user = AuthenticateController::checkUser('Supervisor');
+            $formattedResults = [];
+            $results = DB::table('Convocatoria_Modalidad')
+                ->join('Convocatoria','Convocatoria.id','=','Convocatoria_Modalidad.idConvocatoria')
+                ->join('Modalidad','Modalidad.id','=','Convocatoria_Modalidad.idModalidad')
+                ->join('RegistroProyecto','RegistroProyecto.idConvocatoriaModalidad','=','Convocatoria_Modalidad.id')
+                ->groupBy('Labels');
+            if($type=='Modalidad')
+            {
+                $results->where('Modalidad.id',$id);
+                $selectString = 'Convocatoria.Nombre as Labels';
+            }
+            else
+            {
+                $results->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+                    ->where('ProgramaFondeo.id',$id);
+                $selectString = 'Modalidad.Nombre as Labels';
+            }
+
+            if($how=='Apoyado')
+            {
+                $results->select(DB::raw('SUM(RegistroProyecto.MontoApoyado) as Data'),$selectString);
+            }
+            else{
+                $results->select(DB::raw('SUM(RegistroProyecto.MontoSolicitado) as Data'),$selectString);
+            }
+
+            if($status!=null && $status!='Todos')
+            {
+                $results->where('RegistroProyecto.Validado',$status);
+            }
+            $results = $results->get();
+            foreach($results as $result)
+            {
+                $formattedResults['Data'][]=$result->Data;
+                $formattedResults['Labels'][]=$result->Labels;
+            }
+
+
+            return response()->json($formattedResults);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    public function countFundsAllProgramas($how='Apoyado',$status=null)
+    {
+        try{
+            $user = AuthenticateController::checkUser('Supervisor');
+            $formattedResults = [];
+            $results = DB::table('Convocatoria_Modalidad')
+                ->join('Convocatoria','Convocatoria.id','=','Convocatoria_Modalidad.idConvocatoria')
+                ->join('Modalidad','Modalidad.id','=','Convocatoria_Modalidad.idModalidad')
+                ->join('RegistroProyecto','RegistroProyecto.idConvocatoriaModalidad','=','Convocatoria_Modalidad.id')
+                ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+                ->groupBy('Labels');
+
+
+            if($how=='Apoyado')
+            {
+                $results->select(DB::raw('SUM(RegistroProyecto.MontoApoyado) as Data, ProgramaFondeo.Titulo as Labels'));
+            }
+            else{
+                $results->select(DB::raw('SUM(RegistroProyecto.MontoSolicitado) as Data, ProgramaFondeo.Titulo as Labels'));
+            }
+
+            if($status!=null && $status!='Todos')
+            {
+                $results->where('RegistroProyecto.Validado',$status);
+            }
+            $results = $results->get();
+            foreach($results as $result)
+            {
+                $formattedResults['Data'][]=$result->Data;
+                $formattedResults['Labels'][]=$result->Labels;
+            }
+
+
+            return response()->json($formattedResults);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
 }
