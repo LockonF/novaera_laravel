@@ -124,6 +124,11 @@ class ModalidadController extends Controller
                 return response()->json(['modalidad_not_found'],500);
             }
             $modalidad->load('Convocatoria');
+            foreach($modalidad->Convocatoria as $convocatoria)
+            {
+                $convocatoria->Requisitos  =json_decode($convocatoria->Requisitos);
+            }
+
             return response()->json(['Convocatoria'=>$modalidad->Convocatoria]);
 
         }catch (QueryException $e)

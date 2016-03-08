@@ -667,6 +667,10 @@ class SupervisorController extends Controller
     }
 
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function organizacionesByDescriptor($id)
     {
@@ -702,6 +706,10 @@ class SupervisorController extends Controller
     }
 
 
+    /**
+     * @param $idModalidad
+     * @return \Illuminate\Http\JsonResponse
+     */
 
 
     public function openConvocatoriaModalidad($idModalidad)
@@ -736,6 +744,13 @@ class SupervisorController extends Controller
         }
     }
 
+    /**
+     * @param $type
+     * @param $id
+     * @param null $status
+     * @return \Illuminate\Http\JsonResponse
+     */
+
 
     public function countProyectosByConvocatoriaModalidad($type,$id,$status=null)
     {
@@ -748,18 +763,21 @@ class SupervisorController extends Controller
                 ->join('Modalidad','Modalidad.id','=','Convocatoria_Modalidad.idModalidad')
                 ->join('RegistroProyecto','RegistroProyecto.idConvocatoriaModalidad','=','Convocatoria_Modalidad.id')
                 ->groupBy('Convocatoria.id');
-            if($type=='Modalidad')
+
+            switch($type)
             {
-                $results->where('Modalidad.id',$id);
-                $selectString = 'Convocatoria.Nombre as Labels';
+                case 'Modalidad':
+                    $results->where('Modalidad.id',$id);
+                    $selectString = 'Convocatoria.Nombre as Labels';
+                    break;
+                case 'ProgramaFondeo':
+                    $results->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+                        ->where('ProgramaFondeo.id',$id);
+                    $selectString = 'Modalidad.Nombre as Labels';
+                    break;
+
             }
-            else
-            {
-                $results->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
-                    ->where('ProgramaFondeo.id',$id);
-                $selectString = 'Modalidad.Nombre as Labels';
-            }
-            $results->select(DB::raw('count(Convocatoria.id) as Data'),$selectString);
+            $results->select(DB::raw('count(RegistroProyecto.id) as Data'),$selectString);
 
 
             if($status!=null && $status!='Todos')
@@ -794,6 +812,13 @@ class SupervisorController extends Controller
         }
     }
 
+    /**
+     * @param $type
+     * @param $id
+     * @param string $how
+     * @param null $status
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function countFundsByConvocatoriaModalidad($type,$id,$how='Apoyado',$status=null)
     {
         try{
@@ -805,16 +830,18 @@ class SupervisorController extends Controller
                 ->join('Modalidad','Modalidad.id','=','Convocatoria_Modalidad.idModalidad')
                 ->join('RegistroProyecto','RegistroProyecto.idConvocatoriaModalidad','=','Convocatoria_Modalidad.id')
                 ->groupBy('Labels');
-            if($type=='Modalidad')
+
+            switch($type)
             {
-                $results->where('Modalidad.id',$id);
-                $selectString = 'Convocatoria.Nombre as Labels';
-            }
-            else
-            {
-                $results->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
-                    ->where('ProgramaFondeo.id',$id);
-                $selectString = 'Modalidad.Nombre as Labels';
+                case 'Modalidad':
+                    $results->where('Modalidad.id',$id);
+                    $selectString = 'Convocatoria.Nombre as Labels';
+                    break;
+                case 'ProgramaFondeo':
+                    $results->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+                        ->where('ProgramaFondeo.id',$id);
+                    $selectString = 'Modalidad.Nombre as Labels';
+                    break;
             }
 
             if($how=='Apoyado')
@@ -857,6 +884,11 @@ class SupervisorController extends Controller
         }
     }
 
+    /**
+     * @param string $how
+     * @param null $status
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function countFundsAllProgramas($how='Apoyado',$status=null)
     {
@@ -892,6 +924,75 @@ class SupervisorController extends Controller
 
 
             return response()->json($formattedResults);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    /**
+     * @param $type
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function countProjectRegisterStatus($type,$id=null){
+        try{
+            AuthenticateController::checkUser('Supervisor');
+            $result ['Labels'] = ['Aceptado','Rechazado','Pendiente','Culminado'];
+            $result ['Data'] = [];
+            $query = DB::table('RegistroProyecto');
+
+            if($type!='All' && $id == null)
+                return response()->json(['message'=>'id_needed_for_query'],500);
+
+            switch($type)
+            {
+                case 'ProgramaFondeo':
+                    $query
+                        ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
+                        ->join('Modalidad','Modalidad.id','=','Convocatoria_Modalidad.idModalidad')
+                        ->join('ProgramaFondeo','ProgramaFondeo.id','=','Modalidad.idProgramaFondeo')
+                        ->where('ProgramaFondeo.id',$id);
+                    break;
+                case 'Modalidad':
+                    $query
+                        ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
+                        ->where('Convocatoria_Modalidad.idModalidad',$id);
+                    break;
+                case 'Convocatoria':
+                    $query
+                        ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
+                        ->where('Convocatoria_Modalidad.idConvocatoria',$id);
+                    break;
+            }
+
+            foreach($result['Labels'] as $condition)
+            {
+                $queryResult = clone $query;
+                $result['Data'][]= $queryResult->where('Validado',$condition)->count();
+            }
+
+
+
+
+            return response()->json($result);
+
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

@@ -23,78 +23,86 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
 
 
     /*Usuario*/
-    Route::post('Authenticate', 'AuthenticateController@authenticate');
-    Route::post('Register', 'AuthenticateController@register');
-    Route::get('User', 'AuthenticateController@getUser');
+        Route::post('Authenticate', 'AuthenticateController@authenticate');
+        Route::post('Register', 'AuthenticateController@register');
+        Route::get('User', 'AuthenticateController@getUser');
 
     /*Refresh Token*/
-    Route::get('RefreshToken','AuthenticateController@refreshToken');
+        Route::get('RefreshToken','AuthenticateController@refreshToken');
 
     /*Persona*/
-    Route::get('Persona/Lookup/{name}','PersonaController@lookup');
+        Route::get('Persona/Lookup/{name}','PersonaController@lookup');
 
 
-    Route::get('Persona/{who?}','PersonaController@show')
-        ->where(['who'=>'Current']);
-    Route::post('Persona','PersonaController@store');
-    Route::delete('Persona','PersonaController@destroy');
-    Route::put('Persona','PersonaController@update');
-        /*Persona_Descriptor*/
-    Route::post('Persona/Descriptor','PersonaController@addDescriptor');
-    Route::get('Persona/Descriptor/{id?}','PersonaController@showAllDescriptor')
-        ->where(['id'=>'[0-9]+']);
-    Route::delete('Persona/Descriptor/{id}/{idPersona?}','PersonaController@detachDescriptor')
-        ->where(['idPersona'=>'[0-9]+']);
-    Route::put('Persona/Descriptor/{id}','PersonaController@updateDescriptor');
+        Route::get('Persona/{who?}','PersonaController@show')
+            ->where(['who'=>'Current']);
+        Route::post('Persona','PersonaController@store');
+        Route::delete('Persona','PersonaController@destroy');
+        Route::put('Persona','PersonaController@update');
+
+    /*Persona_Descriptor*/
+        Route::post('Persona/Descriptor','PersonaController@addDescriptor');
+        Route::get('Persona/Descriptor/{id?}','PersonaController@showAllDescriptor')
+            ->where(['id'=>'[0-9]+']);
+        Route::delete('Persona/Descriptor/{id}/{idPersona?}','PersonaController@detachDescriptor')
+            ->where(['idPersona'=>'[0-9]+']);
+        Route::put('Persona/Descriptor/{id}','PersonaController@updateDescriptor');
 
     /*Validacion de persona*/
-    Route::get('Supervisor/Persona','PersonaController@showNotValidated');
+        Route::get('Supervisor/Persona','PersonaController@showNotValidated');
 
+    /*Proyectos para supervisor*/
+        Route::get('Supervisor/Proyectos/Descriptor/{idDescriptor}','SupervisorController@proyectosByDescriptor');
+        Route::get('Supervisor/Proyectos/TRL/List/{idTRL}','SupervisorController@proyectosByTRL')->where(['idTRL'=>'[0-9]+']);
+        Route::get('Supervisor/Proyectos/TRL/Count','SupervisorController@countByTRL');
+        Route::get('Supervisor/Proyectos/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countProyectosByTipoDescriptor')
+            ->where(['idDescriptor'=>'[0-9]+']);
 
-    Route::get('Supervisor/Proyectos/Descriptor/{idDescriptor}','SupervisorController@proyectosByDescriptor');
-    Route::get('Supervisor/Proyectos/TRL/List/{idTRL}','SupervisorController@proyectosByTRL')->where(['idTRL'=>'[0-9]+']);
-    Route::get('Supervisor/Proyectos/TRL/Count','SupervisorController@countByTRL');
-    Route::get('Supervisor/Proyectos/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countProyectosByTipoDescriptor')
-        ->where(['idDescriptor'=>'[0-9]+']);
+        Route::get('Supervisor/{type}/{id}','SupervisorController@getEjecucion')
+            ->where(['type'=>'(Ejecucion|Impacto|TransferenciaTecnologica|ModeloNegocio)','id'=>'[0-9]+']);
+        Route::get('Supervisor/{type}/Archivos/{id}','SupervisorController@showFileRoutes')
+            ->where(['type'=>'(Ejecucion|Impacto|TransferenciaTecnologica|ModeloNegocio)','id'=>'[0-9]+']);
+        Route::get('Supervisor/Resultados/{type}/{id}','SupervisorController@showResults')
+            ->where(['type'=>'(Patente|Producto|Servicio|Proceso|Todos)','id'=>'[0-9]+']);
+        Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
+        Route::get('Supervisor/RegistroProyecto/Convocatoria/{id}','RegistroProyectoController@showByConvocatoria')->where(['id'=>'[0-9]+']);
 
-    Route::get('Supervisor/{type}/{id}','SupervisorController@getEjecucion')
-        ->where(['type'=>'(Ejecucion|Impacto|TransferenciaTecnologica|ModeloNegocio)','id'=>'[0-9]+']);
-    Route::get('Supervisor/{type}/Archivos/{id}','SupervisorController@showFileRoutes')
-        ->where(['type'=>'(Ejecucion|Impacto|TransferenciaTecnologica|ModeloNegocio)','id'=>'[0-9]+']);
-    Route::get('Supervisor/Resultados/{type}/{id}','SupervisorController@showResults')
-        ->where(['type'=>'(Patente|Producto|Servicio|Proceso|Todos)','id'=>'[0-9]+']);
-    Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
-    Route::get('Supervisor/RegistroProyecto/Convocatoria/{id}','RegistroProyectoController@showByConvocatoria')->where(['id'=>'[0-9]+']);
-    Route::get('Supervisor/Organizacion','OrganizacionController@getNotValidatedOrganizaciones');
-    Route::get('Supervisor/Organizacion/ByDescriptor/{id}','SupervisorController@organizacionesByDescriptor')->where(['id'=>'[0-9]+']);
-    Route::put('Supervisor/Organizacion/{id}','OrganizacionController@validateDocuments')->where(['id'=>'[0-9]+']);
-    Route::get('Supervisor/Organizacion/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@CountOrganizacionByTipoDescriptor')
-        ->where(['idTipoDescriptor'=>'[0-9]+']);
-    Route::get('Supervisor/Organizacion/Documentos','OrganizacionController@getNotValidatedDocumentsOrganizaciones');
-    Route::get('Supervisor/Organizacion/Persona/{idOrganizacion}','SupervisorController@getOrganizacionPersonas')
-        ->where(['idOrganizacion'=>'[0-9]+']);
-    Route::get('Supervisor/Organizacion/{idOrganizacion}/Persona/TipoDescriptor/Count/{idDescriptor}','SupervisorController@countPersonasOrgByTipoDescriptor')
-        ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
-    Route::get('Supervisor/Organizacion/{idOrganizacion}/Persona/Descriptor/{idDescriptor}','SupervisorController@getOrganizacionPersonasDescriptor')
-        ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
-    Route::post('Supervisor/Persona','PersonaController@validatePerson');
-    Route::get('Supervisor/Persona/ByDescriptor/{idDescriptor}','SupervisorController@getPersonasDescriptor')
-        ->where(['idDescriptor'=>'[0-9]+']);
-    Route::get('Supervisor/Persona/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countPersonasByTipoDescriptor')
-        ->where(['idTipoDescriptor'=>'[0-9]+']);
-    Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
+    /*Organización para supervisor*/
 
-    Route::get('Supervisor/Modalidad/Convocatoria/{idModalidad}','SupervisorController@openConvocatoriaModalidad')->where(['idModalidad'=>'[0-9]+']);
+        Route::get('Supervisor/Organizacion','OrganizacionController@getNotValidatedOrganizaciones');
+        Route::get('Supervisor/Organizacion/ByDescriptor/{id}','SupervisorController@organizacionesByDescriptor')->where(['id'=>'[0-9]+']);
+        Route::put('Supervisor/Organizacion/{id}','OrganizacionController@validateDocuments')->where(['id'=>'[0-9]+']);
+        Route::get('Supervisor/Organizacion/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@CountOrganizacionByTipoDescriptor')
+            ->where(['idTipoDescriptor'=>'[0-9]+']);
+        Route::get('Supervisor/Organizacion/Documentos','OrganizacionController@getNotValidatedDocumentsOrganizaciones');
+        Route::get('Supervisor/Organizacion/Persona/{idOrganizacion}','SupervisorController@getOrganizacionPersonas')
+            ->where(['idOrganizacion'=>'[0-9]+']);
+        Route::get('Supervisor/Organizacion/{idOrganizacion}/Persona/TipoDescriptor/Count/{idDescriptor}','SupervisorController@countPersonasOrgByTipoDescriptor')
+            ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
+        Route::get('Supervisor/Organizacion/{idOrganizacion}/Persona/Descriptor/{idDescriptor}','SupervisorController@getOrganizacionPersonasDescriptor')
+            ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
+        Route::post('Supervisor/Persona','PersonaController@validatePerson');
+        Route::get('Supervisor/Persona/ByDescriptor/{idDescriptor}','SupervisorController@getPersonasDescriptor')
+            ->where(['idDescriptor'=>'[0-9]+']);
+        Route::get('Supervisor/Persona/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countPersonasByTipoDescriptor')
+            ->where(['idTipoDescriptor'=>'[0-9]+']);
+        Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
 
+    /*Programas de Fondeo para Supervisor*/
 
-    Route::get('Supervisor/{type}/{id}/Proyectos/{status?}','SupervisorController@countProyectosByConvocatoriaModalidad')
-        ->where(['type'=>'(ProgramaFondeo|Modalidad)','id'=>'[0-9]+','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
+        Route::get('Supervisor/Modalidad/Convocatoria/{idModalidad}','SupervisorController@openConvocatoriaModalidad')->where(['idModalidad'=>'[0-9]+']);
 
-    Route::get('Supervisor/{type}/{id}/Montos/{how}/{status?}','SupervisorController@countFundsByConvocatoriaModalidad')
-        ->where(['type'=>'(ProgramaFondeo|Modalidad)','id'=>'[0-9]+','how'=>'(Apoyado|Solicitado)','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
+        Route::get('Supervisor/{type}/{id}/Proyectos/{status?}','SupervisorController@countProyectosByConvocatoriaModalidad')
+            ->where(['type'=>'(ProgramaFondeo|Modalidad)','id'=>'[0-9]+','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
 
-    Route::get('Supervisor/ProgramaFondeo/All/Montos/{how}/{status?}','SupervisorController@countFundsAllProgramas')
-        ->where(['how'=>'(Apoyado|Solicitado)','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
+        Route::get('Supervisor/{type}/{id}/Montos/{how}/{status?}','SupervisorController@countFundsByConvocatoriaModalidad')
+            ->where(['type'=>'(ProgramaFondeo|Modalidad)','id'=>'[0-9]+','how'=>'(Apoyado|Solicitado)','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
+
+        Route::get('Supervisor/ProgramaFondeo/All/Montos/{how}/{status?}','SupervisorController@countFundsAllProgramas')
+            ->where(['how'=>'(Apoyado|Solicitado)','status'=>'(Aceptado|Rechazado|Pendiente|Culminado|Todos)']);
+
+        Route::get('Supervisor/{type}/Registros/Count/{id?}','SupervisorController@countProjectRegisterStatus')
+            ->where(['how'=>'(ProgramaFondeo|Modalidad|Convocatoria|All)','id'=>'[0-9]+']);
 
 
 

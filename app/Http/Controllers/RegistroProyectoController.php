@@ -230,7 +230,7 @@ class RegistroProyectoController extends Controller
 
 
     /**
-     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function showRegistroProyectoAdmin()
     {
@@ -252,6 +252,11 @@ class RegistroProyectoController extends Controller
             return response()->json(['proyecto_not_found'], $e->getStatusCode());
         }
     }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
 
     public function showByConvocatoria($id)
     {
