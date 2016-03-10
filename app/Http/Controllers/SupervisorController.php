@@ -986,13 +986,48 @@ class SupervisorController extends Controller
                 $queryResult = clone $query;
                 $result['Data'][]= $queryResult->where('Validado',$condition)->count();
             }
-
-
-
-
             return response()->json($result);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }catch(NotFoundException $e)
+        {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    public function countByOrganizations()
+    {
+        try{
+            AuthenticateController::checkUser('Supervisor');
+            $formattedResults['Data'] = [];
+            $formattedResults['Labels'] = [];
+            $results = DB::
+                        table('Persona_Organizacion')
+                        ->join('Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
+                        ->select(DB::raw('COUNT(Organizacion.id) as Data'),'Organizacion.Titulo as Labels')
+                        ->groupBy('Organizacion.id')
+                        ->orderBy('Data','desc')
+                        ->get();
+
+            foreach($results as $result)
+            {
+                $formattedResults['Data'][] = $result->Data;
+                $formattedResults['Labels'][] = $result->Labels;
+            }
 
 
+            return response()->json($formattedResults);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);

@@ -48,8 +48,19 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['idPersona'=>'[0-9]+']);
         Route::put('Persona/Descriptor/{id}','PersonaController@updateDescriptor');
 
-    /*Validacion de persona*/
+    /*Validacion de persona y Organización*/
         Route::get('Supervisor/Persona','PersonaController@showNotValidated');
+        Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
+
+
+    /*Persona para supervisor*/
+
+        Route::post('Supervisor/Persona','PersonaController@validatePerson');
+        Route::get('Supervisor/Persona/ByDescriptor/{idDescriptor}','SupervisorController@getPersonasDescriptor')
+            ->where(['idDescriptor'=>'[0-9]+']);
+        Route::get('Supervisor/Persona/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countPersonasByTipoDescriptor')
+            ->where(['idTipoDescriptor'=>'[0-9]+']);
+        Route::get('Supervisor/Persona/ByOrganizacion/Count','SupervisorController@countByOrganizations');
 
     /*Proyectos para supervisor*/
         Route::get('Supervisor/Proyectos/Descriptor/{idDescriptor}','SupervisorController@proyectosByDescriptor');
@@ -81,12 +92,6 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
         Route::get('Supervisor/Organizacion/{idOrganizacion}/Persona/Descriptor/{idDescriptor}','SupervisorController@getOrganizacionPersonasDescriptor')
             ->where(['idOrganizacion'=>'[0-9]+','idDescriptor'=>'[0-9]+']);
-        Route::post('Supervisor/Persona','PersonaController@validatePerson');
-        Route::get('Supervisor/Persona/ByDescriptor/{idDescriptor}','SupervisorController@getPersonasDescriptor')
-            ->where(['idDescriptor'=>'[0-9]+']);
-        Route::get('Supervisor/Persona/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countPersonasByTipoDescriptor')
-            ->where(['idTipoDescriptor'=>'[0-9]+']);
-        Route::post('Supervisor/Organizacion','OrganizacionController@valiateOrganizaciones');
 
     /*Programas de Fondeo para Supervisor*/
 
