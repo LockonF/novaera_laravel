@@ -60,7 +60,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['idDescriptor'=>'[0-9]+']);
         Route::get('Supervisor/Persona/TipoDescriptor/Count/{idTipoDescriptor}','SupervisorController@countPersonasByTipoDescriptor')
             ->where(['idTipoDescriptor'=>'[0-9]+']);
-        Route::get('Supervisor/Persona/ByOrganizacion/Count','SupervisorController@countByOrganizations');
+        Route::get('Supervisor/Persona/Organizacion/Count','SupervisorController@countByOrganizations');
 
     /*Proyectos para supervisor*/
         Route::get('Supervisor/Proyectos/Descriptor/{idDescriptor}','SupervisorController@proyectosByDescriptor');
