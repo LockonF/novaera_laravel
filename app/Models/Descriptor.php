@@ -23,6 +23,13 @@ class Descriptor extends Model
             ->withPivot('id','FechaInicio','FechaTermino','TipoResultado','NumeroRegistro')->withTimestamps();
     }
 
+
+    public function Organizacion()
+    {
+        return $this->belongsToMany('App\Models\Organizacion','Descriptor_Organizacion','idDescriptor','idOrganizacion')
+            ->withPivot('id','FechaInicio','FechaTermino','TipoResultado','NumeroRegistro')->withTimestamps();
+    }
+
     public function ProgramaFondeo()
     {
         return $this->belongsToMany('App\Models\ProgramaFondeo','ProgramaFondeoDescriptor','idDescriptor','idProgramaFondeo')
