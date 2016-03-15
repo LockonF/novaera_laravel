@@ -301,7 +301,6 @@ class PersonaController extends Controller
     public function updateDescriptor(Request $request, $id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
             $descriptorPersona = DescriptorPersona::find($request->id);
 
             if($descriptorPersona ==null)
