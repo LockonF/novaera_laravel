@@ -193,7 +193,7 @@ class ProgramaFondeoController extends Controller
 
                 $programaFondeo->Archivos = json_encode($programaFondeo->Archivos);
                 $programaFondeo->save();
-
+                $programaFondeo->Archivos = json_decode($programaFondeo->Archivos);
                 return response()->json($programaFondeo);
 
 
@@ -265,15 +265,14 @@ class ProgramaFondeoController extends Controller
                 return DB::transaction(function() use($request,$id){
                     $programaFondeo =ProgramaFondeo::find($id);
                     if($programaFondeo!=null) {
+                        $serverFiles = json_decode($programaFondeo->Archivos);
 
-                        if($programaFondeo->Archivos==null)
-                        {
-                            $programaFondeo->Archivos = new \stdClass;
-                        }
-                        else
-                        {
-                            $programaFondeo->Archivos = json_decode($programaFondeo->Archivos);
-                        }
+                        $programaFondeo->fill($request->all());
+
+                        $programaFondeo->Archivos = $serverFiles;
+
+
+
                         if ($request->DescripcionFile != null) {
                             if($programaFondeo->Archivos->DescripcionFile!=null)
                             {
@@ -306,13 +305,12 @@ class ProgramaFondeoController extends Controller
                                 try {
                                     Storage::delete($programaFondeo->Archivos->CriteriosDeElegibilidadFile);
                                 } catch (FileNotFoundException $e) {
-                                    $request->CriteriosDeElegibilidadFile = null;
+                                    $programaFondeo->Archivos->CriteriosDeElegibilidadFile= null;
                                 }
                             }
-                            $programaFondeo->Archivos->CriteriosDeElegibilidadFile = 'fondeos/' . $programaFondeo->id . '/' . 'CriteriosDeElegibilidadFile_' . $request->CriteriosDeElegibilidadFile->getClientOriginalName();
-                            $request->CriteriosDeElegibilidadFile->move('files/fondeos/' . $programaFondeo->id, "CriteriosDeElegibilidadFile_" . $request->CriteriosDeElegibilidadFile->getClientOriginalName());
+                            $programaFondeo->Archivos->CriteriosDeElegibilidadFile = 'fondeos/' . $programaFondeo->id . '/' . 'CriteriosDeElegibilidad_' . $request->CriteriosDeElegibilidadFile->getClientOriginalName();
+                            $request->CriteriosDeElegibilidadFile->move('files/fondeos/' . $programaFondeo->id, "CriteriosDeElegibilidad_" . $request->CriteriosDeElegibilidadFile->getClientOriginalName());
                         }
-                        $programaFondeo->fill($request->all());
                         $programaFondeo->Archivos = json_encode($programaFondeo->Archivos);
                         $programaFondeo->save();
                         $programaFondeo->Archivos = json_decode($programaFondeo->Archivos);
