@@ -184,21 +184,15 @@ class Proyecto extends Model
      */
     public static function getOneRegister($user,$id=null,$type = 'Persona',$idOrganizacion = null,$strict=0)
     {
-
-        $query = DB::table('Proyecto')
-            ->join('RegistroProyecto','RegistroProyecto.idProyecto','=','Proyecto.id')
-            ->join('ParqueTecnologico','ParqueTecnologico.id','=','RegistroProyecto.idParque')
-            ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
-            ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
-            ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
-            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
-            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.Titulo as ProgramaFondeo')
-            ->where('Proyecto.id',$id);
+        if(Proyecto::find($id))
+        {
+            throw new NotFoundException;
+        }
 
         if($type=='Persona')
         {
             $user->load('Persona');
-            $query
+            $query = DB::table('Proyecto')
                 ->join('Persona_Proyecto','Persona_Proyecto.idProyecto','=','Proyecto.id')
                 ->where('Persona_Proyecto.idPersona',$user->Persona->id);
             if($strict==1)
@@ -214,7 +208,7 @@ class Proyecto extends Model
         }
         if($type=='Organizacion')
         {
-            $query
+            $query =  DB::table('Proyecto')
                 ->join('Organizacion_Proyecto','Organizacion_Proyecto.idProyecto','=','Proyecto.id')
                 ->join('Organizacion','Organizacion_Proyecto.idOrganizacion','=','Organizacion.id')
                 ->join('Persona_Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
@@ -231,6 +225,21 @@ class Proyecto extends Model
                 throw new InvalidAccessException;
             }
         }
+
+        $proyectos = DB::table('Proyecto')
+            ->join('RegistroProyecto','RegistroProyecto.idProyecto','=','Proyecto.id')
+            ->join('ParqueTecnologico','ParqueTecnologico.id','=','RegistroProyecto.idParque')
+            ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
+            ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
+            ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
+            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.Titulo as ProgramaFondeo')
+            ->where('Proyecto.id',$id)
+            ->get();
+
+
+
+
         foreach($proyectos as $proyecto)
         {
             $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
