@@ -83,6 +83,7 @@ class Proyecto extends Model
             ->join('ProyectoDescriptor','ProyectoDescriptor.idProyecto','=','Proyecto.id')
             ->join('Descriptor','ProyectoDescriptor.idDescriptor','=','Descriptor.id')
             ->join('TipoDescriptor','Descriptor.idTipoDescriptor','=','TipoDescriptor.id')
+            ->where('TipoDescriptor.id',$idTipoDescriptor)
             ->groupBy('Descriptor.id');
 
 
