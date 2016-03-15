@@ -184,7 +184,7 @@ class Proyecto extends Model
      */
     public static function getOneRegister($user,$id=null,$type = 'Persona',$idOrganizacion = null,$strict=0)
     {
-        if(Proyecto::find($id))
+        if(Proyecto::find($id) == null)
         {
             throw new NotFoundException;
         }
