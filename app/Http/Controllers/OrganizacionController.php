@@ -703,7 +703,7 @@ class OrganizacionController extends Controller
     {
         try{
             $user = AuthenticateController::checkUser(null);
-            $descriptorOrganizacion = DescriptorOrganizacion::find($request->id);
+            $descriptorOrganizacion = DescriptorOrganizacion::find($id);
 
             if($descriptorOrganizacion ==null)
             {
