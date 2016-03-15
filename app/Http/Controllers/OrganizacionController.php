@@ -669,7 +669,7 @@ class OrganizacionController extends Controller
     public function showAllDescriptor($id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
+            $user = AuthenticateController::checkUser(null);
             $organizacion =Organizacion::find($id);
             if($organizacion==null)
             {
@@ -702,7 +702,7 @@ class OrganizacionController extends Controller
     public function updateDescriptor(Request $request, $id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
+            $user = AuthenticateController::checkUser(null);
             $descriptorOrganizacion = DescriptorOrganizacion::find($request->id);
 
             if($descriptorOrganizacion ==null)
@@ -744,7 +744,7 @@ class OrganizacionController extends Controller
     public function detachDescriptor($idOrganizacion, $id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
+            $user = AuthenticateController::checkUser(null);
             $organizacion =Organizacion::find($idOrganizacion);
             if($organizacion ==null)
             {
