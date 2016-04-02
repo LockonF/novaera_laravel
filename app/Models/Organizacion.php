@@ -10,7 +10,7 @@ class Organizacion extends Model
 {
     protected $table = 'Organizacion';
     protected $fillable = ['Titulo','Descripcion','Mision','Vision','RFC','idContacto','RepresentanteLegal'
-    ,'RazonSocial','ActaFile','RFCFile','RENIECyTFile'];
+    ,'RazonSocial','ActaFile','RFCFile','RENIECyTFile','Giro','DireccionFiscal'];
 
     public function Contacto()
     {
