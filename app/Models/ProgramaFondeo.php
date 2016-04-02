@@ -18,6 +18,7 @@ class ProgramaFondeo extends Model
 
     public static function Convocatorias_Asociadas($id)
     {
+        //Buscar convocatorias únicas
         $convocatoria =DB::table('ProgramaFondeo')
             ->join('Modalidad','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
             ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
