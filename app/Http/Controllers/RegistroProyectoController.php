@@ -280,4 +280,34 @@ class RegistroProyectoController extends Controller
     }
 
 
+    /**
+     * @param $idConvocatoria
+     * @param $idModalidad
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showByConvocatoriaAndModalidad($idConvocatoria,$idModalidad)
+    {
+        try
+        {
+            $user = AuthenticateController::checkUser('Supervisor');
+            $registros = RegistroProyecto::getByConvocatoriaAndModalidad($idConvocatoria,$idModalidad);
+            return response()->json(['RegistroProyectos'=>$registros]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }
+    }
+
+
+
+
 }

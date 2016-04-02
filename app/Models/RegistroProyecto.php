@@ -56,4 +56,34 @@ class RegistroProyecto extends Model
     }
 
 
+
+    public static function getByConvocatoriaAndModalidad($idConvocatoria,$idModalidad)
+    {
+        $query = DB::table('Proyecto')
+            ->join('RegistroProyecto','RegistroProyecto.idProyecto','=','Proyecto.id')
+            ->join('ParqueTecnologico','ParqueTecnologico.id','=','RegistroProyecto.idParque')
+            ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
+            ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
+            ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
+            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+            ->select(
+                'RegistroProyecto.*',
+                'Proyecto.Titulo','Proyecto.Descripcion','Proyecto.Antecedentes','Proyecto.Justificacion',
+                'Proyecto.Objetivos','Proyecto.Alcances',
+                'Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria',
+                'ParqueTecnologico.Nombre as Parque','ProgramaFondeo.Titulo as ProgramaFondeo')
+            ->where('Convocatoria.id',$idConvocatoria)
+            ->where('Modalidad.id',$idModalidad)
+            ->get();
+
+        foreach($query as $item)
+        {
+            $item->TRLInicial = TRL::find($item->idTRLInicial)->Descripcion;
+            $item->TRLFinal = TRL::find($item->idTRLFinal)->Descripcion;
+        }
+
+        return $query;
+    }
+
+
 }

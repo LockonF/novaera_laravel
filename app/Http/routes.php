@@ -77,6 +77,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['type'=>'(Patente|Producto|Servicio|Proceso|Todos)','id'=>'[0-9]+']);
         Route::get('Supervisor/RegistroProyecto','RegistroProyectoController@showRegistroProyectoAdmin');
         Route::get('Supervisor/RegistroProyecto/Convocatoria/{id}','RegistroProyectoController@showByConvocatoria')->where(['id'=>'[0-9]+']);
+        Route::get('Supervisor/RegistroProyecto/ConvocatoriaModalidad/{idConvocatoria}/{idModalidad}','RegistroProyectoController@showByConvocatoriaAndModalidad')
+            ->where(['idConvocatoria'=>'[0-9]+','idModalidad'=>'[0-9]+']);
 
     /*Organización para supervisor*/
 
