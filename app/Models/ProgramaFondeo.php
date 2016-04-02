@@ -25,7 +25,7 @@ class ProgramaFondeo extends Model
             ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
             ->select('Convocatoria.*')
             ->where('ProgramaFondeo.id',$id)
-            ->unique()
+            ->distinct()
             ->get();
         return $convocatoria;
     }
