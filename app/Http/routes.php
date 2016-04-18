@@ -195,6 +195,10 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::put('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@editProject')
             ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
+        Route::delete('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@deleteProject')
+            ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
+
+
         Route::delete('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@removeProject')
             ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         /*Metodos para personas colaboradoras del proyecto*/

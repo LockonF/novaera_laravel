@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Mockery\CountValidator\Exception;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Tymon\JWTAuth\Exceptions;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 

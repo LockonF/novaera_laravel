@@ -194,6 +194,40 @@ class ProyectoController extends Controller
 
 
     /**
+     * @param $id
+     * @param string $type
+     * @param null $idOrganizacion
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function deleteProject($type = 'Persona',$id=null,$idOrganizacion=null)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $proyecto = Proyecto::validateProyecto($id,$user,$type,$idOrganizacion);
+            $proyecto->delete();
+            return response()->json($proyecto,200);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }
+        catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['invalid_write_permissions'], $e->getStatusCode());
+        }
+    }
+
+
+
+    /**
      * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
