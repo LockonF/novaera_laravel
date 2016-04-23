@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidAccessException;
+use App\Exceptions\NotFoundException;
 use Illuminate\Http\Request;
 
 use App\Exceptions\UnauthorizedException;
@@ -183,17 +185,10 @@ class TransferenciaTecnologicaController extends Controller
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto = Proyecto::validateProyecto($id, $user, $whoIs, $idOrganizacion);
-            $transferencia = TransferenciaTecnologica::find($id);
-            if($transferencia==null)
-            {
-                return response()->json(['message'=>'transferenciaTecnologica_not_found'],404);
-            }
-            else
-            {
-                $transferencia->delete();
-                return response()->json(['message'=>'success']);
-            }
+            $transferencia= TransferenciaTecnologica::ValidateTransferencia($id, $user, $whoIs, $idOrganizacion);
+            $transferencia->delete();
+            return response()->json(['message'=>'success']);
+
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -206,6 +201,10 @@ class TransferenciaTecnologicaController extends Controller
             return response()->json(['unauthorized'], $e->getStatusCode());
         }
         catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        } catch (NotFoundException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }

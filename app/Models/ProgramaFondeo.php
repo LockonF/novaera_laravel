@@ -18,12 +18,14 @@ class ProgramaFondeo extends Model
 
     public static function Convocatorias_Asociadas($id)
     {
+        //Buscar convocatorias únicas
         $convocatoria =DB::table('ProgramaFondeo')
             ->join('Modalidad','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
             ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
             ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
             ->select('Convocatoria.*')
             ->where('ProgramaFondeo.id',$id)
+            ->distinct()
             ->get();
         return $convocatoria;
     }

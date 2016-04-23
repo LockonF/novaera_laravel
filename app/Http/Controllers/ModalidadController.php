@@ -26,6 +26,7 @@ class ModalidadController extends Controller
             AuthenticateController::checkUser('Supervisor');
                 $modalidad = new Modalidad($request->all());
                 $modalidad->save();
+                return response()->json($modalidad);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -123,6 +124,11 @@ class ModalidadController extends Controller
                 return response()->json(['modalidad_not_found'],500);
             }
             $modalidad->load('Convocatoria');
+            foreach($modalidad->Convocatoria as $convocatoria)
+            {
+                $convocatoria->Requisitos  =json_decode($convocatoria->Requisitos);
+            }
+
             return response()->json(['Convocatoria'=>$modalidad->Convocatoria]);
 
         }catch (QueryException $e)

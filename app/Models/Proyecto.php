@@ -18,6 +18,113 @@ class Proyecto extends Model
 
 
     /**
+     * @param $idDescriptor
+     * @param $user
+     * @param string $type
+     * @param null $idOrganizacion
+     * @param int $strict
+     * @return null
+     */
+
+    public static function allByDescriptor($idDescriptor,$user,$type = 'Persona',$idOrganizacion = null,$strict=1)
+    {
+        $results = DB::table('Proyecto')
+            ->join('ProyectoDescriptor','ProyectoDescriptor.idProyecto','=','Proyecto.id')
+            ->join('Descriptor','ProyectoDescriptor.idDescriptor','=','Descriptor.id')
+            ->where('Descriptor.id',$idDescriptor)
+            ->select('Proyecto.id');
+
+        if($type=='Persona')
+        {
+            $results =
+                $results
+                ->join('Persona_Proyecto','Proyecto.id','=','Persona_Proyecto.idProyecto')
+                ->where('Persona_Proyecto.WritePermissions',$strict)
+                ->where('Persona_Proyecto.idPersona',$user->Persona->id)
+                ->get();
+        }
+        if($type=='Organizacion')
+        {
+            $results=
+                $results
+                    ->join('Organizacion_Proyecto','Organizacion.id','=','Organizacion_Proyecto.idOrganizacion')
+                    ->join('Organizacion','Organizacion.id','=','Persona_Organizacion.idOrganizacion')
+                    ->join('Persona_Organizacion','Persona.id','=','Persona_Organizacion.idPersona')
+                    ->where('Persona.id',$user->Persona->id)
+                    ->where('Organizacion.id',$idOrganizacion)
+                    ->where('Persona_Organizacion.WritePermissions',$strict)
+                    ->get();
+
+        }
+        if(count($results)==0)
+            return null;
+
+        foreach($results as $result)
+        {
+            $ids[]=$result->id;
+        }
+        return Proyecto::whereIn('id',$ids)->get();
+
+    }
+
+    /**
+     * @param $idTipoDescriptor
+     * @param $user
+     * @param string $type
+     * @param null $idOrganizacion
+     * @param int $strict
+     * @return null
+     */
+
+    public static function allByTipoDescriptor($idTipoDescriptor,$user,$type = 'Persona',$idOrganizacion = null,$strict=1)
+    {
+        $formattedResults = [];
+        $results = DB::table('Proyecto')
+            ->join('ProyectoDescriptor','ProyectoDescriptor.idProyecto','=','Proyecto.id')
+            ->join('Descriptor','ProyectoDescriptor.idDescriptor','=','Descriptor.id')
+            ->join('TipoDescriptor','Descriptor.idTipoDescriptor','=','TipoDescriptor.id')
+            ->where('TipoDescriptor.id',$idTipoDescriptor)
+            ->groupBy('Descriptor.id');
+
+
+        if($type=='Persona')
+        {
+            $results
+                ->join('Persona_Proyecto','Proyecto.id','=','Persona_Proyecto.idProyecto')
+                ->where('Persona_Proyecto.WritePermissions','=',$strict)
+                ->where('Persona_Proyecto.idPersona','=',$user->Persona->id)
+                ->select(DB::raw('count(Descriptor.id) as Data, Descriptor.Titulo as Labels'));
+        }
+        if($type=='Organizacion')
+        {
+            $results
+                    ->join('Organizacion_Proyecto','Organizacion.id','=','Organizacion_Proyecto.idOrganizacion')
+                    ->join('Organizacion','Organizacion.id','=','Persona_Organizacion.idOrganizacion')
+                    ->join('Persona_Organizacion','Persona.id','=','Persona_Organizacion.idPersona')
+                    ->where('Persona.id','=',$user->Persona->id)
+                    ->where('Organizacion.id','=',$idOrganizacion)
+                    ->where('Persona_Organizacion.WritePermissions','=',$strict)
+                    ->select(DB::raw('count(Descriptor.id) as Data, Descriptor.Titulo as Labels, Persona.id, Organizacion.id, Persona_Organizacion.WritePermissions'));
+        }
+        $results = $results->get();
+
+
+        if($results !=null)
+        {
+            foreach($results as $result)
+            {
+                $formattedResults['Data'][]=$result->Data;
+                $formattedResults['Labels'][]=$result->Labels;
+            }
+        }
+
+        return $formattedResults;
+
+
+    }
+
+
+    /**
      * @param int $idProyecto
      * @param User $user
      * @param string $type
@@ -29,6 +136,9 @@ class Proyecto extends Model
      */
     public static function validateProyecto($idProyecto,$user,$type = 'Persona',$idOrganizacion = null,$strict=1)
     {
+        $proyecto = null;
+        if(Proyecto::find($idProyecto)==null)
+            throw new NotFoundException;
         if($type=='Persona')
         {
             $user->load('Persona');
@@ -70,6 +180,82 @@ class Proyecto extends Model
     }
 
 
+    /**
+     *
+     */
+    public static function getOneRegister($user,$id=null,$type = 'Persona',$idOrganizacion = null,$strict=0)
+    {
+        if(Proyecto::find($id) == null)
+        {
+            throw new NotFoundException;
+        }
+
+        if($type=='Persona')
+        {
+            $user->load('Persona');
+            $query = DB::table('Proyecto')
+                ->join('Persona_Proyecto','Persona_Proyecto.idProyecto','=','Proyecto.id')
+                ->where('Persona_Proyecto.idPersona',$user->Persona->id);
+            if($strict==1)
+            {
+                $query->where('Persona_Proyecto.WritePermissions',$strict);
+            }
+
+            $proyectos =$query->get();
+            if($proyectos==null)
+            {
+                throw new InvalidAccessException;
+            }
+        }
+        if($type=='Organizacion')
+        {
+            $query =  DB::table('Proyecto')
+                ->join('Organizacion_Proyecto','Organizacion_Proyecto.idProyecto','=','Proyecto.id')
+                ->join('Organizacion','Organizacion_Proyecto.idOrganizacion','=','Organizacion.id')
+                ->join('Persona_Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
+                ->where('Persona_Organizacion.idPersona',$user->Persona->id)
+                ->where('Organizacion.id',$idOrganizacion);
+            if($strict==1)
+            {
+                $query->where('Persona_Organizacion.WritePermissions',$strict);
+            }
+            $proyectos = $query->get();
+
+            if($proyectos==null)
+            {
+                throw new InvalidAccessException;
+            }
+        }
+
+        $proyectos = DB::table('Proyecto')
+            ->join('RegistroProyecto','RegistroProyecto.idProyecto','=','Proyecto.id')
+            ->join('ParqueTecnologico','ParqueTecnologico.id','=','RegistroProyecto.idParque')
+            ->join('Convocatoria_Modalidad','Convocatoria_Modalidad.id','=','RegistroProyecto.idConvocatoriaModalidad')
+            ->join('Modalidad','Convocatoria_Modalidad.idModalidad','=','Modalidad.id')
+            ->join('Convocatoria','Convocatoria_Modalidad.idConvocatoria','=','Convocatoria.id')
+            ->join('ProgramaFondeo','Modalidad.idProgramaFondeo','=','ProgramaFondeo.id')
+            ->select('RegistroProyecto.*','Modalidad.Nombre as Modalidad','Convocatoria.Nombre as Convocatoria','ParqueTecnologico.Nombre as Parque','Proyecto.*','ProgramaFondeo.Titulo as ProgramaFondeo')
+            ->where('Proyecto.id',$id)
+            ->get();
+
+
+
+
+        foreach($proyectos as $proyecto)
+        {
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
+            $proyecto->Requisitos = json_decode($proyecto->Requisitos);
+        }
+        return $proyectos;
+    }
+
+
+    /**
+     * @return mixed
+     * @throws NotFoundException
+     */
+
     public static function getAllRegistros()
     {
         $query = DB::table('Proyecto')
@@ -87,8 +273,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
-            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
-            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;
@@ -141,7 +327,7 @@ class Proyecto extends Model
                 ->join('Organizacion_Proyecto','Organizacion_Proyecto.idProyecto','=','Proyecto.id')
                 ->join('Organizacion','Organizacion_Proyecto.idOrganizacion','=','Organizacion.id')
                 ->join('Persona_Organizacion','Persona_Organizacion.idOrganizacion','=','Organizacion.id')
-                ->where('Persona_Organizacion.idPersona',$user->load('Persona'))
+                ->where('Persona_Organizacion.idPersona',$user->Persona->id)
                 ->where('Organizacion.id',$idOrganizacion);
             if($strict==1)
             {
@@ -156,8 +342,8 @@ class Proyecto extends Model
         }
         foreach($proyectos as $proyecto)
         {
-            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->select('Descripcion')->first()->Descripcion;
-            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->select('Descripcion')->first()->Descripcion;
+            $proyecto->TRLInicial = TRL::find($proyecto->idTRLInicial)->Descripcion;
+            $proyecto->TRLFinal = TRL::find($proyecto->idTRLFinal)->Descripcion;
             $proyecto->Requisitos = json_decode($proyecto->Requisitos);
         }
         return $proyectos;

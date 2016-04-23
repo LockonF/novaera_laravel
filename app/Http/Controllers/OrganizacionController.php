@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidAccessException;
+use App\Exceptions\NotFoundException;
 use App\Exceptions\UnauthorizedException;
 use App\Models\DescriptorOrganizacion;
 use App\Models\Organizacion;
@@ -21,6 +23,133 @@ use Tymon\JWTAuth\Exceptions;
 
 class OrganizacionController extends Controller
 {
+
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws Exceptions\JWTException
+     * @throws Exceptions\TokenExpiredException
+     * @throws Exceptions\TokenInvalidException
+     */
+    public function validateDocuments(Request $request,$id)
+    {
+        AuthenticateController::checkUser('Supervisor');
+        try{
+            $organizacion = Organizacion::find($id);
+            if($organizacion!=null)
+            {
+                if($request->ActaValidated!=null)
+                    $organizacion->ActaValidated = $request->ActaValidated;
+                if($request->RENIECyTValidated!=null)
+                    $organizacion->RENIECyTValidated = $request->RENIECyTValidated;
+                if($request->RFCValidated!=null)
+                    $organizacion->RFCValidated = $request->RFCValidated;
+                $organizacion->save();
+
+                $organizacion->Archivos = json_decode($organizacion->Archivos);
+                return response()->json($organizacion);
+            }
+            return response()->json(['message'=>'organizacion_not_found'],500);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     * @throws Exceptions\JWTException
+     * @throws Exceptions\TokenExpiredException
+     * @throws Exceptions\TokenInvalidException
+     */
+
+
+
+
+    public function getNotValidatedDocumentsOrganizaciones()
+    {
+        AuthenticateController::checkUser('Supervisor');
+        try{
+            AuthenticateController::checkUser(null);
+            $organizaciones = Organizacion::
+                where('ActaValidated',0)
+                ->orWhere('RENIECyTValidated',0)
+                ->orWhere('RFCValidated',0)
+                ->get();
+            foreach($organizaciones as $organizacion)
+            {$organizacion->Archivos = json_decode($organizacion->Archivos);}
+            return response()->json(['Organizacion'=>$organizaciones]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     * @throws Exceptions\JWTException
+     * @throws Exceptions\TokenExpiredException
+     * @throws Exceptions\TokenInvalidException
+     */
+
+
+    public function getNotValidatedOrganizaciones()
+    {
+        AuthenticateController::checkUser('Supervisor');
+        try{
+            AuthenticateController::checkUser(null);
+            $organizaciones = Organizacion::where('isValidated',0)
+                ->get();
+            foreach($organizaciones as $organizacion)
+            {$organizacion->Archivos = json_decode($organizacion->Archivos);}
+            return response()->json(['Organizacion'=>$organizaciones]);
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch(UnauthorizedException $e)
+        {
+            return response()->json(['unauthorized'], $e->getStatusCode());
+        }
+        catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
 
 
     public function valiateOrganizaciones(Request $request)
@@ -109,7 +238,7 @@ class OrganizacionController extends Controller
     {
         try{
             AuthenticateController::checkUser(null);
-            $organizaciones = Organizacion::all();
+            $organizaciones = Organizacion::orderBy('created_at','desc')->get();
             foreach($organizaciones as $organizacion)
             {$organizacion->Archivos = json_decode($organizacion->Archivos);}
             return response()->json(['Organizacion'=>$organizaciones]);
@@ -143,9 +272,10 @@ class OrganizacionController extends Controller
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
             $organizaciones = $user->Persona->Organizacion()->get();
-            $organizaciones = Organizacion::get();
             foreach($organizaciones as $organizacion)
-            {$organizacion->Archivos = json_decode($organizacion->Archivos);}
+            {
+                $organizacion->Archivos = json_decode($organizacion->Archivos);
+            }
 
             return response()->json(['Organizacion'=>$organizaciones]);
 
@@ -215,11 +345,19 @@ class OrganizacionController extends Controller
             if($user->Persona!=null)
             {
                 $organizacion = new Organizacion($request->Organizacion);
+                $organizacion->Archivos = new \stdClass;
+                $organizacion->Archivos->ActaFile =null;
+                $organizacion->Archivos->RFCFile =null;
+                $organizacion->Archivos->RENIECyTFile =null;
+
                 $personaData = $request->Datos;
                 $personaData['Owner'] = 1;
                 $personaData['WritePermissions']=1;
+                $organizacion->Archivos = json_encode($organizacion->Archivos);
 
                 $user->Persona->Organizacion()->save($organizacion,$personaData);
+                $organizacion->Archivos = json_decode($organizacion->Archivos);
+
                 return response()->json($organizacion);
             }
             return response()->json(['message'=>'persona_not_found'],404);
@@ -254,6 +392,7 @@ class OrganizacionController extends Controller
                 $record= $user->Persona->Organizacion()->where('Organizacion.id',$id)->where('idPersona',$user->Persona->id)->where('Owner',1)->first();
                 if($record!=null)
                 {
+                    Storage::deleteDirectory('Organizaciones/'.$id);
                     $record->delete();
                     return response()->json(['message'=>'success']);
                 }
@@ -364,6 +503,7 @@ class OrganizacionController extends Controller
                     }
                     $record->Archivos = json_encode($record->Archivos);
                     $record->save();
+                    $record->Archivos = json_decode($record->Archivos);
 
                     return response()->json($record);
                 });
@@ -488,6 +628,11 @@ class OrganizacionController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
     public function addDescriptor(Request $request)
     {
         try{
@@ -524,7 +669,7 @@ class OrganizacionController extends Controller
     public function showAllDescriptor($id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
+            $user = AuthenticateController::checkUser(null);
             $organizacion =Organizacion::find($id);
             if($organizacion==null)
             {
@@ -548,11 +693,17 @@ class OrganizacionController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+
     public function updateDescriptor(Request $request, $id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
-            $descriptorOrganizacion = DescriptorOrganizacion::find($request->id);
+            $user = AuthenticateController::checkUser(null);
+            $descriptorOrganizacion = DescriptorOrganizacion::find($id);
 
             if($descriptorOrganizacion ==null)
             {
@@ -593,7 +744,7 @@ class OrganizacionController extends Controller
     public function detachDescriptor($idOrganizacion, $id)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
+            $user = AuthenticateController::checkUser(null);
             $organizacion =Organizacion::find($idOrganizacion);
             if($organizacion ==null)
             {
@@ -618,4 +769,102 @@ class OrganizacionController extends Controller
             return response()->json(['token_absent'], $e->getStatusCode());
         }
     }
+
+    /**
+     * @param $idOrganizacion
+     * @param $idDescriptor
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showPersonsByDescriptor($idOrganizacion,$idDescriptor)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            if(!Organizacion::doesPersonaBelongTo($user,$idOrganizacion))
+                throw new InvalidAccessException;
+            $personas = DB::table('Persona_Organizacion')
+                ->join('Persona','Persona_Organizacion.idPersona','=','Persona.id')
+                ->join('Descriptor_Persona','Persona.id','=','Descriptor_Persona.idPersona')
+                ->join('Descriptor','Descriptor_Persona.idPersona','=','Descriptor.id')
+                ->select('Persona.*')
+                ->where('Persona_Organizacion.id',$idOrganizacion)
+                ->where('Descriptor.id',$idDescriptor)
+                ->get();
+            return response()->json(['Persona'=>$personas]);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['does_not_belong_to_organizacion'], $e->getStatusCode());
+        }
+
+    }
+
+
+    /**
+     * @param $idOrganizacion
+     * @param $idTipoDescriptor
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function countPersonsByTipoDescriptor($idOrganizacion,$idTipoDescriptor){
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            if(!Organizacion::doesPersonaBelongTo($user,$idOrganizacion))
+                throw new InvalidAccessException;
+            $formattedResults = [];
+            $organizacion = Organizacion::find($idOrganizacion);
+
+            $personas = $organizacion->Persona()
+                ->select('Persona.id')->lists('id')->toArray();
+
+            $results = DB::table('Persona')
+                ->join('Descriptor_Persona','Persona.id','=','Descriptor_Persona.idPersona')
+                ->join('Descriptor','Descriptor.id','=','Descriptor_Persona.idDescriptor')
+                ->join('TipoDescriptor','TipoDescriptor.id','=','Descriptor.idTipoDescriptor')
+                ->where('TipoDescriptor.id',$idTipoDescriptor)
+                ->groupBy('Descriptor.id')
+                ->havingRaw('Data in'.'('.implode(",",$personas).')')
+                ->select(DB::raw('count(Persona.id) as Data'),'Descriptor.Titulo as Labels');
+
+            $results=$results    ->get();
+            if($results !=null)
+            {
+                foreach($results as $result)
+                {
+                    $formattedResults['Data'][]=$result->Data;
+                    $formattedResults['Labels'][]=$result->Labels;
+                }
+            }
+
+            return response()->json($formattedResults);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['does_not_belong_to_organizacion'], $e->getStatusCode());
+        }
+    }
+
+
 }

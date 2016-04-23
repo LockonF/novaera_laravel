@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Convocatoria extends Model
 {
     protected $table = 'Convocatoria';
-    protected $fillable = ['Nombre','FechaInicio','FechaTermino','Requisitos','MontosMaximosTotales','idProgramaFondeo'];
+    protected $fillable = ['Nombre','FechaInicio','FechaTermino','Requisitos','MontosMaximosTotales','Activo','ProgramaAsociado'];
 
     /*
      * Relaciones

@@ -194,6 +194,40 @@ class ProyectoController extends Controller
 
 
     /**
+     * @param $id
+     * @param string $type
+     * @param null $idOrganizacion
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function deleteProject($type = 'Persona',$id=null,$idOrganizacion=null)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $proyecto = Proyecto::validateProyecto($id,$user,$type,$idOrganizacion);
+            $proyecto->delete();
+            return response()->json($proyecto,200);
+
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }
+        catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['invalid_write_permissions'], $e->getStatusCode());
+        }
+    }
+
+
+
+    /**
      * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
@@ -568,8 +602,13 @@ class ProyectoController extends Controller
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($id, $user, $whoIs, $idOrganizacion);
             $proyecto->load('TRL');
+            $data = [];
+            $i = 0;
             foreach ($proyecto->TRL as $trl) {
-                $data[] = $trl->pivot;
+                $data[$i] = (object) $trl->pivot['attributes'];
+                $data[$i]->TRL = $trl['attributes'];
+                $i++;
+
             }
 
             return response()->json(['TRL' => $data]);
@@ -628,6 +667,8 @@ class ProyectoController extends Controller
 
     /**
      * @param Request $request
+     * @param string $whoIs
+     * @param null $idOrganizacion
      * @return \Illuminate\Http\JsonResponse
      */
 
@@ -638,13 +679,10 @@ class ProyectoController extends Controller
             $user->load('Persona');
             $proyecto = Proyecto::validateProyecto($request->idProyecto, $user, $whoIs, $idOrganizacion);
             $resultado  = new ProyectoResultado($request->Resultado);
+            $resultado->PaisesProteccion = json_encode($resultado->PaisesProteccion);
             $resultado->save();
-
-            $proyecto->load('ProyectoTRL');
-            foreach ($proyecto->ProyectoTRL as $TRL) {
-                $TRL->load('ProyectoResultado');
-            }
-            return response()->json($proyecto->ProyectoTRL);
+            $resultado->PaisesProteccion = json_decode($resultado->PaisesProteccion);
+            return response()->json($resultado);
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -667,33 +705,18 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function editResult(Request $request)
+    public function editResult(Request $request,$id,$type=null,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
             $user = AuthenticateController::checkUser(null);
             $user->load('Persona');
-            $proyecto  = $user->Persona->Proyecto()->where('Proyecto.id',$request->idProyecto)->first();
-            if($proyecto == null)
-            {
-                return response()->json(['message'=>'proyecto_not_found'],500);
-            }
-            if($proyecto->pivot->Owner!=1)
-            {
-                return response()->json(['message'=>'owner_not_matching'],500);
-            }
-            else
-            {
-                $resultado  = ProyectoResultado::find($request->id);
+            $proyectoResultado = ProyectoResultado::validateResultadoProyecto($id,$user,$type,$whoIs,$idOrganizacion);
+            $proyectoResultado->fill($request->all());
+            $proyectoResultado->PaisesProteccion = json_encode($proyectoResultado->PaisesProteccion);
+            $proyectoResultado->save();
+            $proyectoResultado->PaisesProteccion = json_decode($proyectoResultado->PaisesProteccion);
+            return response()->json($proyectoResultado);
 
-                if($resultado==null)
-                {
-                    return response()->json(['message'=>'resultado_not_found'],404);
-                }
-                $resultado->fill($request->all());
-                $resultado->save();
-                return response()->json($resultado);
-
-            }
         }catch (QueryException $e)
         {
             return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
@@ -709,9 +732,6 @@ class ProyectoController extends Controller
             return response()->json(['invalid_write_permissions'], $e->getStatusCode());
         }
     }
-
-
-
 
 
 
@@ -731,22 +751,58 @@ class ProyectoController extends Controller
             $proyecto = Proyecto::validateProyecto($id, $user, $whoIs, $idOrganizacion);
             $results = DB::table('ProyectoResultado')
                 ->join('ProyectoTRL', 'ProyectoResultado.idProyectoTRL', '=', 'ProyectoTRL.id')
-                ->join('Proyecto', 'ProyectoTRL.idProyecto', '=', 'Proyecto.id')
                 ->select('ProyectoResultado.*')
-                ->where('Proyecto.id', $proyecto->id);
+                ->where('ProyectoTRL.idProyecto',$id);
 
-            if ($type != null) {
-                if ($type == 'Todos') {
-                    $results
-                        ->where('ProyectoResultado.Tipo', 'Producto')
-                        ->orWhere('ProyectoResultado.Tipo', 'Proceso')
-                        ->orWhere('ProyectoResultado.Tipo', 'Servicio');
-                } else {
+            if ($type != null)
+            {
+                if($type!='Todos')
+                {
                     $results->where('ProyectoResultado.Tipo', $type);
                 }
+                else
+                {
+                    $results->where('ProyectoResultado.Tipo','!=','Patente');
+                }
+
             }
             $results = $results->get();
+            foreach($results as $result)
+            {
+                $result->PaisesProteccion = json_decode($result->PaisesProteccion);
+            }
+
             return response()->json(['Resultado' => $results]);
+
+        }
+        catch (QueryException $e)
+        {
+        return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['invalid_write_permissions'], $e->getStatusCode());
+        }
+    }
+
+
+
+    public function destroyResult($id,$whoIs='Persona',$idOrganizacion=null)
+    {
+        try
+        {
+
+            $user = AuthenticateController::checkUser(null);
+            $user->load('Persona');
+            $proyectoResultado = ProyectoResultado::validateResultadoProyecto($id,$user,$whoIs,$idOrganizacion);
+            $proyectoResultado->delete();
+            return response()->json(['message' => 'success']);
 
         }
         catch (QueryException $e)
@@ -770,15 +826,11 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function addDescriptor(Request $request)
+    public function addDescriptor(Request $request,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
-            AuthenticateController::checkUser(null);
-            $proyecto =Proyecto::find($request->idProyecto);
-            if($proyecto==null)
-            {
-                return response()->json(['message'=>'proyecto_not_found'],404);
-            }
+            $user = AuthenticateController::checkUser(null);
+            $proyecto =Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
             $descriptor = Descriptor::find($request->idDescriptor);
 
             $proyecto->Descriptor()->save($descriptor,$request->all());
@@ -797,6 +849,8 @@ class ProyectoController extends Controller
             return response()->json(['token_invalid'], $e->getStatusCode());
         } catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
         }
     }
 
@@ -805,11 +859,11 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function showAllDescriptor($id)
+    public function showAllDescriptor($id,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
-            $proyecto =Proyecto::find($id);
+            $user = AuthenticateController::checkUser(null);
+            $proyecto =Proyecto::validateProyecto($id,$user,$whoIs,$idOrganizacion);
             if($proyecto==null)
             {
                 return response()->json(['message'=>'proyecto_not_found'],404);
@@ -838,29 +892,21 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function updateDescriptor(Request $request, $id)
+    public function updateDescriptor(Request $request,$id,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
-            $proyectoDescriptor = ProyectoDescriptor::find($request->id);
+            $user = AuthenticateController::checkUser(null);
+            $proyecto = Proyecto::validateProyecto($request->idProyecto,$user,$whoIs,$idOrganizacion);
+            $proyectoDescriptor = ProyectoDescriptor::find($id);
             if($proyectoDescriptor==null)
             {
                 return response()->json(['descriptor_proyecto_not_found'],404);
             }
 
-            $proyectoDescriptor->idProyecto = $request->idProyecto;
-            $proyectoDescriptor->idDescriptor = $request->idDescriptor;
-            $proyectoDescriptor->id = $request->id;
-            $proyectoDescriptor->observaciones = $request->observaciones;
+            $proyectoDescriptor->fill($request->all());
             $proyectoDescriptor->save();
 
-            $proyecto = Proyecto::find($request->idProyecto);
-            $proyecto->load('Descriptor');
-            foreach($proyecto->Descriptor as $descriptor)
-            {
-                $descriptores[] = $descriptor;
-            }
-            return response()->json(['Descriptor'=>$descriptores]);
+            return response()->json($proyectoDescriptor);
 
         }catch (QueryException $e) {
             return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
@@ -879,11 +925,11 @@ class ProyectoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function detachDescriptor($idProyecto,$id)
+    public function detachDescriptor($idProyecto,$id,$whoIs='Persona',$idOrganizacion=null)
     {
         try{
-            $user = AuthenticateController::checkUser('Supervisor');
-            $proyecto =Proyecto::find($idProyecto);
+            $user = AuthenticateController::checkUser(null);
+            $proyecto =Proyecto::validateProyecto($idProyecto,$user,$whoIs,$idOrganizacion);
             if($proyecto ==null)
             {
                 return response()->json(['message'=>'proyecto_fondeo_not_found'],404);
@@ -906,9 +952,61 @@ class ProyectoController extends Controller
         } catch (Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
+
     }
 
 
+    /**
+     * @param $idDescriptor
+     * @param string $whoIs
+     * @param null $idOrganizacion
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function showByDescriptor($idDescriptor,$whoIs='Persona',$idOrganizacion=null)
+    {
+        try{
+            $user = AuthenticateController::checkUser(null);
+            $proyectos = Proyecto::allByDescriptor($idDescriptor,$user,$whoIs,$idOrganizacion);
+            return response()->json(['Proyecto'=>$proyectos]);
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+
+    public function countByTipoDescriptor($idTipoDescriptor,$whoIs='Persona',$idOrganizacion=null)
+    {
+        try{
+            $user = AuthenticateController::checkUser();
+            $results = Proyecto::allByTipoDescriptor($idTipoDescriptor,$user,$whoIs,$idOrganizacion);
+            return response()->json($results);
+        }catch (QueryException $e) {
+            return response()->json(['message'=>$e->getMessage(),'sql'=>$e->getSql()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        } catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        } catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }
+    }
+
+
+    public function countByTRL($whoIs='Persona',$idOrganizacion=null)
+    {
+        $user = AuthenticateController::checkUser();
+        $trls = ProyectoTRL::countByTRL($user,$whoIs,$idOrganizacion);
+        return response()->json($trls);
+
+    }
 
 
 

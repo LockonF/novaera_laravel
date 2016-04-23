@@ -15,6 +15,8 @@ use App\Http\Controllers\Controller;
 class ConvocatoriaController extends Controller
 {
 
+
+
     /**
      * @param $idConvocatoria
      * @return \Illuminate\Http\JsonResponse

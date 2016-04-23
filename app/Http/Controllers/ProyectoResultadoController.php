@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidAccessException;
 use App\Exceptions\NotFoundException;
+use App\Models\Descriptor;
 use App\Models\Proyecto;
 use App\Models\ProyectoResultado;
 use App\Models\ResultadoDescriptor;
+use App\Models\TipoDescriptor;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -28,6 +30,18 @@ class ProyectoResultadoController extends Controller
 
             $user = AuthenticateController::checkUser();
             $resultado = ProyectoResultado::validateResultadoProyecto($idResultado,$user,$whoIs,$idOrganizacion,0);
+            foreach($resultado->ResultadoDescriptor as $resultadoDescriptor)
+            {
+                $descriptor = Descriptor::find($resultadoDescriptor->idDescriptor);
+                $tipoDescriptor = TipoDescriptor::find($descriptor->idTipoDescriptor);
+                $resultadoDescriptor->idTipoDescriptor = $descriptor->idTipoDescriptor;
+                $resultadoDescriptor->NombreResultado = $resultado->Nombre;
+                $resultadoDescriptor->TipoResultado = $resultado->Tipo;
+                $resultadoDescriptor->TipoDescriptor = $tipoDescriptor->Nombre;
+                $resultadoDescriptor->DescriptorTitulo = $descriptor->Titulo;
+                $resultadoDescriptor->DescriptorDescripcion = $descriptor->Descripcion;
+
+            }
             return response()->json(['ResultadoRescriptor'=>$resultado->ResultadoDescriptor]);
         }catch (QueryException $e)
         {
@@ -57,7 +71,7 @@ class ProyectoResultadoController extends Controller
         try{
 
             $user = AuthenticateController::checkUser();
-            $resultado = ProyectoResultado::validateResultadoProyecto($request->idResultado,$user,$whoIs,$idOrganizacion);
+            $resultado = ProyectoResultado::validateResultadoProyecto($request->idResultado,$user,$whoIs,$idOrganizacion,0);
             if($resultado==null)
                 return response()->json(['proyecto_resultado_not_found'],500);
             $resultadoDescriptor = new ResultadoDescriptor($request->all());
@@ -144,4 +158,30 @@ class ProyectoResultadoController extends Controller
             return response()->json(['invalid_write_permissions'], $e->getStatusCode());
         }
     }
+
+
+
+    public function countResultados($whoIs='Persona',$idOrganizacion=null)
+    {
+
+        try{
+            $user = AuthenticateController::checkUser();
+            return response()->json(ProyectoResultado::countResultados($user,$whoIs,$idOrganizacion,0));
+        }catch (QueryException $e)
+        {
+            return response()->json(['message'=>'server_error','exception'=>$e->getMessage()],500);
+        }catch (Exceptions\TokenExpiredException $e) {
+            return response()->json(['token_expired'], $e->getStatusCode());
+        }catch (Exceptions\TokenInvalidException $e) {
+            return response()->json(['token_invalid'], $e->getStatusCode());
+        }catch (Exceptions\JWTException $e) {
+            return response()->json(['token_absent'], $e->getStatusCode());
+        }catch (NotFoundException $e) {
+            return response()->json(['proyecto_not_found'], $e->getStatusCode());
+        }catch (InvalidAccessException $e) {
+            return response()->json(['invalid_write_permissions'], $e->getStatusCode());
+        }
+
+    }
+
 }
