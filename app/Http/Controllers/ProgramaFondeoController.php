@@ -33,6 +33,11 @@ class ProgramaFondeoController extends Controller
             {
                 return response()->json(['convocatoria_not_found'],500);
             }
+            foreach($convocatorias as $convocatoria)
+            {
+                $convocatoria->Requisitos = json_decode($convocatoria->Requisitos);
+            }
+
             return response()->json(['Convocatoria'=>$convocatorias]);
         }catch (QueryException $e)
         {
@@ -116,7 +121,7 @@ class ProgramaFondeoController extends Controller
             $programaFondeo = ProgramaFondeo::with('Modalidad')->find($id);
             if($programaFondeo!=null)
             {
-                return response()->json($programaFondeo->Modalidad);
+                return response()->json(['Modalidad'=>$programaFondeo->Modalidad]);
             }
             return response()->json(['message'=>'programa_fondeo_not_found'],404);
         }catch (QueryException $e)

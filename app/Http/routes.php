@@ -121,7 +121,7 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
             ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::get('Proyecto/Date/{type?}/{idOrganizacion?}','ProyectoController@showByDate')
             ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
-        Route::get('Proyecto/{type}/{id}/{idOrganizacion?}','ProyectoController@showOneProject')
+        Route::get('Proyecto/One/{type}/{id}/{idOrganizacion?}','ProyectoController@showOneProject')
             ->where(['id'=>'[0-9]+','type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
         Route::post('Proyecto/{type}/{idOrganizacion?}','ProyectoController@storeByPerson')
             ->where(['type'=>'(Persona|Organizacion)','idOrganizacion'=>'[0-9]+']);
@@ -204,8 +204,8 @@ Route::group(['middleware' => 'cors','prefix' => 'api'], function()
         Route::post('Proyecto/Resultados/{whoIs?}/{idOrganizacion?}','ProyectoController@addResult')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
         Route::put('Proyecto/Resultados','ProyectoController@editResult');
-        Route::get('Proyecto/Resultados/{id}/{type?}','ProyectoController@showResults')
-            ->where(['id'=>'[0-9]+','type'=>'(Patente|Producto|Servicio|Proceso|Todos)']);
+        Route::get('Proyecto/Resultados/{id}/{type?}/{whoIs?}/{idOrganizacion?}','ProyectoController@showResults')
+            ->where(['id'=>'[0-9]+','type'=>'(Patente|Producto|Servicio|Proceso|Todos)','whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
             /* Descriptor de Resultado */
         Route::get('Proyecto/Resultados/Descriptor/{id}/{whoIs?}/{idOrganizacion?}','ProyectoResultadoController@showDescriptor')
             ->where(['whoIs'=>'Organizacion','idOrganizacion'=>'[0-9]+']);
